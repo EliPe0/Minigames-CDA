@@ -40,9 +40,6 @@ export default function Home() {
           onClick={() => navigate('/caixinha')} 
           className="group relative p-8 bg-[#0c0c0c] border border-neutral-800 rounded-xl hover:border-amber-500/40 shadow-2xl backdrop-blur-md transition-all text-left hover:shadow-[0_0_40px_rgba(245,158,11,0.01)]"
         >
-          <div className="absolute top-4 right-4 text-[8px] bg-neutral-900 border border-neutral-800 text-emerald-400 px-2 py-0.5 rounded font-black tracking-widest">
-            TREINO CDA
-          </div>
           <h3 className="text-md font-black mb-3 group-hover:text-amber-400 transition-colors uppercase tracking-wider">
             Sequência de Caixinha
           </h3>
