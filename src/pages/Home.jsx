@@ -17,7 +17,7 @@ export default function Home() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[size:100%_4px] pointer-events-none opacity-10" />
 
       <h1 className="text-2xl font-black italic text-amber-500 mb-12 tracking-[0.3em] drop-shadow-[0_0_15px_rgba(245,158,11,0.15)] z-10 font-mono uppercase">
-        Central de Minigames
+        Hacking Lab | Cidade Alta
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl z-10 font-mono">
