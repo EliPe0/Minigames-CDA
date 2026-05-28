@@ -206,12 +206,12 @@ export default function CaixinhaTreino() {
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-50 animate-in fade-in duration-200">
               {gameState === 'lost' && (
                 <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">
-                  🚨 CÓDIGO INCORRETO | CIRCUITO RESETADO
+                 🔴 SISTEMA FALHOU | NÃO FOI POSSÍVEL ARMAR A BOMBA
                 </div>
               )}
               {gameState === 'won' && (
                 <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">
-                  🔓 BYPASS CONCLUÍDO / SISTEMA HACKEADO
+                  駭客 SISTEMA HACKEADO | INICIANDO CONTAGEM...
                 </div>
               )}
             </div>
