@@ -37,12 +37,12 @@ export default function Sidebar() {
   return (
     <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-[#1f1f1f] p-6 flex flex-col justify-between select-none shrink-0 font-mono">
       <div className="flex flex-col gap-10">
-        <div onClick={() => navigate('/')} className="flex flex-col items-center gap-3 cursor-pointer group">
+        <div onClick={() => navigate('/home')} className="flex flex-col items-center gap-3 cursor-pointer group">
           <img src="logocda.png" alt="CDA Logo" className="h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-105 transition-transform" />
         </div>
 
         <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest">
-          <button onClick={() => navigate('/')} className={`w-full text-left py-3 px-4 rounded-lg border transition-all flex items-center ${location.pathname === '/' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/50'}`}>
+          <button onClick={() => navigate('/home')} className={`w-full text-left py-3 px-4 rounded-lg border transition-all flex items-center ${location.pathname === '/home' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/50'}`}>
             <Icons.House /> Painel Inicial
           </button>
           

@@ -17,10 +17,10 @@ export default function App() {
         <Sidebar />
         <main className="flex-1 flex flex-col justify-center min-w-0 bg-[#050505]">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/lockpick" element={<Lockpick />} />
             <Route path="/caixinha" element={<CaixinhaTreino />} />
-            <Route path="/portamalas" element={<PortaMalas />} /> {/* ROTA ATIVA */}
+            <Route path="/portamalas" element={<PortaMalas />} />
           </Routes>
         </main>
       </div>

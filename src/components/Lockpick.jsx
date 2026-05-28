@@ -225,7 +225,6 @@ export default function Digipick() {
         e.preventDefault();
         handleInput('confirm');
       }
-      if (k === 'escape') navigate('/');
     };
     window.addEventListener('keydown', h);
     return () => window.removeEventListener('keydown', h);
