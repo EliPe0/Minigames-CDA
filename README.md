@@ -22,3 +22,9 @@ Fiel ao sistema atual da Cidade Alta, com randomização de padrões e desenhos.
 Fiel do sistema de sequência de caracteres da Cidade Alta.
 
 ---
+
+## 2. Porta Malas 🚗
+
+Fiel do sistema de arrombamento de porta-malas, com nível de dificuldade e layout parecidos ao da Cidade Alta.
+
+---
