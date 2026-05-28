@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const getCoords = (angle, radius, center = 150) => {
+// --- MATEMÁTICA DO CÍRCULO ---
+const getCoords = (angle, radius, center = 200) => {
   const rad = (angle - 90) * (Math.PI / 180);
   return { x: center + radius * Math.cos(rad), y: center + radius * Math.sin(rad) };
 };
 
+// --- MOTOR PROCEDURAL ---
 const generatePuzzle = () => {
   const numRings = 3; 
   const possibleAngles = Array.from({ length: 24 }, (_, i) => i * 15); 
@@ -15,9 +17,25 @@ const generatePuzzle = () => {
   let requiredToolsCount = 0;
 
   for (let r = 0; r < numRings; r++) {
-    const toolsForThisRing = Math.floor(Math.random() * 2) + 2; 
+    let toolsForThisRing = 2; 
+    const roll = Math.random();
+
+    // CALIBRAÇÃO DO PRIMEIRO CÍRCULO:
+    if (r === 0) {
+      if (roll < 0.90) {
+        toolsForThisRing = 1; // 90% de chance de precisar de apenas 1 chave
+      } else if (roll < 0.97) {
+        toolsForThisRing = 2; // 7% de chance de precisar de 2 chaves
+      } else {
+        toolsForThisRing = 3; // 3% de chance de precisar de 3 chaves
+      }
+    } else {
+      if (roll < 0.05) toolsForThisRing = 1; 
+      else if (roll < 0.60) toolsForThisRing = 2;
+      else toolsForThisRing = 3;
+    }
+
     requiredToolsCount += toolsForThisRing;
-    
     let ringHoles = new Set();
 
     for (let t = 0; t < toolsForThisRing; t++) {
@@ -98,12 +116,16 @@ export default function Digipick() {
   const [activeToolIdx, setActiveToolIdx] = useState(0);
   const [rotation, setRotation] = useState(0);
   const [slottedPins, setSlottedPins] = useState([]); 
-  const [timer, setTimer] = useState(90);
+  const [timer, setTimer] = useState(90); 
+  const [feedback, setFeedback] = useState(null); 
+
   const intervalRef = useRef(null);
+  const feedbackTimeoutRef = useRef(null);
 
   useEffect(() => { 
     const p = generatePuzzle();
     setRings(p.rings); setTools(p.tools);
+    return () => clearTimeout(feedbackTimeoutRef.current);
   }, []);
 
   const iniciarSistema = () => {
@@ -111,7 +133,7 @@ export default function Digipick() {
     setRings(p.rings); setTools(p.tools);
     setActiveRingIdx(0); 
     setRotation(0); setSlottedPins([]);
-    setTimer(90); setGameState('playing');
+    setTimer(90); setGameState('playing'); setFeedback(null);
 
     const firstValidIdx = p.tools.findIndex(t => !t.isEmpty);
     setActiveToolIdx(firstValidIdx !== -1 ? firstValidIdx : 0);
@@ -121,7 +143,7 @@ export default function Digipick() {
     setGameState('idle');
     setActiveRingIdx(0); setActiveToolIdx(0);
     setRotation(0); setSlottedPins([]);
-    setTimer(90);
+    setTimer(90); setFeedback(null);
   };
 
   const cycleTool = useCallback((dir, customTools) => {
@@ -153,7 +175,12 @@ export default function Digipick() {
     const rotatedPins = tool.pins.map(p => (p + rotation) % 360);
     const isValid = rotatedPins.every(p => rings[activeRingIdx].includes(p) && !slottedPins.includes(p));
 
+    clearTimeout(feedbackTimeoutRef.current);
+
     if (isValid) {
+      setFeedback('correct');
+      feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 300);
+
       const newSlotted = [...slottedPins, ...rotatedPins];
       const newTools = [...tools];
       newTools[activeToolIdx].used = true;
@@ -173,7 +200,8 @@ export default function Digipick() {
         cycleTool(1, newTools); 
       }
     } else { 
-      setGameState('lost'); 
+      setFeedback('incorrect');
+      feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 300);
     }
   };
 
@@ -204,7 +232,7 @@ export default function Digipick() {
   }, [handleInput, navigate, gameState]);
 
   useEffect(() => {
-    if (gameState === 'playing' && timer > 0) {
+    if (gameState === 'playing') {
       intervalRef.current = setInterval(() => {
         setTimer(p => { if (p <= 1) { setGameState('lost'); return 0; } return p - 1; });
       }, 1000);
@@ -233,30 +261,39 @@ export default function Digipick() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black p-4 font-sans selection:bg-transparent">
       
       {/* 1. COFRE CENTRAL */}
-      <div className="relative w-80 h-80 mb-12 flex items-center justify-center rounded-full bg-[#070707] border border-neutral-900 shadow-[0_0_80px_rgba(0,0,0,0.9)]">
-        <svg width="300" height="300" viewBox="0 0 300 300">
+      <div className={`relative w-[420px] h-[420px] mb-12 flex items-center justify-center rounded-full bg-[#070707] border transition-all duration-150 ${
+        feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
+        feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
+        'border-neutral-900 shadow-[0_0_80px_rgba(0,0,0,0.9)]'
+      }`}>
+        
+        {/* Camada interna de flash ambiental */}
+        {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/5 pointer-events-none animate-pulse" />}
+        {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/5 pointer-events-none animate-pulse" />}
+
+        <svg width="400" height="400" viewBox="0 0 400 400">
           
-          <circle cx="150" cy="150" r="140" fill="none" stroke="#2589a6" strokeWidth="1" className="opacity-20" />
-          <circle cx="150" cy="150" r="130" fill="#030303" />
+          <circle cx="200" cy="200" r="185" fill="none" stroke="#3be8ff" strokeWidth="1" className="opacity-20" />
+          <circle cx="200" cy="200" r="175" fill="#030303" />
 
           {rings.map((holes, i) => {
             if (i < activeRingIdx) return null;
 
-            const radius = 115 - (i * 24);
-            const thicknesses = [8, 4.2, 2.2, 1.2];
-            const strokeThickness = thicknesses[i] || 1.2;
+            const radius = 150 - (i * 34);
+            const thicknesses = [11, 7, 4.5];
+            const strokeThickness = thicknesses[i] || 4.5;
             const isActive = i === activeRingIdx;
 
             const remainingHoles = isActive ? holes.filter(h => !slottedPins.includes(h)) : holes;
 
             return (
               <g key={i}>
-                <circle cx="150" cy="150" r={radius} fill="none" stroke={isActive ? "#1f222e" : "#0d0f14"} strokeWidth={strokeThickness} />
+                <circle cx="200" cy="200" r={radius} fill="none" stroke={isActive ? "#1f222e" : "#0d0f14"} strokeWidth={strokeThickness} />
                 
                 {remainingHoles.map(holeAngle => {
-                  const p1 = getCoords(holeAngle, radius - strokeThickness - 4);
-                  const p2 = getCoords(holeAngle, radius + strokeThickness + 4);
-                  return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#030303" strokeWidth={radius * 0.26} strokeLinecap="butt" />;
+                  const p1 = getCoords(holeAngle, radius - strokeThickness - 6);
+                  const p2 = getCoords(holeAngle, radius + strokeThickness + 6);
+                  return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#030303" strokeWidth={radius * 0.32} strokeLinecap="butt" />;
                 })}
               </g>
             );
@@ -264,16 +301,16 @@ export default function Digipick() {
 
           {/* PALITINHOS DA CHAVE ATIVA */}
           {gameState === 'playing' && tools[activeToolIdx] && !tools[activeToolIdx].used && !tools[activeToolIdx].isEmpty && (
-            <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '150px 150px' }} className="transition-transform duration-75">
+            <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '200px 200px' }} className="transition-transform duration-75">
               {tools[activeToolIdx].pins.map(p => {
-                const { x, y } = getCoords(p, 140);
-                return <rect key={p} x={x - 3} y={y - 8} width="6" height="16" rx="1.5" fill="#3be8ff" className="drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
+                const { x, y } = getCoords(p, 185);
+                return <rect key={p} x={x - 4} y={y - 10} width="8" height="20" rx="2" fill="#3be8ff" className="drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
               })}
             </g>
           )}
 
-          <rect x="110" y="140" width="80" height="20" rx="10" fill="none" stroke="#1f222e" strokeWidth="1" />
-          <text x="150" y="153" fill="#1f222e" fontSize="9" fontWeight="900" textAnchor="middle" className="tracking-widest">LOCKPICK</text>
+          <rect x="150" y="190" width="100" height="20" rx="10" fill="none" stroke="#1f222e" strokeWidth="1" />
+          <text x="200" y="203" fill="#1f222e" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest">LOCKPICK</text>
         </svg>
       </div>
 
@@ -301,6 +338,7 @@ export default function Digipick() {
           </div>
         </div>
 
+        {/* GRID DE SLOTS */}
         <div className="grid grid-cols-6 gap-x-[11px] gap-y-3.5 mb-8 w-full max-w-[360px] mx-auto">
           {tools.map((t, i) => {
             const isActive = i === activeToolIdx && gameState === 'playing';
@@ -328,12 +366,13 @@ export default function Digipick() {
           })}
         </div>
 
+        {/* RODAPÉ */}
         <div className="flex justify-between items-center border-t border-neutral-900 pt-5 w-full gap-6">
           <div className="text-[10px] font-bold text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-4 gap-y-1 items-center flex-1 min-w-0">
             {gameState === 'playing' ? (
               <>
-                <div><span className="text-neutral-400 font-black mr-1">[A/D]</span> ROTACIONAR </div>
-                <div><span className="text-neutral-400 font-black mr-1">[Q/E]</span> MUDAR ESCOLHA</div>
+                <div><span className="text-neutral-400 font-black mr-1">[A/D]</span> ROTACIONAR</div>
+                <div><span className="text-neutral-400 font-black mr-1">[Q/E]</span> PRÓXIMA ESCOLHA</div>
                 <div><span className="text-neutral-400 font-black mr-1">[ENTER]</span> ENCAIXAR</div>
               </>
             ) : (
@@ -360,6 +399,7 @@ export default function Digipick() {
           </div>
         </div>
 
+        {/* INTERFACE DE DERROTA */}
         {gameState === 'lost' && (
           <div className="mt-4 text-center">
             <span className="text-xs font-black tracking-widest uppercase text-red-500">SISTEMA BLOQUEADO</span>

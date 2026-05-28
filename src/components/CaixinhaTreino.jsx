@@ -12,21 +12,13 @@ export default function CaixinhaTreino() {
   const [stage, setStage] = useState(1); 
   
   const timerRef = useRef(null);
-  const keyPressSound = useRef(new Audio('/sound/key_press_sound.mp3'));
-  const wrongSound = useRef(new Audio('/sound/wrong_sound.mp3'));
-
   const stateRef = useRef({});
+
   useEffect(() => {
     stateRef.current = { gameState, sequence, currentIndex, stage };
   }, [gameState, sequence, currentIndex, stage]);
 
   useEffect(() => {
-    keyPressSound.current.volume = 0.40;
-    wrongSound.current.volume = 0.70;
-    
-    keyPressSound.current.load();
-    wrongSound.current.load();
-
     return () => clearInterval(timerRef.current);
   }, []);
 
@@ -41,8 +33,6 @@ export default function CaixinhaTreino() {
       setProgress((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          wrongSound.current.currentTime = 0;
-          wrongSound.current.play().catch(() => {});
           setGameState('lost'); 
           return 0;
         }
@@ -76,9 +66,6 @@ export default function CaixinhaTreino() {
     if (!LETTERS.includes(inputKey)) return;
 
     if (inputKey === seq[cIndex]) {
-      keyPressSound.current.currentTime = 0;
-      keyPressSound.current.play().catch(() => {});
-
       const nextIndex = cIndex + 1;
       setCurrentIndex(nextIndex);
 
@@ -95,8 +82,6 @@ export default function CaixinhaTreino() {
         }
       }
     } else {
-      wrongSound.current.currentTime = 0;
-      wrongSound.current.play().catch(() => {});
       setSequence(gerarSequencia());
       setCurrentIndex(0);
     }
@@ -117,8 +102,14 @@ export default function CaixinhaTreino() {
           </div>
         )}
 
-        <div className="text-center pb-3 border-b border-neutral-900 text-neutral-500 font-bold text-sm tracking-wider uppercase font-mono">
-          💣 Digite a sequência correta do código
+        {/* HEADER ATUALIZADO COM SVG DA BOMBA */}
+        <div className="flex items-center justify-center gap-2 pb-3 border-b border-neutral-900 text-neutral-500 font-bold text-sm tracking-wider uppercase font-mono">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse">
+            <circle cx="11" cy="13" r="9"></circle>
+            <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
+            <path d="m22 2-1.5 1.5"></path>
+          </svg>
+          Digite a sequência correta do código
         </div>
 
         {gameState === 'playing' && (
@@ -132,16 +123,7 @@ export default function CaixinhaTreino() {
                 const isCompleted = idx < currentIndex;
                 const isCurrent = idx === currentIndex;
                 return (
-                  <div 
-                    key={idx} 
-                    className={`h-16 flex items-center justify-center font-black text-2xl rounded-xl font-mono transition-all ${
-                      isCompleted 
-                        ? 'bg-neutral-800 text-neutral-600 opacity-40' 
-                        : isCurrent 
-                          ? 'bg-white text-black ring-4 ring-amber-500 -translate-y-1 shadow-[0_10px_20px_rgba(245,158,11,0.15)]' 
-                          : 'bg-white text-black shadow-md'
-                    }`}
-                  >
+                  <div key={idx} className={`h-16 flex items-center justify-center font-black text-2xl rounded-xl font-mono transition-all ${isCompleted ? 'bg-neutral-800 text-neutral-600 opacity-40' : isCurrent ? 'bg-white text-black ring-4 ring-amber-500 -translate-y-1 shadow-[0_10px_20px_rgba(245,158,11,0.15)]' : 'bg-white text-black shadow-md'}`}>
                     {letter}
                   </div>
                 );
@@ -152,13 +134,13 @@ export default function CaixinhaTreino() {
 
         {gameState === 'idle' && <div className="text-center py-12 text-neutral-600 font-mono text-xs uppercase tracking-widest animate-pulse">Aguardando inicialização...</div>}
         {gameState === 'lost' && <div className="text-center py-8 text-[#FF3E24] font-mono font-black text-md tracking-widest uppercase animate-bounce">🔴 CÓDIGO INCORRETO | CIRCUITO RESETADO</div>}
-        {gameState === 'won' && <div className="text-center py-8 text-[#a3ef52] font-mono font-black text-xl tracking-[0.2em] uppercase animate-pulse">🟢 SISTEMA INVADIDO</div>}
+        {gameState === 'won' && <div className="text-center py-8 text-[#a3ef52] font-mono font-black text-xl tracking-[0.2em] uppercase animate-pulse">🔓 SISTEMA HACKEADO</div>}
 
         <div className="flex justify-center border-t border-neutral-900 pt-5">
           {gameState === 'playing' ? (
             <button onClick={pararJogo} className="px-10 py-3.5 bg-[#b83131] hover:bg-[#972424] text-white font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Abortar</button>
           ) : (
-            <button onClick={iniciarSistemaCompleto} className="px-12 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-amber-500/10">Iniciar Sistema</button>
+            <button onClick={iniciarSistemaCompleto} className="px-12 py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-amber-500/10">Iniciar Sequência</button>
           )}
         </div>
       </div>

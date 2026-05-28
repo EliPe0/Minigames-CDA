@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Lockpick from './components/Lockpick';
 import CaixinhaTreino from './components/CaixinhaTreino';
+import PortaMalas from './components/PortaMalas';
 import Sidebar from './components/Sidebar';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/lockpick" element={<Lockpick />} />
             <Route path="/caixinha" element={<CaixinhaTreino />} />
+            <Route path="/portamalas" element={<PortaMalas />} /> {/* ROTA ATIVA */}
           </Routes>
         </main>
       </div>
