@@ -59,7 +59,7 @@ export default function PortaMalas() {
       lastTime = time;
 
       // 1. CURSOR
-      const cursorSpeed = 0.040; 
+      const cursorSpeed = 0.065; 
       let proximoCursor = cursorPosRef.current + (cursorSpeed * deltaTime * directionRef.current);
       
       if (proximoCursor >= 100) {

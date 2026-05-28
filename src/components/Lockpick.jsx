@@ -7,27 +7,25 @@ const getCoords = (angle, radius, center = 200) => {
   return { x: center + radius * Math.cos(rad), y: center + radius * Math.sin(rad) };
 };
 
-// --- MOTOR PROCEDURAL ---
+// --- MOTOR PROCEDURAL AJUSTADO ---
 const generatePuzzle = () => {
   const numRings = 3; 
   const possibleAngles = Array.from({ length: 24 }, (_, i) => i * 15); 
   
   let generatedRings = [];
   let validTools = [];
-  let requiredToolsCount = 0;
 
   for (let r = 0; r < numRings; r++) {
     let toolsForThisRing = 2; 
     const roll = Math.random();
 
-    // CALIBRAÇÃO DO PRIMEIRO CÍRCULO:
     if (r === 0) {
       if (roll < 0.90) {
-        toolsForThisRing = 1; // 90% de chance de precisar de apenas 1 chave
+        toolsForThisRing = 1; 
       } else if (roll < 0.97) {
-        toolsForThisRing = 2; // 7% de chance de precisar de 2 chaves
+        toolsForThisRing = 2; 
       } else {
-        toolsForThisRing = 3; // 3% de chance de precisar de 3 chaves
+        toolsForThisRing = 3; 
       }
     } else {
       if (roll < 0.05) toolsForThisRing = 1; 
@@ -35,7 +33,6 @@ const generatePuzzle = () => {
       else toolsForThisRing = 3;
     }
 
-    requiredToolsCount += toolsForThisRing;
     let ringHoles = new Set();
 
     for (let t = 0; t < toolsForThisRing; t++) {
@@ -60,8 +57,11 @@ const generatePuzzle = () => {
           toolPins.push(selectedAngle);
           ringHoles.add(selectedAngle);
        }
+       
        if (toolPins.length > 0) {
-          validTools.push({ pins: toolPins, used: false });
+          const randomOffset = possibleAngles[Math.floor(Math.random() * possibleAngles.length)];
+          const shiftedPins = toolPins.map(pin => (pin + randomOffset) % 360);
+          validTools.push({ pins: shiftedPins, used: false });
        }
     }
 
@@ -81,8 +81,10 @@ const generatePuzzle = () => {
     generatedRings.push(Array.from(ringHoles));
   }
 
-  let totalToolsCount = 12; 
+  // 🎛️ AJUSTE SOLICITADO: Força o mínimo de chaves randômicas para 6 para cima
   if (validTools.length > 12) validTools = validTools.slice(0, 12);
+  const minToolsRequired = Math.max(6, validTools.length); 
+  const totalToolsCount = Math.floor(Math.random() * (12 - minToolsRequired + 1)) + minToolsRequired;
 
   let decoysCount = totalToolsCount - validTools.length;
   let decoyTools = [];
@@ -97,11 +99,16 @@ const generatePuzzle = () => {
      decoyTools.push({ pins: toolPins, used: false });
   }
 
-  let allTools = [...validTools, ...decoyTools].sort(() => Math.random() - 0.5);
+  // Agrupa as ferramentas visíveis na parte da frente do grid de forma sequencial
+  let visibleTools = [...validTools, ...decoyTools].sort(() => Math.random() - 0.5);
   
   let gridTools = [];
   for (let i = 0; i < 12; i++) {
-     gridTools.push({ ...allTools[i], id: i, isEmpty: false });
+     if (i < visibleTools.length) {
+        gridTools.push({ ...visibleTools[i], id: i, isEmpty: false });
+     } else {
+        gridTools.push({ pins: [], used: false, isEmpty: true, id: i });
+     }
   }
 
   return { rings: generatedRings, tools: gridTools };
@@ -239,39 +246,22 @@ export default function Digipick() {
     return () => clearInterval(intervalRef.current);
   }, [gameState]);
 
-  const DrawRing = ({ radius, gaps, isActive, strokeWidth }) => {
-    if (!gaps || gaps.length === 0) return null;
-    const sorted = [...gaps].sort((a, b) => a - b);
-    
-    return sorted.map((g, i) => {
-      const start = (g + 15) % 360; 
-      const nextGap = sorted[(i + 1) % sorted.length];
-      const end = (nextGap - 15 + 360) % 360;
-      const { x: sx, y: sy } = getCoords(start, radius);
-      const { x: ex, y: ey } = getCoords(end, radius);
-      
-      return <path key={i} d={`M ${sx} ${sy} A ${radius} ${radius} 0 ${ (end - start + 360) % 360 > 180 ? 1 : 0 } 1 ${ex} ${ey}`} fill="none" stroke={isActive ? "#1f222e" : "#0d0f14"} strokeWidth={strokeWidth} strokeLinecap="round" />;
-    });
-  };
-
   if (rings.length === 0) return null;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black p-4 font-sans selection:bg-transparent">
       
-      {/* 1. COFRE CENTRAL */}
+      {/* COFRE CENTRAL */}
       <div className={`relative w-[420px] h-[420px] mb-12 flex items-center justify-center rounded-full bg-[#070707] border transition-all duration-150 ${
         feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
         feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
         'border-neutral-900 shadow-[0_0_80px_rgba(0,0,0,0.9)]'
       }`}>
         
-        {/* Camada interna de flash ambiental */}
         {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/5 pointer-events-none animate-pulse" />}
         {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/5 pointer-events-none animate-pulse" />}
 
         <svg width="400" height="400" viewBox="0 0 400 400">
-          
           <circle cx="200" cy="200" r="185" fill="none" stroke="#3be8ff" strokeWidth="1" className="opacity-20" />
           <circle cx="200" cy="200" r="175" fill="#030303" />
 
@@ -288,7 +278,6 @@ export default function Digipick() {
             return (
               <g key={i}>
                 <circle cx="200" cy="200" r={radius} fill="none" stroke={isActive ? "#1f222e" : "#0d0f14"} strokeWidth={strokeThickness} />
-                
                 {remainingHoles.map(holeAngle => {
                   const p1 = getCoords(holeAngle, radius - strokeThickness - 6);
                   const p2 = getCoords(holeAngle, radius + strokeThickness + 6);
@@ -313,10 +302,9 @@ export default function Digipick() {
         </svg>
       </div>
 
-      {/* 2. PAINEL DE CONTROLE INFERIOR */}
+      {/* PAINEL DE CONTROLE INFERIOR */}
       <div className="w-[480px] bg-[#0c0c0c] p-6 rounded-xl border border-neutral-800 shadow-2xl relative overflow-hidden">
         
-        {/* INTERFACE DE SUCESSO */}
         {gameState === 'won' && (
           <div className="absolute inset-0 bg-[#0c0c0c]/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6">
             <div className="border border-[#2ecc71]/30 bg-[#2ecc71]/5 p-6 rounded-xl text-center w-full max-w-sm shadow-[0_0_30px_rgba(46,204,113,0.1)]">
@@ -344,13 +332,22 @@ export default function Digipick() {
             const isUsed = t.used;
 
             return (
-              <div key={t.id} className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all ${isUsed ? 'opacity-0 pointer-events-none' : isActive ? 'border-[#3be8ff] bg-[#121212]' : 'border-neutral-800 bg-transparent'}`}>
-                {isActive && !isUsed && <div className="absolute w-2.5 h-2.5 bg-[#1f222e] rounded-full z-10" />}
+              <div 
+                key={t.id} 
+                className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all ${
+                  t.isEmpty || isUsed 
+                    ? 'opacity-0 pointer-events-none' 
+                    : isActive 
+                      ? 'border-[#3be8ff] bg-[#121212]' 
+                      : 'border-neutral-800 bg-transparent'
+                }`}
+              >
+                {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-[#1f222e] rounded-full z-10" />}
                 
                 <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
                   <circle cx="22" cy="22" r="16" fill="none" stroke="#1f222e" strokeWidth="1" className="opacity-40" />
                   
-                  {!isUsed && isActive && (
+                  {!isUsed && !t.isEmpty && isActive && (
                     <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
                       {t.pins.map(p => {
                         const { x: x1, y: y1 } = getCoords(p, 12, 22); 
@@ -380,17 +377,17 @@ export default function Digipick() {
           </div>
           
           <div className="flex-shrink-0">
-            {gameState === 'idle' ? (
+            {gameState === 'idle' || gameState === 'lost' || gameState === 'won' ? (
               <button 
                 onClick={iniciarSistema} 
-                className="px-5 py-2.5 bg-[#2589a6]/20 border border-[#2589a6]/50 text-[#3be8ff] hover:bg-[#2589a6]/40 rounded text-xs font-black uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(59,232,255,0.15)] animate-pulse"
+                className="px-5 py-2.5 bg-[#2589a6]/20 border border-[#2589a6]/50 text-[#3be8ff] hover:bg-[#2589a6]/40 rounded text-xs font-black uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(59,232,255,0.15)]"
               >
                 Iniciar Sistema
               </button>
             ) : (
               <button 
                 onClick={pararSistema} 
-                className="px-5 py-2.5 bg-[#b83131]/20 border border-[#b83131]/50 text-[#ff4d4d] hover:bg-[#b83131]/40 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap shadow-[0_0_15px_rgba(184,49,49,0.35)] animate-pulse"
+                className="px-5 py-2.5 bg-[#b83131]/20 border border-[#b83131]/50 text-[#ff4d4d] hover:bg-[#b83131]/40 rounded text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap shadow-[0_0_15px_rgba(184,49,49,0.35)]"
               >
                 Finalizar Sistema
               </button>
@@ -398,7 +395,6 @@ export default function Digipick() {
           </div>
         </div>
 
-        {/* INTERFACE DE DERROTA */}
         {gameState === 'lost' && (
           <div className="mt-4 text-center">
             <span className="text-xs font-black tracking-widest uppercase text-red-500">SISTEMA BLOQUEADO</span>
