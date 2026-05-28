@@ -71,7 +71,7 @@ export default function Home() {
           <div className="absolute top-4 right-4 text-[8px] bg-neutral-950 border border-neutral-900 text-neutral-600 px-2 py-0.5 rounded font-black tracking-widest">BLOQUEADO</div>
           <div className="pt-4">
             <h3 className="text-sm font-black mb-3 text-neutral-500 uppercase tracking-wider">Em Breve...</h3>
-            <p className="text-neutral-600 text-[11px] leading-relaxed">Em breve um novo sistema estará disponível para treino, aguarde as próximas atualizações do sistema.</p>
+            <p className="text-neutral-600 text-[11px] leading-relaxed">Em breve um novo sistema estará disponível para treino, aguarde as próximas atualizações.</p>
           </div>
           <span className="text-[9px] text-neutral-700 font-black tracking-widest uppercase">
             Conexão Indisponível
