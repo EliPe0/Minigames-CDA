@@ -220,7 +220,8 @@ export default function PortaMalas() {
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-black p-6 font-sans select-none w-full relative overflow-hidden">
-      <div className="w-full max-w-[480px] bg-[#0c0c0c] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden border border-neutral-800">
+      
+      <div className="w-full max-w-[540px] bg-[#0c0c0c] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden border border-neutral-800">
         
         {/* HEADER */}
         <div className="h-11 bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-800/40 text-neutral-400 text-sm font-bold tracking-wide font-mono">
@@ -268,7 +269,7 @@ export default function PortaMalas() {
                 <div key={idx} className="flex-1 flex justify-center relative h-full">
                   <div className="absolute top-0 bottom-0 w-[1px] bg-white/[0.02]" />
                   <div 
-                    className={`absolute top-0 w-[26px] h-[95px] transition-transform duration-300 ease-in-out z-10 ${getPinTranslateY(level)}`}
+                    className={`absolute top-0 w-[30px] h-[130px] transition-transform duration-300 ease-in-out z-10 ${getPinTranslateY(level)}`}
                     style={{ opacity: isMax ? 0.9 : 1 }}
                   >
                     <svg width="100%" height="100%" viewBox="0 0 26 95" className="overflow-visible drop-shadow-[0_4px_10px_rgba(245,128,2,0.15)]">
@@ -287,7 +288,7 @@ export default function PortaMalas() {
           </div>
 
           {/* WRENCH E TIMELINE */}
-          <div className="px-6 relative w-full mb-2 mt-2">
+          <div className="px-8 relative w-full mb-2 mt-2">
             <div className="relative w-full h-[64px]">
               <div className="absolute top-0 w-full h-[36px] bg-[#050505] rounded-lg border border-neutral-900" />
               
@@ -295,9 +296,9 @@ export default function PortaMalas() {
                 <div className="absolute inset-x-2 h-[2px] bg-neutral-800" />
                 <div className="relative w-full h-full flex items-center">
                   {pinsProgress.map((level, i) => (
-                    <div key={i} className="flex-1 flex justify-center relative z-10 -translate-y-[1px]">
+                    <div key={i} className="flex-1 flex justify-center relative z-10">
                       { level === MAX_LEVEL ? (
-                        <div className="w-[12px] h-[3px] bg-[#ef4444] rounded-sm shadow-[0_0_4px_rgba(239,68,68,0.5)]" /> 
+                        <div className="w-[2px] h-[12px] bg-[#ef4444] rounded-sm shadow-[0_0_8px_rgba(239,68,68,0.5)] opacity-60" /> 
                       ) : (
                         <div 
                           className="w-[50%] h-[6px] bg-[#3b82f6] rounded-sm"
@@ -318,28 +319,29 @@ export default function PortaMalas() {
                 style={{ left: gameState === 'playing' ? undefined : '0%' }}
               >
                 <div 
-                  className={`absolute right-[1px] top-[14px] flex items-end origin-left transition-all duration-75 ease-out ${
+                  className={`absolute right-[1px] top-[12px] flex items-end origin-left transition-all duration-75 ease-out ${
                     isClicking ? '-rotate-[3deg] -translate-y-[4px]' : 'rotate-0 translate-y-0'
                   }`}
                 >
-                  <div className="w-[500px] h-[4px] bg-[#8a8c9e]" />
-                  <div className="w-[6px] h-[10px] bg-[#8a8c9e]" style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 60%, 60% 60%, 60% 0%, 0% 0%)' }} />
+                  <svg width="506" height="10" viewBox="0 0 506 10" fill="#8a8c9e" className="overflow-visible block">
+                    <path d="M0 6 H500 V0 H504 V6 H506 V10 H0 Z" />
+                  </svg>
                 </div>
-                <div className="absolute right-[1px] top-[40px] w-[3px] h-[20px] bg-white shadow-[0_0_8px_rgba(255,255,255,1)] rounded-full" />
+                <div className="absolute right-[1px] top-[42px] w-[3px] h-[20px] bg-white shadow-[0_0_8px_rgba(255,255,255,1)] rounded-full" />
               </div>
 
             </div>
           </div>
           
           <div className="text-center text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase">
-            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para hackear'}
+            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para destravar'}
           </div>
           
           {/* OVERLAY DE STATUS */}
           {gameState !== 'playing' && gameState !== 'idle' && (
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-50 animate-in fade-in duration-200">
-              {gameState === 'lost' && <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🚨 Falha no arrombamento</div>}
-              {gameState === 'won' && <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🔓 Porta malas destrancado.</div>}
+              {gameState === 'lost' && <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🚨 Falha no destravamento</div>}
+              {gameState === 'won' && <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🔓 Porta malas destrancado</div>}
             </div>
           )}
         </div>
