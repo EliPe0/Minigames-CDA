@@ -17,6 +17,7 @@ export default function App() {
         <Sidebar />
         <main className="flex-1 flex flex-col justify-center min-w-0 bg-[#050505]">
           <Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
             <Route path="/lockpick" element={<Lockpick />} />
             <Route path="/caixinha" element={<CaixinhaTreino />} />
