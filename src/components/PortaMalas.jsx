@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 const TOTAL_PINS = 8;
 const MAX_LEVEL = 3; 
-const CHANCE_PENALIDADE = 0.35; // 35% de chance de perder um nível ao errar
-const TEMPO_TOTAL_MS = 60000; // 60 Segundos exatos
+const CHANCE_PENALIDADE = 0.35;
+const TEMPO_TOTAL_MS = 60000;
+const COOLDOWN_INPUT_MS = 300;
 
 const gerarPinosIniciais = () => {
   return Array(TOTAL_PINS).fill(0).map(() => Math.floor(Math.random() * 3));
@@ -17,9 +18,9 @@ export default function PortaMalas() {
   const [timerProgress, setTimerProgress] = useState(100); 
   const [isClicking, setIsClicking] = useState(false); 
 
-  // Referências para o motor de animação do cursor e do timer (Lag-Zero)
   const cursorRef = useRef(null);
   const timerDOMRef = useRef(null); 
+  const clockRef = useRef(null); 
   const cursorPosRef = useRef(0);
   const directionRef = useRef(1); 
   const startTimeRef = useRef(null);
@@ -27,28 +28,58 @@ export default function PortaMalas() {
   const animationRef = useRef(null); 
   const stateRef = useRef({});
 
+  const cooldownRef = useRef(false);
+  const cooldownTimeoutRef = useRef(null);
+
   useEffect(() => {
     stateRef.current = { gameState, pinsProgress };
   }, [gameState, pinsProgress]);
 
+  useEffect(() => {
+    return () => {
+      clearTimeout(clickTimeoutRef.current);
+      clearTimeout(cooldownTimeoutRef.current);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, []);
+
   const iniciarSistema = () => {
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    clearTimeout(cooldownTimeoutRef.current);
     
+    cooldownRef.current = false;
     setPinsProgress(gerarPinosIniciais()); 
     cursorPosRef.current = 0;
     directionRef.current = 1;
     startTimeRef.current = performance.now();
     setTimerProgress(100);
+    
+    if (timerDOMRef.current) {
+      timerDOMRef.current.style.width = '100%';
+      timerDOMRef.current.style.backgroundColor = '#a3ef52'; 
+      timerDOMRef.current.style.boxShadow = '0 0 14px #a3ef52'; 
+    }
+    if (clockRef.current) clockRef.current.style.stroke = '#a3ef52';
+    if (cursorRef.current) cursorRef.current.style.left = '0%';
+    
     setGameState('playing');
   };
 
   const pararSistema = () => {
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    setPinsProgress(Array(TOTAL_PINS).fill(0)); // Reseta os pinos para o visual estático
+    clearTimeout(cooldownTimeoutRef.current);
+    cooldownRef.current = false;
+    setPinsProgress(Array(TOTAL_PINS).fill(0)); 
+    setTimerProgress(100);
+    if (timerDOMRef.current) {
+      timerDOMRef.current.style.width = '100%';
+      timerDOMRef.current.style.backgroundColor = '#a3ef52';
+      timerDOMRef.current.style.boxShadow = '0 0 14px #a3ef52';
+    }
+    if (clockRef.current) clockRef.current.style.stroke = '#a3ef52';
     setGameState('idle');
   };
 
-  // 🚀 MOTOR GRÁFICO (SÓ ATIVA QUANDO PLAYING)
   useEffect(() => {
     if (gameState !== 'playing') return;
 
@@ -58,7 +89,6 @@ export default function PortaMalas() {
       const deltaTime = time - lastTime;
       lastTime = time;
 
-      // 1. CURSOR
       const cursorSpeed = 0.065; 
       let proximoCursor = cursorPosRef.current + (cursorSpeed * deltaTime * directionRef.current);
       
@@ -76,7 +106,6 @@ export default function PortaMalas() {
         cursorRef.current.style.left = `${proximoCursor}%`;
       }
 
-      // 2. TIMER (60s exatos)
       const tempoDecorrido = time - startTimeRef.current;
       const tempoRestante = Math.max(0, TEMPO_TOTAL_MS - tempoDecorrido);
       const progressoTimer = (tempoRestante / TEMPO_TOTAL_MS) * 100;
@@ -85,12 +114,19 @@ export default function PortaMalas() {
 
       if (timerDOMRef.current) {
         timerDOMRef.current.style.width = `${progressoTimer}%`;
+        
         if (progressoTimer > 60) {
           timerDOMRef.current.style.backgroundColor = '#a3ef52';
+          timerDOMRef.current.style.boxShadow = '0 0 14px #a3ef52';
+          if (clockRef.current) clockRef.current.style.stroke = '#a3ef52';
         } else if (progressoTimer > 30) {
           timerDOMRef.current.style.backgroundColor = '#f58002';
+          timerDOMRef.current.style.boxShadow = '0 0 14px #f58002';
+          if (clockRef.current) clockRef.current.style.stroke = '#f58002';
         } else {
           timerDOMRef.current.style.backgroundColor = '#ef4444';
+          timerDOMRef.current.style.boxShadow = '0 0 14px #ef4444';
+          if (clockRef.current) clockRef.current.style.stroke = '#ef4444';
         }
       }
 
@@ -116,7 +152,6 @@ export default function PortaMalas() {
   const handleKeyDown = useCallback((e) => {
     const { gameState: gState, pinsProgress: currentPins } = stateRef.current;
     
-    // ATALHO: Permite iniciar o minigame apertando Enter ou Espaço quando estiver em idle
     if (gState === 'idle' && (e.key === ' ' || e.key === 'Enter')) {
       e.preventDefault();
       iniciarSistema();
@@ -127,6 +162,13 @@ export default function PortaMalas() {
 
     if (e.key === ' ') {
       e.preventDefault();
+
+      if (cooldownRef.current) return;
+
+      cooldownRef.current = true;
+      cooldownTimeoutRef.current = setTimeout(() => {
+        cooldownRef.current = false;
+      }, COOLDOWN_INPUT_MS);
 
       setIsClicking(true);
       clearTimeout(clickTimeoutRef.current);
@@ -174,7 +216,7 @@ export default function PortaMalas() {
     return 'translate-y-[0px]'; 
   };
 
-  const timerColor = gameState === 'idle' ? '#a3ef52' : timerProgress > 60 ? '#a3ef52' : timerProgress > 30 ? '#f58002' : '#ef4444';
+  const currentStaticColor = gameState === 'idle' ? '#a3ef52' : timerProgress > 60 ? '#a3ef52' : timerProgress > 30 ? '#f58002' : '#ef4444';
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-black p-6 font-sans select-none w-full relative overflow-hidden">
@@ -189,20 +231,31 @@ export default function PortaMalas() {
           Destrave o Porta Malas
         </div>
 
-        {/* COMPONENTE INTERFECE GLOBAL - SEMPRE VISÍVEL */}
+        {/* INTERFACE */}
         <div className="flex flex-col w-full pb-6 pt-4 relative">
           
-          {/* TIMER PROGRESS */}
+          {/* SEÇÃO DO CRONÔMETRO */}
           <div className="flex flex-col items-center gap-2 px-8 mb-6">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={timerColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-colors duration-300">
+            <svg 
+              ref={clockRef}
+              width="15" 
+              height="15" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke={currentStaticColor} 
+              strokeWidth="2.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="transition-colors duration-200"
+            >
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <div className="w-full h-2.5 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800">
+            <div className="w-full h-3 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800/60">
               <div 
                 ref={timerDOMRef}
-                className="h-full shadow-[0_0_8px_rgba(0,0,0,0.4)]"
-                style={{ width: `${timerProgress}%`, backgroundColor: timerColor }} 
+                className="h-full transition-colors duration-200"
+                style={{ width: `${timerProgress}%`, backgroundColor: currentStaticColor, boxShadow: `0 0 14px ${currentStaticColor}` }} 
               />
             </div>
           </div>
@@ -233,7 +286,7 @@ export default function PortaMalas() {
             })}
           </div>
 
-          {/* SEÇÃO DA WRENCH E TIMELINE */}
+          {/* WRENCH E TIMELINE */}
           <div className="px-6 relative w-full mb-2 mt-2">
             <div className="relative w-full h-[64px]">
               <div className="absolute top-0 w-full h-[36px] bg-[#050505] rounded-lg border border-neutral-900" />
@@ -279,23 +332,24 @@ export default function PortaMalas() {
           </div>
           
           <div className="text-center text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase">
-            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para abrir o porta malas'}
+            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para hackear'}
           </div>
           
+          {/* OVERLAY DE STATUS */}
           {gameState !== 'playing' && gameState !== 'idle' && (
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-50 animate-in fade-in duration-200">
-              {gameState === 'lost' && <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🚨 Falha ao abrir o Porta Malas</div>}
-              {gameState === 'won' && <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🔓 Porta Malas aberto</div>}
+              {gameState === 'lost' && <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🚨 Falha no arrombamento</div>}
+              {gameState === 'won' && <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🔓 Porta malas destrancado.</div>}
             </div>
           )}
         </div>
 
-        {/* MENUS GERAIS DE BOTÃO */}
+        {/* CONTROLE */}
         <div className="flex justify-center border-t border-neutral-900/40 p-4 bg-[#101010]">
           {gameState === 'playing' ? (
             <button onClick={pararSistema} className="px-10 py-2.5 bg-[#b83131]/20 hover:bg-[#b83131]/30 border border-[#b83131]/40 text-[#ff4d4d] font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Abortar</button>
           ) : (
-            <button onClick={iniciarSistema} className="px-12 py-2.5 bg-f88f2c bg-[#f58002] hover:bg-[#ff9e24] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-amber-500/10">Iniciar Sistema</button>
+            <button onClick={iniciarSistema} className="px-12 py-2.5 bg-[#f58002] hover:bg-[#ff9e24] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-amber-500/10">Iniciar Sistema</button>
           )}
         </div>
 
