@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import Home from './pages/Home';
 import Lockpick from './components/Lockpick';
 import CaixinhaTreino from './components/CaixinhaTreino';
