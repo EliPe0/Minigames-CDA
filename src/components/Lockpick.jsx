@@ -481,7 +481,7 @@ export default function Digipick() {
                   <path d="M9 18h6"/>
                   <path d="M10 22h4"/>
                 </svg>
-                Guia da Lockpick
+                Guia do Minigame
               </div>
               <button 
                 onClick={() => setShowHint(false)} 
