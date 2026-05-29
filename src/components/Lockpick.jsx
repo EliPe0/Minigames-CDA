@@ -119,11 +119,13 @@ export default function Digipick() {
   const [tools, setTools] = useState([]);
   const [activeRingIdx, setActiveRingIdx] = useState(0);
   const [activeToolIdx, setActiveToolIdx] = useState(0);
-  const [rotation, setRotation] = useState(0);
   const [slottedPins, setSlottedPins] = useState([]); 
   const [timer, setTimer] = useState(90); 
   const [feedback, setFeedback] = useState(null); 
   const [showHint, setShowHint] = useState(true);
+
+  // 🧠 MEMÓRIA DE ROTAÇÃO
+  const [toolRotations, setToolRotations] = useState(Array(12).fill(0));
 
   const intervalRef = useRef(null);
   const feedbackTimeoutRef = useRef(null);
@@ -138,7 +140,8 @@ export default function Digipick() {
     const p = generatePuzzle();
     setRings(p.rings); setTools(p.tools);
     setActiveRingIdx(0); 
-    setRotation(0); setSlottedPins([]);
+    setSlottedPins([]);
+    setToolRotations(Array(12).fill(0)); 
     setTimer(90); setGameState('playing'); setFeedback(null);
 
     const firstValidIdx = p.tools.findIndex(t => !t.isEmpty);
@@ -148,7 +151,8 @@ export default function Digipick() {
   const pararSistema = () => {
     setGameState('idle');
     setActiveRingIdx(0); setActiveToolIdx(0);
-    setRotation(0); setSlottedPins([]);
+    setToolRotations(Array(12).fill(0));
+    setSlottedPins([]);
     setTimer(90); setFeedback(null);
   };
 
@@ -159,26 +163,17 @@ export default function Digipick() {
       n = (n + dir + list.length) % list.length;
       if (!list[n].isEmpty && !list[n].used) { 
         setActiveToolIdx(n); 
-        setRotation(0); 
         break; 
       }
     }
   }, [activeToolIdx, tools]);
 
-  const handleInput = useCallback((action) => {
-    if (gameState !== 'playing') return;
-    if (action === 'rotate_left') setRotation(p => (p - 15 + 360) % 360);
-    else if (action === 'rotate_right') setRotation(p => (p + 15) % 360);
-    else if (action === 'next') cycleTool(1);
-    else if (action === 'prev') cycleTool(-1);
-    else if (action === 'confirm') slot();
-  }, [gameState, activeToolIdx, rotation, tools, slottedPins, cycleTool]);
-
-  const slot = () => {
+  const slot = useCallback(() => {
     const tool = tools[activeToolIdx];
     if (!tool || tool.used || tool.isEmpty) return;
 
-    const rotatedPins = tool.pins.map(p => (p + rotation) % 360);
+    const currentRotation = toolRotations[activeToolIdx];
+    const rotatedPins = tool.pins.map(p => (p + currentRotation) % 360);
     const isValid = rotatedPins.every(p => rings[activeRingIdx].includes(p) && !slottedPins.includes(p));
 
     clearTimeout(feedbackTimeoutRef.current);
@@ -198,7 +193,6 @@ export default function Digipick() {
         } else { 
           setActiveRingIdx(p => p + 1); 
           setSlottedPins([]); 
-          setRotation(0); 
           cycleTool(1, newTools); 
         }
       } else { 
@@ -209,7 +203,29 @@ export default function Digipick() {
       setFeedback('incorrect');
       feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 300);
     }
-  };
+  }, [activeToolIdx, activeRingIdx, rings, slottedPins, tools, toolRotations, cycleTool]);
+
+  const handleInput = useCallback((action) => {
+    if (gameState !== 'playing') return;
+    
+    if (action === 'rotate_left') {
+      setToolRotations(prev => {
+        const next = [...prev];
+        next[activeToolIdx] = (next[activeToolIdx] - 15 + 360) % 360;
+        return next;
+      });
+    }
+    else if (action === 'rotate_right') {
+      setToolRotations(prev => {
+        const next = [...prev];
+        next[activeToolIdx] = (next[activeToolIdx] + 15) % 360;
+        return next;
+      });
+    }
+    else if (action === 'next') cycleTool(1);
+    else if (action === 'prev') cycleTool(-1);
+    else if (action === 'confirm') slot();
+  }, [gameState, activeToolIdx, cycleTool, slot]);
 
   useEffect(() => {
     const h = (e) => {
@@ -250,167 +266,179 @@ export default function Digipick() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 dark:bg-black p-4 font-sans selection:bg-transparent select-none transition-colors duration-300 animate-page-reveal">
       
-      {/* ANIMAÇÕES */}
+      {/* 🔮 CONFIGURAÇÕES DE TRANSIÇÃO ULTRA FLUÍDAS (REMOVIDO O IMPACTO SECO/ELÁSTICO) */}
       <style>{`
         @keyframes pageReveal {
-          from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
+          from { opacity: 0; filter: blur(6px); transform: translateY(10px) scale(0.99); }
           to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
         }
-        .animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-page-reveal { animation: pageReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes blurFadeIn {
           from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
+          to { opacity: 1; background-color: rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
         }
         @keyframes blurFadeInLight {
           from { opacity: 0; background-color: rgba(255,255,255,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(255,255,255,0.7); backdrop-filter: blur(8px); }
+          to { opacity: 1; background-color: rgba(255,255,255,0.4); backdrop-filter: blur(8px); }
         }
-        @keyframes elasticPopUp {
-          from { transform: scale(0.94); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+        @keyframes smoothRevealUp {
+          from { transform: translateY(8px) scale(0.98); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
         }
-        .animate-blur-fade { animation: blurFadeInLight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .dark .animate-blur-fade { animation: blurFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-blur-fade { animation: blurFadeInLight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .dark .animate-blur-fade { animation: blurFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-elastic-pop { animation: smoothRevealUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       `}</style>
 
-      {/* COFRE CENTRAL */}
-      <div className={`relative w-[420px] h-[420px] mb-12 flex items-center justify-center rounded-full bg-white dark:bg-[#070707] border transition-all duration-300 ${
-        feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
-        feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
-        'border-neutral-200 dark:border-neutral-900 shadow-xl dark:shadow-[0_0_80px_rgba(0,0,0,0.9)]'
-      }`}>
+      {/* WRAPPER DO COFRE */}
+      <div className="relative flex items-center justify-center w-full max-w-[500px] mb-12">
         
-        {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 pointer-events-none animate-pulse" />}
-        {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/10 dark:bg-red-500/5 pointer-events-none animate-pulse" />}
+        {/* COFRE CENTRAL */}
+        <div className={`relative w-[420px] h-[420px] flex items-center justify-center rounded-full bg-white dark:bg-[#070707] border transition-all duration-300 ${
+          feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
+          feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
+          'border-neutral-200 dark:border-neutral-900 shadow-xl dark:shadow-[0_0_80px_rgba(0,0,0,0.9)]'
+        }`}>
+          
+          {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 pointer-events-none animate-pulse" />}
+          {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/10 dark:bg-red-500/5 pointer-events-none animate-pulse" />}
 
-        <svg width="400" height="400" viewBox="0 0 400 400">
-          <circle cx="200" cy="200" r="185" fill="none" strokeWidth="1" className="stroke-cyan-500 dark:stroke-[#3be8ff] opacity-20" />
-          <circle cx="200" cy="200" r="175" className="fill-neutral-100 dark:fill-[#030303] transition-colors duration-300" />
+          <svg width="400" height="400" viewBox="0 0 400 400">
+            <circle cx="200" cy="200" r="185" fill="none" strokeWidth="1" className="stroke-cyan-500 dark:stroke-[#3be8ff] opacity-20" />
+            <circle cx="200" cy="200" r="175" className="fill-neutral-100 dark:fill-[#030303] transition-colors duration-300" />
 
-          {rings.map((holes, i) => {
-            if (i < activeRingIdx) return null;
+            {rings.map((holes, i) => {
+              if (i < activeRingIdx) return null;
 
-            const radius = 150 - (i * 34);
-            const thicknesses = [11, 7, 4.5];
-            const strokeThickness = thicknesses[i] || 4.5;
-            const isActive = i === activeRingIdx;
+              const radius = 150 - (i * 34);
+              const thicknesses = [11, 7, 4.5];
+              const strokeThickness = thicknesses[i] || 4.5;
+              const isActive = i === activeRingIdx;
 
-            const remainingHoles = isActive ? holes.filter(h => !slottedPins.includes(h)) : holes;
+              const remainingHoles = isActive ? holes.filter(h => !slottedPins.includes(h)) : holes;
 
-            return (
-              <g key={i}>
-                <circle cx="200" cy="200" r={radius} fill="none" strokeWidth={strokeThickness} className={`transition-all duration-300 ${isActive ? "stroke-neutral-300 dark:stroke-[#1f222e]" : "stroke-neutral-200 dark:stroke-[#0d0f14]"}`} />
-                {remainingHoles.map(holeAngle => {
-                  const p1 = getCoords(holeAngle, radius - strokeThickness - 6);
-                  const p2 = getCoords(holeAngle, radius + strokeThickness + 6);
-                  return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} strokeWidth={radius * 0.32} strokeLinecap="butt" className="stroke-neutral-100 dark:stroke-[#030303] transition-colors duration-300" />;
+              return (
+                <g key={i}>
+                  <circle cx="200" cy="200" r={radius} fill="none" strokeWidth={strokeThickness} className={`transition-all duration-300 ${isActive ? "stroke-neutral-300 dark:stroke-[#1f222e]" : "stroke-neutral-200 dark:stroke-[#0d0f14]"}`} />
+                  {remainingHoles.map(holeAngle => {
+                    const p1 = getCoords(holeAngle, radius - strokeThickness - 6);
+                    const p2 = getCoords(holeAngle, radius + strokeThickness + 6);
+                    return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} strokeWidth={radius * 0.32} strokeLinecap="butt" className="stroke-neutral-100 dark:stroke-[#030303] transition-colors duration-300" />;
+                  })}
+                </g>
+              );
+            })}
+
+            {/* PALITINHOS DA CHAVE ATIVA */}
+            {gameState === 'playing' && tools[activeToolIdx] && !tools[activeToolIdx].used && !tools[activeToolIdx].isEmpty && (
+              <g style={{ transform: `rotate(${toolRotations[activeToolIdx]}deg)`, transformOrigin: '200px 200px' }} className="transition-transform duration-75">
+                {tools[activeToolIdx].pins.map(p => {
+                  const { x, y } = getCoords(p, 185);
+                  return <rect key={p} x={x - 4} y={y - 10} width="8" height="20" rx="2" className="fill-cyan-500 dark:fill-[#3be8ff] drop-shadow-[0_0_8px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
                 })}
               </g>
-            );
-          })}
+            )}
 
-          {/* PALITINHOS DA CHAVE ATIVA */}
-          {gameState === 'playing' && tools[activeToolIdx] && !tools[activeToolIdx].used && !tools[activeToolIdx].isEmpty && (
-            <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '200px 200px' }} className="transition-transform duration-75">
-              {tools[activeToolIdx].pins.map(p => {
-                const { x, y } = getCoords(p, 185);
-                return <rect key={p} x={x - 4} y={y - 10} width="8" height="20" rx="2" className="fill-cyan-500 dark:fill-[#3be8ff] drop-shadow-[0_0_8px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
-              })}
-            </g>
-          )}
-
-          <rect x="150" y="190" width="100" height="20" rx="10" fill="none" strokeWidth="1" className="stroke-neutral-300 dark:stroke-[#1f222e]" />
-          <text x="200" y="203" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest fill-neutral-400 dark:fill-[#1f222e]">LOCKPICK</text>
-        </svg>
+            <rect x="150" y="190" width="100" height="20" rx="10" fill="none" strokeWidth="1" className="stroke-neutral-300 dark:stroke-[#1f222e]" />
+            <text x="200" y="203" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest fill-neutral-400 dark:fill-[#1f222e]">LOCKPICK</text>
+          </svg>
+        </div>
       </div>
 
       {/* PAINEL DE CONTROLE INFERIOR */}
-      <div className="w-[480px] bg-white dark:bg-[#0c0c0c] p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors duration-300">
+      <div className="w-[480px] bg-white dark:bg-[#0c0c0c] rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative z-[60] overflow-hidden transition-colors duration-300">
         
-        {/* OVERLAY */}
-        {(gameState === 'won' || gameState === 'lost') && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
-            {gameState === 'lost' && (
-              <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-4 rounded-xl w-[90%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
-                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                SISTEMA BLOQUEADO | CHAVES ESGOTADAS
-              </div>
-            )}
-            {gameState === 'won' && (
-              <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-4 rounded-xl w-[90%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-                </svg>
-                SISTEMA VIOLADO | CRIPTOGRAFIA QUEBRADA
-              </div>
-            )}
+        {/* MÓDULO SUPERIOR */}
+        <div className="p-6 relative">
+          
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-baseline gap-2">
+               <h2 className="text-neutral-800 dark:text-neutral-400 font-black text-lg tracking-widest uppercase font-mono">LOCKPICK</h2>
+            </div>
+            <div className="flex gap-2">
+              <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
+              <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
+            </div>
           </div>
-        )}
 
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-baseline gap-2">
-             <h2 className="text-neutral-800 dark:text-neutral-400 font-black text-lg tracking-widest uppercase font-mono">LOCKPICK</h2>
-          </div>
-          <div className="flex gap-2">
-            <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
-            <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
-          </div>
-        </div>
+          {/* GRID DE SLOTS */}
+          <div className="grid grid-cols-6 gap-x-[11px] gap-y-3.5 mb-2 w-full max-w-[360px] mx-auto">
+            {tools.map((t, i) => {
+              const isActive = i === activeToolIdx && gameState === 'playing';
+              const isUsed = t.used;
 
-        {/* GRID DE SLOTS */}
-        <div className="grid grid-cols-6 gap-x-[11px] gap-y-3.5 mb-8 w-full max-w-[360px] mx-auto">
-          {tools.map((t, i) => {
-            const isActive = i === activeToolIdx && gameState === 'playing';
-            const isUsed = t.used;
-
-            return (
-              <div 
-                key={t.id} 
-                className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ease-out ${
-                  t.isEmpty || isUsed 
-                    ? 'opacity-0 pointer-events-none' 
-                    : isActive 
-                      ? 'border-cyan-500 dark:border-[#3be8ff] bg-cyan-50 dark:bg-[#121212] scale-105 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
-                      : 'border-neutral-200 dark:border-neutral-800 bg-transparent'
-                }`}
-              >
-                {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-neutral-300 dark:bg-[#1f222e] rounded-full z-10 animate-ping" />}
-                
-                <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
-                  <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-neutral-300 dark:stroke-[#1f222e]" />
+              return (
+                <div 
+                  key={t.id} 
+                  className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ease-out ${
+                    t.isEmpty || isUsed 
+                      ? 'border-transparent bg-neutral-100/40 dark:bg-neutral-900/40 opacity-100' 
+                      : isActive 
+                        ? 'border-cyan-500 dark:border-[#3be8ff] bg-cyan-50 dark:bg-[#121212] scale-105 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
+                        : 'border-neutral-200 dark:border-neutral-800 bg-transparent'
+                  }`}
+                >
+                  {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-neutral-300 dark:bg-[#1f222e] rounded-full z-10 animate-ping" />}
                   
-                  {!isUsed && !t.isEmpty && isActive && (
-                    <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
-                      {t.pins.map(p => {
-                        const { x: x1, y: y1 } = getCoords(p, 12, 22); 
-                        const { x: x2, y: y2 } = getCoords(p, 18, 22); 
-                        return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-cyan-500 dark:stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
-                      })}
-                    </g>
-                  )}
-                </svg>
-              </div>
-            );
-          })}
+                  <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
+                    <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-neutral-300 dark:stroke-[#1f222e]" />
+                    
+                    {!isUsed && !t.isEmpty && isActive && (
+                      <g style={{ transform: `rotate(${toolRotations[i]}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
+                        {t.pins.map(p => {
+                          const { x: x1, y: y1 } = getCoords(p, 12, 22); 
+                          const { x: x2, y: y2 } = getCoords(p, 18, 22); 
+                          return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-cyan-500 dark:stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
+                        })}
+                      </g>
+                    )}
+                  </svg>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* OVERLAY DE STATUS SUAVIZADO */}
+          {(gameState === 'won' || gameState === 'lost') && (
+            <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-md z-50 flex items-center justify-center animate-blur-fade p-4">
+              {gameState === 'lost' && (
+                <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  CHAVES ESGOTADAS | SISTEMA BLOQUEADO
+                </div>
+              )}
+              {gameState === 'won' && (
+                <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  </svg>
+                  SUCESSO | CRIPTOGRAFIA QUEBRADA
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
 
-        <div className="flex justify-between items-center border-t border-neutral-200 dark:border-neutral-900 pt-5 w-full gap-6 relative z-[60] transition-colors">
-          <div className="text-[10px] font-bold text-neutral-500 dark:text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-4 gap-y-1 items-center flex-1 min-w-0">
-            {gameState === 'playing' ? (
+        {/* RODAPÉ INTEGRAL */}
+        <div className="flex items-center justify-between border-t border-neutral-200 dark:border-neutral-900 p-6 pt-5 w-full relative transition-colors gap-6 bg-neutral-50/20 dark:bg-neutral-900/10">
+          <div className="text-[10px] font-bold text-neutral-500 dark:text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-5 gap-y-1 items-center flex-1 min-w-0">
+            {(gameState === 'won' || gameState === 'lost') ? (
+              <span>APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
+            ) : gameState === 'playing' ? (
               <>
-                <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[A/D]</span> ROTACIONAR</div>
-                <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[Q/E]</span> MUDAR ESCOLHA</div>
-                <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[ENTER]</span> ENCAIXAR</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">AD</span> Rotacionar</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">QE</span> Mudar Escolha</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">Enter</span> Encaixar</div>
               </>
             ) : (
-              <span className="text-neutral-500 font-bold">Aperte ESPAÇO ou ENTER para iniciar...</span>
+              <span className="text-neutral-500 font-bold">APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
             )}
           </div>
           
@@ -425,7 +453,7 @@ export default function Digipick() {
             ) : gameState === 'won' || gameState === 'lost' ? (
               <button 
                 onClick={pararSistema} 
-                className="px-5 py-2.5 bg-neutral-800 text-white hover:bg-neutral-700 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent dark:border-white font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out whitespace-nowrap"
+                className="px-6 py-2.5 bg-neutral-200 text-black hover:bg-neutral-300 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out whitespace-nowrap"
               >
                 Voltar ao Menu
               </button>
@@ -453,7 +481,7 @@ export default function Digipick() {
                   <path d="M9 18h6"/>
                   <path d="M10 22h4"/>
                 </svg>
-                Guia do Minigame
+                Guia da Lockpick
               </div>
               <button 
                 onClick={() => setShowHint(false)} 
@@ -485,7 +513,7 @@ export default function Digipick() {
             </div>
 
             <p className="text-[10px] text-neutral-600 dark:text-neutral-400 leading-relaxed tracking-wide">
-              Selecione uma chave no grid inferior e use <span className="text-neutral-900 dark:text-neutral-200 font-bold">[A/D]</span> para girá-la até alinhar os dentes com as frestas vazias do anel ativo. Alterne entre as opções usando <span className="text-neutral-900 dark:text-neutral-200 font-bold">[Q/E]</span> e aperte <span className="text-amber-600 dark:text-amber-500 font-bold">ENTER</span> para encaixar. Planeje bem, pois chaves falsas estão misturadas!
+              Selecione uma chave no grid inferior e use <span className="text-neutral-900 dark:text-neutral-200 font-bold">AD</span> para girá-la até alinhar os dentes com as frestas vazias do anel ativo. Alterne entre as opções usando <span className="text-neutral-900 dark:text-neutral-200 font-bold">QE</span> e aperte <span className="text-amber-600 dark:text-amber-500 font-bold">Enter</span> para encaixar. Planeje bem, pois chaves falsas estão misturadas!
             </p>
           </div>
         ) : (
