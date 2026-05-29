@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom'; // 🚀 Importação do Portal adicionada
+import { createPortal } from 'react-dom';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function Home() {
       />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] dark:bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[size:100%_4px] pointer-events-none opacity-20 dark:opacity-10" />
 
-      {/* BOTÃO SOBRE - MAIOR E MAIS DESTACADO */}
+      {/* BOTÃO SOBRE */}
       <button
         onClick={() => setShowAbout(true)}
         className="absolute top-6 right-6 z-20 flex items-center gap-2 px-5 py-2.5 bg-white/50 dark:bg-neutral-900/30 border border-neutral-300 dark:border-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:text-amber-500 dark:hover:text-amber-400 transition-all duration-300 font-mono text-[11px] sm:text-xs font-black uppercase tracking-widest hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] active:scale-[0.97]"
@@ -142,13 +142,13 @@ export default function Home() {
 
       </div>
 
-      {/* 🚀 OVERLAY RENDERIZADO NO PORTAL (Cobre 100% da tela) */}
+      {/* OVERLAY  */}
       {showAbout && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-blur-fade">
           
           <div className="absolute inset-0 cursor-pointer" onClick={() => setShowAbout(false)} />
 
-          {/* CARD DO MODAL (Redimensionado para max-w-xl) */}
+          {/* CARD DO MODAL */}
           <div className="max-w-xl w-[95%] max-h-[90vh] bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl relative overflow-hidden animate-elastic-pop flex flex-col font-mono cursor-default">
             
             <div className="h-14 bg-neutral-50 dark:bg-[#141414] flex items-center justify-between px-6 border-b border-neutral-200 dark:border-neutral-800/60 shrink-0">
@@ -172,7 +172,6 @@ export default function Home() {
                 <span className="text-neutral-500 text-sm">Leia com atenção</span>
               </h2>
               
-              {/* Fonte levemente maior para melhor leitura */}
               <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-[13px] leading-relaxed tracking-wide text-justify">
                 Este sistema foi desenvolvido com fins de estudo e, para aprimoramento dos sistemas utilizados no servidor Cidade Alta, dentro do FiveM. Trata-se de um projeto totalmente independente, sem qualquer vínculo, parceria ou associação com os desenvolvedores, administradores ou responsáveis pelo servidor.<br/><br/>
                 Esse projeto foi criado por um jogador entusiasta e estudante de Desenvolvimento de Sistemas, com o objetivo de aprendizado e prática dos usuários.<br/><br/>
