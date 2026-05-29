@@ -433,9 +433,9 @@ export default function Digipick() {
               <span>APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
             ) : gameState === 'playing' ? (
               <>
-                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">AD</span> Rotacionar</div>
-                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">QE</span> Mudar Escolha</div>
-                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">Enter</span> Encaixar</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[A/D]</span> Rotacionar</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Q/E]</span> Mudar Escolha</div>
+                <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Enter]</span> Encaixar</div>
               </>
             ) : (
               <span className="text-neutral-500 font-bold">APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
