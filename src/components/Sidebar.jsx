@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ThemeContext } from '../App';
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useContext(ThemeContext);
+  
+  const [isRouting, setIsRouting] = useState(false);
+
+  const handleNavigate = (path) => {
+    if (location.pathname === path) return;
+    
+    setIsRouting(true);
+    setTimeout(() => {
+      navigate(path);
+      setIsRouting(false);
+    }, 350); 
+  };
 
   const Icons = {
     House: () => (
@@ -18,8 +32,7 @@ export default function Sidebar() {
       </svg>
     ),
     Bomb: () => (
-      <svg 
-        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 transition-transform duration-300 group-hover:scale-110">
         <circle cx="11" cy="13" r="9"></circle>
         <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
         <path d="m22 2-1.5 1.5"></path>
@@ -35,83 +48,76 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-[#1f1f1f] p-6 flex flex-col justify-between select-none shrink-0 font-mono">
-      <div className="flex flex-col gap-10">
+    <>
+      {/* BARRA DE CARREGAMENTO */}
+      <style>{`
+        @keyframes routeLoad {
+          0% { width: 0%; opacity: 1; }
+          70% { width: 70%; opacity: 1; }
+          100% { width: 100%; opacity: 0; }
+        }
+        .animate-route-load { animation: routeLoad 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+      `}</style>
+      
+      {isRouting && (
+        <div className="fixed top-0 left-0 h-[2px] bg-blue-500 dark:bg-amber-500 z-[9999] shadow-[0_0_10px_rgba(59,130,246,0.8)] dark:shadow-[0_0_10px_rgba(245,158,11,0.8)] animate-route-load"></div>
+      )}
+
+      <aside className="w-full md:w-64 bg-white dark:bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-neutral-200 dark:border-[#1f1f1f] p-6 flex flex-col justify-between select-none shrink-0 font-mono transition-colors duration-300">
         
-        {/* LOGO CONTAINER */}
-        <div onClick={() => navigate('/home')} className="flex flex-col items-center gap-3 cursor-pointer group">
-          <img 
-            src="logocda.png" 
-            alt="CDA Logo" 
-            className="h-16 w-auto object-contain drop-shadow-[0_0_12px_rgba(245,158,11,0.15)] group-hover:scale-105 group-hover:drop-shadow-[0_0_18px_rgba(245,158,11,0.25)] transition-all duration-300 ease-out" 
-          />
+        <div className="flex flex-col gap-10">
+          
+          {/* LOGO */}
+          <div onClick={() => handleNavigate('/home')} className="flex flex-col items-center gap-3 cursor-pointer group">
+            <img 
+              src="logocda.png" 
+              alt="CDA Logo" 
+              className="h-16 w-auto object-contain dark:drop-shadow-[0_0_12px_rgba(245,158,11,0.15)] group-hover:scale-105 transition-all duration-300 ease-out" 
+            />
+          </div>
+
+          <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest">
+            
+            <button onClick={() => handleNavigate('/home')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/home' ? 'bg-neutral-200 border-neutral-300 text-black dark:bg-white/10 dark:border-white/30 dark:text-white dark:shadow-[0_0_15px_rgba(255,255,255,0.08)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900/60'}`}>
+              <Icons.House /> Painel Inicial
+            </button>
+            
+            <button onClick={() => handleNavigate('/lockpick')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-400 dark:shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-neutral-900/60'}`}>
+              <Icons.Key /> Lockpick
+            </button>
+            
+            <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-400/40 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-neutral-900/60'}`}>
+              <Icons.Bomb /> Caixinha
+            </button>
+
+            <button onClick={() => handleNavigate('/portamalas')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-500/10 dark:border-blue-400/40 dark:text-blue-400 dark:shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-neutral-900/60'}`}>
+              <Icons.Car /> Porta Malas
+            </button>
+            
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest">
-          
-          {/* PAINEL INICIAL */}
-          <button 
-            onClick={() => navigate('/home')} 
-            className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
-              location.pathname === '/home' 
-                ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.08)]' 
-                : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'
-            }`}
-          >
-            <Icons.House /> Painel Inicial
-          </button>
-          
-          {/* LOCKPICK */}
-          <button 
-            onClick={() => navigate('/lockpick')} 
-            className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
-              location.pathname === '/lockpick' 
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)]' 
-                : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'
-            }`}
-          >
-            <Icons.Key /> Lockpick
-          </button>
-          
-          {/* CAIXINHA */}
-          <button 
-            onClick={() => navigate('/caixinha')} 
-            className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
-              location.pathname === '/caixinha' 
-                ? 'bg-emerald-500/10 border-emerald-400/40 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]' 
-                : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-400 hover:bg-neutral-900/60'
-            }`}
-          >
-            <Icons.Bomb /> Caixinha
-          </button>
-
-          {/* PORTA MALAS */}
-          <button 
-            onClick={() => navigate('/portamalas')} 
-            className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
-              location.pathname === '/portamalas' 
-                ? 'bg-blue-500/10 border-blue-400/40 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.1)]' 
-                : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-400 hover:bg-neutral-900/60'
-            }`}
-          >
-            <Icons.Car /> Porta Malas
-          </button>
-          
+        {/* SELETOR DE TEMA */}
+        <div className="flex flex-col mt-auto pt-6 border-t border-neutral-200 dark:border-neutral-900">
+          <div className="flex bg-neutral-100 dark:bg-[#141414] rounded-lg p-1 border border-neutral-200 dark:border-neutral-800/60">
+            <button 
+              onClick={() => setTheme('light')}
+              title="Modo Claro"
+              className={`flex-1 flex justify-center py-2 rounded-md transition-all duration-300 ${theme === 'light' ? 'bg-white shadow-sm text-amber-500 border border-neutral-200' : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'}`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+            <button 
+              onClick={() => setTheme('dark')}
+              title="Modo Escuro"
+              className={`flex-1 flex justify-center py-2 rounded-md transition-all duration-300 ${theme === 'dark' ? 'bg-white dark:bg-[#222] shadow-sm text-indigo-400 border border-neutral-200 dark:border-neutral-700' : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'}`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* FOOTER */}
-      <div className="text-[10px] text-neutral-600 text-center tracking-wider pt-6 border-t border-neutral-900 mt-6 md:mt-0 font-mono">
-        Developed by{' '}
-        <a 
-          href="https://github.com/EliPe0" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-amber-500/80 hover:text-amber-400 hover:drop-shadow-[0_0_6px_rgba(245,158,11,0.4)] font-black underline transition-all duration-200"
-        >
-          github.com/EliPe0
-        </a>
-      </div>
-    </aside>
+        
+      </aside>
+    </>
   );
 }
