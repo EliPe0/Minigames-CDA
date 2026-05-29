@@ -88,7 +88,7 @@ export default function Home() {
           </div>
           <div className="pt-4">
             <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-wider">
-              Sequência Caixinha
+              Caixinha
             </h3>
             <p className="text-neutral-500 dark:text-neutral-500 text-[11px] leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-400 transition-colors">
               Objetivo:<br/><br/> Sobrecarregue o circuito digitando sequências de 8 caracteres em 3 fases sem errar.<br/><br/> - Tempo limite: 4 segundos cada etapa<br/><br/>- Dificuldade: Alta
@@ -109,7 +109,7 @@ export default function Home() {
           </div>
           <div className="pt-4">
             <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider">
-              Arrombamento Porta Malas
+              Porta Malas
             </h3>
             <p className="text-neutral-500 dark:text-neutral-500 text-[11px] leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-400 transition-colors">
               Objetivo:<br/><br/> Encaixe os pinos de forma aleatória até completar a sequência para abrir o porta malas.<br/><br/> - Tempo limite: 1 minuto<br/><br/> - Dificuldade: Média
