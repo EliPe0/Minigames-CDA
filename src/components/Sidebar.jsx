@@ -82,11 +82,11 @@ export default function Sidebar() {
               <Icons.House /> Painel Inicial
             </button>
             
-            <button onClick={() => handleNavigate('/lockpick')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-400 dark:shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-neutral-900/60'}`}>
+            <button onClick={() => handleNavigate('/lockpick')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-cyan-100 border-cyan-300 text-cyan-700 dark:bg-cyan-500/10 dark:border-cyan-500/30 dark:text-cyan-400 dark:shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-neutral-900/60'}`}>
               <Icons.Key /> Lockpick
             </button>
             
-            <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-400/40 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-neutral-900/60'}`}>
+            <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-400/40 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-4０ dark:hover:bg-neutral-9００/6０'}`}>
               <Icons.Bomb /> Caixinha
             </button>
 

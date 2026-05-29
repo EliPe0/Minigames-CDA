@@ -60,20 +60,20 @@ export default function Home() {
         {/* CARD LOCKPICK) */}
         <button 
           onClick={() => navigate('/lockpick')} 
-          className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-amber-400 dark:hover:border-amber-500/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(245,158,11,0.08)]"
+          className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-cyan-400 dark:hover:border-cyan-500/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(245,158,11,0.08)]"
         >
-          <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-amber-600 dark:text-amber-500 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-amber-100 dark:group-hover:bg-amber-950/30 group-hover:border-amber-300 dark:group-hover:border-amber-500/30 transition-all duration-300">
+          <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-cyan-600 dark:text-cyan-500 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-cyan-100 dark:group-hover:bg-cyan-950/30 group-hover:border-cyan-300 dark:group-hover:border-cyan-500/30 transition-all duration-300">
             LOCKPICK
           </div>
           <div className="pt-4">
-            <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors uppercase tracking-wider">
+            <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors uppercase tracking-wider">
               Lockpick
             </h3>
             <p className="text-neutral-500 dark:text-neutral-500 text-[11px] leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-400 transition-colors">
               Objetivo:<br/><br/> Alinhe os pinos e limpe as trilhas antes que o cronômetro expire.<br/><br/> - Tempo limite: 1 minuto e 30 segundos<br/><br/>- Dificuldade: Muito Alta
             </p>
           </div>
-          <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-amber-600 dark:group-hover:text-amber-500 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
+          <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-cyan-600 dark:group-hover:text-cyan-500 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
             Acessar Módulo <span className="animate-pulse">_</span>
           </span>
         </button>
