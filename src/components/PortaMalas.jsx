@@ -17,6 +17,8 @@ export default function PortaMalas() {
   const [pinsProgress, setPinsProgress] = useState(Array(TOTAL_PINS).fill(0)); 
   const [timerProgress, setTimerProgress] = useState(100); 
   const [isClicking, setIsClicking] = useState(false); 
+  const [showHint, setShowHint] = useState(true); 
+  const [screenShake, setScreenShake] = useState(false); 
 
   const cursorRef = useRef(null);
   const timerDOMRef = useRef(null); 
@@ -199,6 +201,9 @@ export default function PortaMalas() {
         if (novosPinos[hoveredIdx] > 0 && Math.random() < CHANCE_PENALIDADE) {
           novosPinos[hoveredIdx] -= 1;
           setPinsProgress(novosPinos);
+
+          setScreenShake(true);
+          setTimeout(() => setScreenShake(false), 180);
         }
       }
     }
@@ -221,7 +226,33 @@ export default function PortaMalas() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-black p-6 font-sans select-none w-full relative overflow-hidden">
       
-      <div className="w-full max-w-[540px] bg-[#0c0c0c] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden border border-neutral-800">
+      {/* INTERPOLAÇÃO */}
+      <style>{`
+        @keyframes cyberShake {
+          0%, 100% { transform: translate(0, 0); }
+          20% { transform: translate(-2px, 1px); }
+          40% { transform: translate(2px, -1px); }
+          60% { transform: translate(-1px, 1px); }
+          80% { transform: translate(1px, -1px); }
+        }
+        .animate-cyber-shake { animation: cyberShake 0.16s linear; }
+
+        @keyframes blurFadeIn {
+          from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
+          to { opacity: 1; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
+        }
+        @keyframes elasticPopUp {
+          from { transform: scale(0.94); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .animate-blur-fade { animation: blurFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+      `}</style>
+
+      {/* CARD CENTRAL DO GAME */}
+      <div className={`w-full max-w-[540px] bg-[#0c0c0c] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden border border-neutral-800 transition-transform ${
+        screenShake ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : ''
+      }`}>
         
         {/* HEADER */}
         <div className="h-11 bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-800/40 text-neutral-400 text-sm font-bold tracking-wide font-mono">
@@ -232,7 +263,7 @@ export default function PortaMalas() {
           Destrave o Porta Malas
         </div>
 
-        {/* INTERFACE */}
+        {/* INTERFACE DO SISTEMA */}
         <div className="flex flex-col w-full pb-6 pt-4 relative">
           
           {/* SEÇÃO DO CRONÔMETRO */}
@@ -255,7 +286,7 @@ export default function PortaMalas() {
             <div className="w-full h-3 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800/60">
               <div 
                 ref={timerDOMRef}
-                className="h-full transition-colors duration-200"
+                className="h-full transition-all duration-300 ease-out"
                 style={{ width: `${timerProgress}%`, backgroundColor: currentStaticColor, boxShadow: `0 0 14px ${currentStaticColor}` }} 
               />
             </div>
@@ -269,10 +300,10 @@ export default function PortaMalas() {
                 <div key={idx} className="flex-1 flex justify-center relative h-full">
                   <div className="absolute top-0 bottom-0 w-[1px] bg-white/[0.02]" />
                   <div 
-                    className={`absolute top-0 w-[30px] h-[130px] transition-transform duration-300 ease-in-out z-10 ${getPinTranslateY(level)}`}
+                    className={`absolute top-0 w-[30px] h-[130px] transition-transform duration-500 ease-in-out z-10 ${getPinTranslateY(level)}`}
                     style={{ opacity: isMax ? 0.9 : 1 }}
                   >
-                    <svg width="100%" height="100%" viewBox="0 0 26 95" className="overflow-visible drop-shadow-[0_4px_10px_rgba(245,128,2,0.15)]">
+                    <svg width="100%" height="100%" viewBox="0 0 26 95" className="overflow-visible block drop-shadow-[0_4px_10px_rgba(245,128,2,0.15)]">
                       <polygon 
                         points="3,3 23,3 23,75 13,88 3,75" 
                         fill="#f58002" 
@@ -298,10 +329,10 @@ export default function PortaMalas() {
                   {pinsProgress.map((level, i) => (
                     <div key={i} className="flex-1 flex justify-center relative z-10">
                       { level === MAX_LEVEL ? (
-                        <div className="w-[2px] h-[12px] bg-[#ef4444] rounded-sm shadow-[0_0_8px_rgba(239,68,68,0.5)] opacity-60" /> 
+                        <div className="w-[4px] h-[16px] bg-[#ef4444] rounded-sm shadow-[0_0_8px_rgba(239,68,68,0.5)] opacity-60 transition-all duration-300" /> 
                       ) : (
                         <div 
-                          className="w-[50%] h-[6px] bg-[#3b82f6] rounded-sm"
+                          className="w-[50%] h-[6px] bg-[#3b82f6] rounded-sm transition-all duration-300"
                           style={{ 
                             backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 4px)',
                             boxShadow: '0 0 8px rgba(59,130,246,0.6)'
@@ -334,28 +365,118 @@ export default function PortaMalas() {
           </div>
           
           <div className="text-center text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase">
-            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para destravar'}
+            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para hackear'}
           </div>
           
-          {/* OVERLAY DE STATUS */}
+          {/* OVERLAY */}
           {gameState !== 'playing' && gameState !== 'idle' && (
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-50 animate-in fade-in duration-200">
-              {gameState === 'lost' && <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🚨 Falha no destravamento</div>}
-              {gameState === 'won' && <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest animate-pulse border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] text-center shadow-lg">🔓 Porta malas destrancado</div>}
+            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
+              
+              {gameState === 'lost' && (
+                <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  Falha no arrombamento
+                </div>
+              )}
+              
+              {gameState === 'won' && (
+                <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  </svg>
+                  Porta malas destrancado
+                </div>
+              )}
+              
             </div>
           )}
         </div>
 
-        {/* CONTROLE */}
+        {/* RODAPÉ */}
         <div className="flex justify-center border-t border-neutral-900/40 p-4 bg-[#101010]">
           {gameState === 'playing' ? (
-            <button onClick={pararSistema} className="px-10 py-2.5 bg-[#b83131]/20 hover:bg-[#b83131]/30 border border-[#b83131]/40 text-[#ff4d4d] font-mono font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md">Abortar</button>
+            <button onClick={pararSistema} className="px-10 py-2.5 bg-red-600 hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out">
+              Abortar
+            </button>
+          ) : gameState === 'won' || gameState === 'lost' ? (
+            <button onClick={pararSistema} className="px-10 py-2.5 bg-neutral-200 hover:bg-white hover:scale-[1.02] active:scale-[0.97] text-black border border-white font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out">
+              Voltar ao Menu
+            </button>
           ) : (
-            <button onClick={iniciarSistema} className="px-12 py-2.5 bg-[#f58002] hover:bg-[#ff9e24] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-amber-500/10">Iniciar Sistema</button>
+            <button onClick={iniciarSistema} className="px-12 py-2.5 bg-[#f58002] hover:bg-[#ff9e24] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_25px_rgba(245,128,2,0.35)] transition-all duration-300 ease-out">
+              Iniciar Sistema
+            </button>
           )}
         </div>
 
       </div>
+
+      {/* PAINEL DE ASSISTÊNCIA */}
+      <div className="fixed bottom-6 right-6 z-40 font-mono transition-all duration-500 ease-out">
+        {showHint ? (
+          <div className="w-64 bg-[#0c0c0c] border border-neutral-800 rounded-xl p-4 shadow-2xl flex flex-col gap-3 animate-elastic-pop">
+            <div className="flex justify-between items-center border-b border-neutral-900 pb-2">
+              <div className="flex items-center gap-1.5 text-blue-400 text-[11px] font-black uppercase tracking-wider">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                  <path d="M9 18h6"/>
+                  <path d="M10 22h4"/>
+                </svg>
+                Guia do Minigame
+              </div>
+              <button 
+                onClick={() => setShowHint(false)} 
+                className="text-neutral-500 hover:text-neutral-300 text-xs font-bold transition-colors duration-200 px-1"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="w-full h-32 bg-neutral-950 border border-neutral-900 rounded-lg overflow-hidden relative flex items-center justify-center">
+              <img 
+                src="dica_portamalas.gif" 
+                alt="Tutorial do Porta Malas" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-2 text-[9px] text-neutral-500 gap-1 select-none bg-[#050505]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 animate-pulse mb-1">
+                  <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+                  <line x1="7" y1="2" x2="7" y2="22"></line>
+                  <line x1="17" y1="2" x2="17" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                </svg>
+                [ dica_portamalas.gif ]
+              </div>
+            </div>
+
+            <p className="text-[10px] text-neutral-400 leading-relaxed tracking-wide">
+              Espere a barra branca da <span className="text-neutral-200 font-bold">chave</span> se alinhar perfeitamente em cima do bloco azul do trilho. Aperte <span className="text-amber-500 font-bold">ESPAÇO</span> para fixar o pino. Cuidado com o tempo de recarga após o clique!
+            </p>
+          </div>
+        ) : (
+          <button 
+            onClick={() => setShowHint(true)} 
+            className="bg-[#0c0c0c] border border-neutral-800 text-amber-400 hover:text-amber-300 hover:border-amber-500/40 hover:scale-[1.04] active:scale-[0.96] px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xl flex items-center gap-1.5 transition-all duration-300 ease-out"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+              <path d="M9 18h6"/>
+              <path d="M10 22h4"/>
+            </svg>
+            Ver Ajuda
+          </button>
+        )}
+      </div>
+
     </div>
   );
 }
