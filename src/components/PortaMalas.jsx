@@ -365,7 +365,7 @@ export default function PortaMalas() {
           </div>
           
           <div className="text-center text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase">
-            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para hackear'}
+            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para destravar o porta malas'}
           </div>
           
           {/* OVERLAY */}
