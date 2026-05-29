@@ -115,10 +115,16 @@ export default function CaixinhaTreino() {
   const timerColor = gameState === 'idle' ? '#a3ef52' : progress > 60 ? '#a3ef52' : progress > 30 ? '#f58002' : '#ef4444';
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 bg-neutral-50 dark:bg-black p-6 font-sans select-none w-full relative overflow-hidden transition-colors duration-300">
+    <div className="flex flex-col items-center justify-center flex-1 bg-neutral-50 dark:bg-black p-6 font-sans select-none w-full relative overflow-hidden transition-colors duration-300 animate-page-reveal">
       
       {/* INTERPOLAÇÃO DE ANIMAÇÕES */}
       <style>{`
+        @keyframes pageReveal {
+          from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
+          to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
+        }
+        .animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
         @keyframes cyberShake {
           0%, 100% { transform: translate(0, 0); }
           20% { transform: translate(-2px, 1px); }

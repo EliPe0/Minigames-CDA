@@ -224,10 +224,16 @@ export default function PortaMalas() {
   const currentStaticColor = gameState === 'idle' ? '#a3ef52' : timerProgress > 60 ? '#a3ef52' : timerProgress > 30 ? '#f58002' : '#ef4444';
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 bg-neutral-50 dark:bg-black p-6 font-sans select-none w-full relative overflow-hidden transition-colors duration-300">
+    <div className="flex flex-col items-center justify-center flex-1 bg-neutral-50 dark:bg-black p-6 font-sans select-none w-full relative overflow-hidden transition-colors duration-300 animate-page-reveal">
       
       {/* INTERPOLAÇÃO */}
       <style>{`
+        @keyframes pageReveal {
+          from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
+          to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
+        }
+        .animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
         @keyframes cyberShake {
           0%, 100% { transform: translate(0, 0); }
           20% { transform: translate(-2px, 1px); }
@@ -254,7 +260,7 @@ export default function PortaMalas() {
         .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
       `}</style>
 
-      {/* CARD CENTRAL DO GAME */}
+      {/* CARD CENTRAL */}
       <div className={`w-full max-w-[540px] bg-white dark:bg-[#0c0c0c] rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden border border-neutral-200 dark:border-neutral-800 transition-transform ${
         screenShake ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : ''
       }`}>

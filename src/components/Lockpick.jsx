@@ -248,10 +248,16 @@ export default function Digipick() {
   if (rings.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 dark:bg-black p-4 font-sans selection:bg-transparent select-none transition-colors duration-300">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 dark:bg-black p-4 font-sans selection:bg-transparent select-none transition-colors duration-300 animate-page-reveal">
       
-      {/* ANIMAÇÕES CINEMATOGRÁFICAS CURVAS */}
+      {/* ANIMAÇÕES */}
       <style>{`
+        @keyframes pageReveal {
+          from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
+          to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
+        }
+        .animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
         @keyframes blurFadeIn {
           from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
           to { opacity: 1; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
@@ -323,7 +329,7 @@ export default function Digipick() {
       {/* PAINEL DE CONTROLE INFERIOR */}
       <div className="w-[480px] bg-white dark:bg-[#0c0c0c] p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative overflow-hidden transition-colors duration-300">
         
-        {/* OVERLAY*/}
+        {/* OVERLAY */}
         {(gameState === 'won' || gameState === 'lost') && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
             {gameState === 'lost' && (
@@ -441,13 +447,13 @@ export default function Digipick() {
         {showHint ? (
           <div className="w-64 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-2xl flex flex-col gap-3 animate-elastic-pop transition-colors">
             <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-900 pb-2">
-              <div className="flex items-center gap-1.5 text-amber-600 dark:text-[#3be8ff] text-[11px] font-black uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 text-cyan-600 dark:text-[#3be8ff] text-[11px] font-black uppercase tracking-wider">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
                   <path d="M9 18h6"/>
                   <path d="M10 22h4"/>
                 </svg>
-                Guia da Lockpick
+                Guia do Minigame
               </div>
               <button 
                 onClick={() => setShowHint(false)} 
