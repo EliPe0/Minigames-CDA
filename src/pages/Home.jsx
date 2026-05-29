@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom'; // 🚀 Importação do Portal adicionada
 
 export default function Home() {
   const navigate = useNavigate();
@@ -35,17 +36,17 @@ export default function Home() {
       />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] dark:bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[size:100%_4px] pointer-events-none opacity-20 dark:opacity-10" />
 
-      {/* BOTÃO SOBRE - TOP RIGHT */}
+      {/* BOTÃO SOBRE - MAIOR E MAIS DESTACADO */}
       <button
         onClick={() => setShowAbout(true)}
-        className="absolute top-6 right-6 z-20 flex items-center gap-2 px-4 py-2 bg-white/50 dark:bg-neutral-900/30 border border-neutral-300 dark:border-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800/80 text-neutral-600 dark:text-neutral-500 hover:text-amber-500 dark:hover:text-amber-400 transition-all duration-300 font-mono text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+        className="absolute top-6 right-6 z-20 flex items-center gap-2 px-5 py-2.5 bg-white/50 dark:bg-neutral-900/30 border border-neutral-300 dark:border-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800/80 text-neutral-600 dark:text-neutral-400 hover:text-amber-500 dark:hover:text-amber-400 transition-all duration-300 font-mono text-[11px] sm:text-xs font-black uppercase tracking-widest hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] active:scale-[0.97]"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="16" x2="12" y2="12"></line>
           <line x1="12" y1="8" x2="12.01" y2="8"></line>
         </svg>
-        Sobre
+        Sobre o Projeto
       </button>
 
       {/* TÍTULO PRINCIPAL */}
@@ -141,55 +142,54 @@ export default function Home() {
 
       </div>
 
-      {/* OVERLAY / MODAL DE INFORMAÇÕES */}
-      {showAbout && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-blur-fade">
+      {/* 🚀 OVERLAY RENDERIZADO NO PORTAL (Cobre 100% da tela) */}
+      {showAbout && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 animate-blur-fade">
           
-          {/* ÁREA CLICÁVELA */}
           <div className="absolute inset-0 cursor-pointer" onClick={() => setShowAbout(false)} />
 
-          <div className="max-w-md w-full bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl relative overflow-hidden animate-elastic-pop flex flex-col font-mono cursor-default">
+          {/* CARD DO MODAL (Redimensionado para max-w-xl) */}
+          <div className="max-w-xl w-[95%] max-h-[90vh] bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl relative overflow-hidden animate-elastic-pop flex flex-col font-mono cursor-default">
             
-            {/* HEADER DO MODAL */}
-            <div className="h-12 bg-neutral-50 dark:bg-[#141414] flex items-center justify-between px-5 border-b border-neutral-200 dark:border-neutral-800/60">
-              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500 text-xs font-black tracking-widest uppercase">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="dark:drop-shadow-[0_0_6px_rgba(245,158,11,0.6)]">
+            <div className="h-14 bg-neutral-50 dark:bg-[#141414] flex items-center justify-between px-6 border-b border-neutral-200 dark:border-neutral-800/60 shrink-0">
+              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500 text-sm font-black tracking-widest uppercase">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="dark:drop-shadow-[0_0_6px_rgba(245,158,11,0.6)]">
                   <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"></path>
                 </svg>
                 Info do Sistema
               </div>
               <button 
                 onClick={() => setShowAbout(false)}
-                className="text-neutral-400 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors px-2 py-1"
+                className="text-neutral-400 hover:text-black dark:text-neutral-500 dark:hover:text-white transition-colors p-2"
               >
                 ✕
               </button>
             </div>
 
-            {/* CONTEÚDO DO MODAL */}
-            <div className="p-6 sm:p-8 flex flex-col gap-4">
-              <h2 className="text-xl font-black text-neutral-900 dark:text-white tracking-widest uppercase border-b border-neutral-200 dark:border-neutral-900 pb-4 mb-2">
+            <div className="p-6 sm:p-8 flex flex-col gap-5 overflow-y-auto">
+              <h2 className="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white tracking-widest uppercase border-b border-neutral-200 dark:border-neutral-900 pb-4 mb-1">
                 Hacking Lab | Cidade Alta <br/>
                 <span className="text-neutral-500 text-sm">Leia com atenção</span>
               </h2>
               
-              <p className="text-neutral-600 dark:text-neutral-400 text-[11px] sm:text-xs leading-relaxed tracking-wide text-justify">
-                O sistema foi desenvolvido com intuito de testes e treinar para os sistemas que possuem dentro do servidor Cidade Alta no FiveM, um projeto totalmente independente que não possui qualquer vínculo com os desenvolvedores do servidor, algo feito totalmente por um jogador entusiasta e estudante de desenvolvimento de sistemas. Quaisquer dúvidas contate o projeto no GitHub ou se deseja entrar no seridor, procure o link abaixo.
+              {/* Fonte levemente maior para melhor leitura */}
+              <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-[13px] leading-relaxed tracking-wide text-justify">
+                Este sistema foi desenvolvido com fins de estudo e, para aprimoramento dos sistemas utilizados no servidor Cidade Alta, dentro do FiveM. Trata-se de um projeto totalmente independente, sem qualquer vínculo, parceria ou associação com os desenvolvedores, administradores ou responsáveis pelo servidor.<br/><br/>
+                Esse projeto foi criado por um jogador entusiasta e estudante de Desenvolvimento de Sistemas, com o objetivo de aprendizado e prática dos usuários.<br/><br/>
+                Em caso de dúvidas, sugestões ou problemas, entre em contato por meio do repositório do projeto no GitHub. Caso tenha interesse em conhecer o servidor <span className="text-amber-600 dark:text-amber-500">Cidade Alta</span>, utilize o link disponibilizado abaixo.
               </p>
               
-              <div className="bg-neutral-50 dark:bg-[#050505] border border-neutral-200 dark:border-neutral-900 p-4 rounded-xl flex flex-col gap-3 mt-2">
+              <div className="bg-neutral-50 dark:bg-[#050505] border border-neutral-200 dark:border-neutral-900 p-4 sm:p-5 rounded-xl flex flex-col gap-4 mt-2">
                 
-                {/* LINHA DO DESENVOLVEDOR */}
-                <div className="flex justify-between items-center text-[10px] font-bold tracking-widest uppercase">
+                <div className="flex justify-between items-center text-xs font-bold tracking-widest uppercase">
                   <span className="text-neutral-500">Desenvolvedor:</span>
-                  <span className="text-amber-600 dark:text-amber-500">EliPe0</span>
+                  <span className="text-purple-600 dark:text-purple-400">EliPe0</span>
                 </div>
 
-                {/* LINK DO PROJETO */}
-                <div className="flex justify-between items-center text-[10px] font-bold tracking-widest uppercase border-t border-neutral-200 dark:border-neutral-900/60 pt-3">
+                <div className="flex justify-between items-center text-xs font-bold tracking-widest uppercase border-t border-neutral-200 dark:border-neutral-900/60 pt-4">
                   <span className="text-neutral-500">Link do Projeto:</span>
                   <a 
-                    href="https://github.com/EliPe0" 
+                    href="https://github.com/EliPe0/Minigames-CDA" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 hover:underline dark:hover:drop-shadow-[0_0_6px_rgba(96,165,250,0.4)] transition-all duration-200"
@@ -198,14 +198,13 @@ export default function Home() {
                   </a>
                 </div>
 
-                {/* SITE DO SERVIDOR */}
-                <div className="flex justify-between items-center text-[10px] font-bold tracking-widest uppercase border-t border-neutral-200 dark:border-neutral-900/60 pt-3">
+                <div className="flex justify-between items-center text-xs font-bold tracking-widest uppercase border-t border-neutral-200 dark:border-neutral-900/60 pt-4">
                   <span className="text-neutral-500">Site do Servidor:</span>
                   <a 
                     href="https://cidadealta.gg/" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 hover:underline dark:hover:drop-shadow-[0_0_6px_rgba(192,132,252,0.4)] transition-all duration-200"
+                    className="text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-300 hover:underline dark:hover:drop-shadow-[0_0_6px_rgba(255,193,7,0.4)] transition-all duration-200"
                   >
                     cidadealta.gg
                   </a>
@@ -214,18 +213,18 @@ export default function Home() {
               </div>
             </div>
             
-            {/* BOTÃO */}
-            <div className="p-4 border-t border-neutral-200 dark:border-neutral-900/60 bg-neutral-100 dark:bg-[#101010] flex justify-end">
+            <div className="p-4 sm:p-5 border-t border-neutral-200 dark:border-neutral-900/60 bg-neutral-100 dark:bg-[#101010] flex justify-end shrink-0">
               <button 
                 onClick={() => setShowAbout(false)}
-                className="px-6 py-2.5 bg-black hover:bg-neutral-800 text-white dark:bg-neutral-200 dark:hover:bg-white active:scale-[0.97] dark:text-black font-mono font-black text-[10px] uppercase tracking-widest rounded-xl transition-all shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                className="px-8 py-3 bg-black hover:bg-neutral-800 text-white dark:bg-neutral-200 dark:hover:bg-white active:scale-[0.97] dark:text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest rounded-xl transition-all shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)]"
               >
                 Retornar ao Dashboard
               </button>
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
