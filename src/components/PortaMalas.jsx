@@ -258,178 +258,196 @@ export default function PortaMalas() {
         .animate-blur-fade { animation: blurFadeInLight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .dark .animate-blur-fade { animation: blurFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        .responsive-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          transform-origin: center center;
+          transition: transform 0.3s ease-out;
+        }
+        @media (max-height: 900px) { .responsive-wrapper { transform: scale(0.95); } }
+        @media (max-height: 800px) { .responsive-wrapper { transform: scale(0.85); } }
+        @media (max-height: 700px) { .responsive-wrapper { transform: scale(0.75); } }
+        @media (max-height: 600px) { .responsive-wrapper { transform: scale(0.65); } }
+        @media (max-width: 600px) { .responsive-wrapper { transform: scale(0.85); } }
+        @media (max-width: 500px) { .responsive-wrapper { transform: scale(0.75); } }
       `}</style>
 
-      {/* CARD CENTRAL */}
-      <div className={`w-full max-w-[540px] bg-white dark:bg-[#0c0c0c] rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden border border-neutral-200 dark:border-neutral-800 transition-transform ${
-        screenShake ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : ''
-      }`}>
-        
-        {/* HEADER */}
-        <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-sm font-bold tracking-wide font-mono transition-colors">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f58002" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          Destrave o Porta Malas
-        </div>
-
-        {/* INTERFACE DO SISTEMA */}
-        <div className="flex flex-col w-full pb-6 pt-4 relative">
+      <div className="responsive-wrapper">
+        {/* CARD CENTRAL DO GAME */}
+        <div className={`w-full max-w-[540px] bg-white dark:bg-[#0c0c0c] rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden border border-neutral-200 dark:border-neutral-800 transition-transform ${
+          screenShake ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : ''
+        }`}>
           
-          {/* SEÇÃO DO CRONÔMETRO */}
-          <div className="flex flex-col items-center gap-2 px-8 mb-6">
-            <svg 
-              ref={clockRef}
-              width="15" 
-              height="15" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke={currentStaticColor} 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="transition-colors duration-200"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
+          {/* HEADER */}
+          <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-sm font-bold tracking-wide font-mono transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f58002" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <div className="w-full h-3 bg-neutral-200 dark:bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-800/60 transition-colors">
-              <div 
-                ref={timerDOMRef}
-                className="h-full transition-all duration-300 ease-out"
-                style={{ width: `${timerProgress}%`, backgroundColor: currentStaticColor, boxShadow: `0 0 14px ${currentStaticColor}` }} 
-              />
-            </div>
+            Destrave o Porta Malas
           </div>
 
-          {/* ÁREA DOS PINOS */}
-          <div className="relative h-[160px] w-full px-8 flex mb-4">
-            {pinsProgress.map((level, idx) => {
-              const isMax = level === MAX_LEVEL;
-              return (
-                <div key={idx} className="flex-1 flex justify-center relative h-full">
-                  <div className="absolute top-0 bottom-0 w-[1px] bg-black/5 dark:bg-white/[0.02] transition-colors" />
-                  <div 
-                    className={`absolute top-0 w-[30px] h-[130px] transition-transform duration-500 ease-in-out z-10 ${getPinTranslateY(level)}`}
-                    style={{ opacity: isMax ? 0.9 : 1 }}
-                  >
-                    <svg width="100%" height="100%" viewBox="0 0 26 95" className="overflow-visible block drop-shadow-[0_4px_10px_rgba(245,128,2,0.15)]">
-                      <polygon 
-                        points="3,3 23,3 23,75 13,88 3,75" 
-                        className="fill-orange-500 stroke-orange-500 dark:fill-[#f58002] dark:stroke-[#f58002] transition-colors"
-                        strokeWidth="4" 
-                        strokeLinejoin="round" 
-                      />
-                    </svg>
+          {/* INTERFACE DO SISTEMA */}
+          <div className="flex flex-col w-full pb-6 pt-4 relative">
+            
+            {/* SEÇÃO DO CRONÔMETRO */}
+            <div className="flex flex-col items-center gap-2 px-8 mb-6">
+              <svg 
+                ref={clockRef}
+                width="15" 
+                height="15" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke={currentStaticColor} 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="transition-colors duration-200"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <div className="w-full h-3 bg-neutral-200 dark:bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-800/60 transition-colors">
+                <div 
+                  ref={timerDOMRef}
+                  className="h-full transition-all duration-300 ease-out"
+                  style={{ width: `${timerProgress}%`, backgroundColor: currentStaticColor, boxShadow: `0 0 14px ${currentStaticColor}` }} 
+                />
+              </div>
+            </div>
+
+            {/* ÁREA DOS PINOS */}
+            <div className="relative h-[160px] w-full px-8 flex mb-4">
+              {pinsProgress.map((level, idx) => {
+                const isMax = level === MAX_LEVEL;
+                return (
+                  <div key={idx} className="flex-1 flex justify-center relative h-full">
+                    <div className="absolute top-0 bottom-0 w-[1px] bg-black/5 dark:bg-white/[0.02] transition-colors" />
+                    <div 
+                      className={`absolute top-0 w-[30px] h-[130px] transition-transform duration-500 ease-in-out z-10 ${getPinTranslateY(level)}`}
+                      style={{ opacity: isMax ? 0.9 : 1 }}
+                    >
+                      <svg width="100%" height="100%" viewBox="0 0 26 95" className="overflow-visible block drop-shadow-[0_4px_10px_rgba(245,128,2,0.15)]">
+                        <polygon 
+                          points="3,3 23,3 23,75 13,88 3,75" 
+                          className="fill-orange-500 stroke-orange-500 dark:fill-[#f58002] dark:stroke-[#f58002] transition-colors"
+                          strokeWidth="4" 
+                          strokeLinejoin="round" 
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* WRENCH E TIMELINE */}
+            <div className="px-8 relative w-full mb-2 mt-2">
+              <div className="relative w-full h-[64px]">
+                {/* Fundo do Trilho */}
+                <div className="absolute top-0 w-full h-[36px] bg-neutral-100 dark:bg-[#050505] rounded-lg border border-neutral-300 dark:border-neutral-900 transition-colors" />
+                
+                <div className="absolute bottom-0 w-full h-[24px] flex items-center">
+                  <div className="absolute inset-x-2 h-[2px] bg-neutral-300 dark:bg-neutral-800 transition-colors" />
+                  <div className="relative w-full h-full flex items-center">
+                    {pinsProgress.map((level, i) => (
+                      <div key={i} className="flex-1 flex justify-center relative z-10">
+                        { level === MAX_LEVEL ? (
+                          <div className="w-[4px] h-[16px] bg-red-500 dark:bg-[#ef4444] rounded-sm shadow-[0_0_8px_rgba(239,68,68,0.3)] dark:shadow-[0_0_8px_rgba(239,68,68,0.5)] opacity-60 transition-all duration-300" /> 
+                        ) : (
+                          <div 
+                            className="w-[50%] h-[6px] bg-blue-500 dark:bg-[#3b82f6] rounded-sm transition-all duration-300"
+                            style={{ 
+                              backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 4px)',
+                              boxShadow: '0 0 8px rgba(59,130,246,0.6)'
+                            }} 
+                          />
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
-              );
-            })}
-          </div>
 
-          {/* WRENCH E TIMELINE */}
-          <div className="px-8 relative w-full mb-2 mt-2">
-            <div className="relative w-full h-[64px]">
-              {/* Fundo do Trilho */}
-              <div className="absolute top-0 w-full h-[36px] bg-neutral-100 dark:bg-[#050505] rounded-lg border border-neutral-300 dark:border-neutral-900 transition-colors" />
-              
-              <div className="absolute bottom-0 w-full h-[24px] flex items-center">
-                <div className="absolute inset-x-2 h-[2px] bg-neutral-300 dark:bg-neutral-800 transition-colors" />
-                <div className="relative w-full h-full flex items-center">
-                  {pinsProgress.map((level, i) => (
-                    <div key={i} className="flex-1 flex justify-center relative z-10">
-                      { level === MAX_LEVEL ? (
-                        <div className="w-[4px] h-[16px] bg-red-500 dark:bg-[#ef4444] rounded-sm shadow-[0_0_8px_rgba(239,68,68,0.3)] dark:shadow-[0_0_8px_rgba(239,68,68,0.5)] opacity-60 transition-all duration-300" /> 
-                      ) : (
-                        <div 
-                          className="w-[50%] h-[6px] bg-blue-500 dark:bg-[#3b82f6] rounded-sm transition-all duration-300"
-                          style={{ 
-                            backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(255,255,255,0.4) 2px, rgba(255,255,255,0.4) 4px)',
-                            boxShadow: '0 0 8px rgba(59,130,246,0.6)'
-                          }} 
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cursor / Chave Deslizante */}
-              <div
-                ref={cursorRef}
-                className="absolute top-0 bottom-0 w-0 z-30 pointer-events-none"
-                style={{ left: gameState === 'playing' ? undefined : '0%' }}
-              >
-                <div 
-                  className={`absolute right-[1px] top-[12px] flex items-end origin-left transition-all duration-75 ease-out ${
-                    isClicking ? '-rotate-[3deg] -translate-y-[4px]' : 'rotate-0 translate-y-0'
-                  }`}
+                {/* Cursor / Chave Deslizante */}
+                <div
+                  ref={cursorRef}
+                  className="absolute top-0 bottom-0 w-0 z-30 pointer-events-none"
+                  style={{ left: gameState === 'playing' ? undefined : '0%' }}
                 >
-                  <svg width="506" height="10" viewBox="0 0 506 10" className="overflow-visible block fill-neutral-400 dark:fill-[#8a8c9e] transition-colors">
-                    <path d="M0 6 H500 V0 H504 V6 H506 V10 H0 Z" />
-                  </svg>
+                  <div 
+                    className={`absolute right-[1px] top-[12px] flex items-end origin-left transition-all duration-75 ease-out ${
+                      isClicking ? '-rotate-[3deg] -translate-y-[4px]' : 'rotate-0 translate-y-0'
+                    }`}
+                  >
+                    <svg width="506" height="10" viewBox="0 0 506 10" className="overflow-visible block fill-neutral-400 dark:fill-[#8a8c9e] transition-colors">
+                      <path d="M0 6 H500 V0 H504 V6 H506 V10 H0 Z" />
+                    </svg>
+                  </div>
+                  <div className="absolute right-[1px] top-[42px] w-[3px] h-[20px] bg-neutral-700 dark:bg-white shadow-[0_0_6px_rgba(0,0,0,0.3)] dark:shadow-[0_0_8px_rgba(255,255,255,1)] rounded-full transition-colors" />
                 </div>
-                <div className="absolute right-[1px] top-[42px] w-[3px] h-[20px] bg-neutral-700 dark:bg-white shadow-[0_0_6px_rgba(0,0,0,0.3)] dark:shadow-[0_0_8px_rgba(255,255,255,1)] rounded-full transition-colors" />
+
               </div>
-
             </div>
-          </div>
-          
-          <div className="text-center text-neutral-500 dark:text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase transition-colors">
-            {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para destravar o porta malas'}
-          </div>
-          
-          {/* OVERLAY */}
-          {gameState !== 'playing' && gameState !== 'idle' && (
-            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
-              
-              {gameState === 'lost' && (
-                <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
-                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                  </svg>
-                  Falha no arrombamento
-                </div>
-              )}
-              
-              {gameState === 'won' && (
-                <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-                  </svg>
-                  Porta malas destrancado
-                </div>
-              )}
-              
+            
+            <div className="text-center text-neutral-500 dark:text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase transition-colors">
+              {gameState === 'playing' ? 'Aperte espaço no momento certo' : 'Pressione INICIAR ou ESPAÇO para destravar o porta malas'}
             </div>
-          )}
-        </div>
+            
+            {/* OVERLAY DE STATUS */}
+            {gameState !== 'playing' && gameState !== 'idle' && (
+              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade pointer-events-none">
+                
+                {gameState === 'lost' && (
+                  <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop pointer-events-auto">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Falha no arrombamento
+                  </div>
+                )}
+                
+                {gameState === 'won' && (
+                  <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop pointer-events-auto">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    </svg>
+                    Porta malas destrancado
+                  </div>
+                )}
+                
+              </div>
+            )}
+          </div>
 
-        {/* RODAPÉ */}
-        <div className="flex justify-center border-t border-neutral-200 dark:border-neutral-900/40 p-4 bg-neutral-100 dark:bg-[#101010] transition-colors">
-          {gameState === 'playing' ? (
-            <button onClick={pararSistema} className="px-10 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out">
-              Abortar
-            </button>
-          ) : gameState === 'won' || gameState === 'lost' ? (
-            <button onClick={pararSistema} className="px-10 py-2.5 bg-neutral-800 text-white hover:bg-neutral-700 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent dark:border-white font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out">
-              Voltar ao Menu
-            </button>
-          ) : (
-            <button onClick={iniciarSistema} className="px-12 py-2.5 bg-orange-400 hover:bg-orange-500 dark:bg-[#f58002] dark:hover:bg-[#ff9e24] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-orange-500/30 dark:shadow-[0_0_25px_rgba(245,128,2,0.35)] transition-all duration-300 ease-out">
-              Iniciar Sistema
-            </button>
-          )}
-        </div>
+          {/* RODAPÉ */}
+          <div className="flex justify-center border-t border-neutral-200 dark:border-neutral-900/40 p-4 bg-neutral-100 dark:bg-[#101010] transition-colors">
+            {gameState === 'playing' ? (
+              <button onClick={pararSistema} className="px-10 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out">
+                Abortar
+              </button>
+            ) : gameState === 'won' || gameState === 'lost' ? (
+              <button onClick={pararSistema} className="px-10 py-2.5 bg-neutral-800 text-white hover:bg-neutral-700 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent dark:border-white font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out">
+                Voltar ao Menu
+              </button>
+            ) : (
+              <button onClick={iniciarSistema} className="px-12 py-2.5 bg-orange-400 hover:bg-orange-500 dark:bg-[#f58002] dark:hover:bg-[#ff9e24] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-orange-500/30 dark:shadow-[0_0_25px_rgba(245,128,2,0.35)] transition-all duration-300 ease-out">
+                Iniciar Sistema
+              </button>
+            )}
+          </div>
 
+        </div>
       </div>
 
       {/* PAINEL DE ASSISTÊNCIA */}
-      <div className="fixed bottom-6 right-6 z-40 font-mono transition-all duration-500 ease-out">
+      <div className="fixed bottom-6 right-6 z-[100] font-mono transition-all duration-500 ease-out">
         {showHint ? (
           <div className="w-64 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-2xl flex flex-col gap-3 animate-elastic-pop transition-colors">
             <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-900 pb-2">

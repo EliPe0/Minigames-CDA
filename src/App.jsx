@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Lockpick from './components/Lockpick';
-import CaixinhaTreino from './components/CaixinhaTreino';
+import Caixinha from './components/Caixinha';
 import PortaMalas from './components/PortaMalas';
 import Sidebar from './components/Sidebar';
 
@@ -43,14 +43,15 @@ export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <div className="flex flex-col md:flex-row min-h-screen w-full h-full bg-neutral-100 text-neutral-900 dark:bg-black dark:text-white transition-colors duration-300">
+        <div className="flex h-screen w-screen max-h-screen overflow-hidden bg-neutral-100 text-neutral-900 dark:bg-black dark:text-white transition-colors duration-300">
           <Sidebar />
-          <main className="flex-1 flex flex-col justify-center min-w-0 bg-neutral-50 dark:bg-[#050505] transition-colors duration-300">
+          
+          <main className="flex-1 h-full overflow-hidden flex flex-col justify-center min-w-0 bg-neutral-50 dark:bg-[#050505] transition-colors duration-300">
             <Routes>
               <Route path="/" element={<Navigate to="/home" replace />} />
               <Route path="/home" element={<Home />} />
               <Route path="/lockpick" element={<Lockpick />} />
-              <Route path="/caixinha" element={<CaixinhaTreino />} />
+              <Route path="/caixinha" element={<Caixinha />} />
               <Route path="/portamalas" element={<PortaMalas />} />
             </Routes>
           </main>

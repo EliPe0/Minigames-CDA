@@ -117,7 +117,7 @@ export default function CaixinhaTreino() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-neutral-50 dark:bg-black p-6 font-sans select-none w-full relative overflow-hidden transition-colors duration-300 animate-page-reveal">
       
-      {/* INTERPOLAÇÃO DE ANIMAÇÕES */}
+      {/* INTERPOLAÇÃO DE ANIMAÇÕES E RESPONSIVIDADE */}
       <style>{`
         @keyframes pageReveal {
           from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
@@ -149,152 +149,169 @@ export default function CaixinhaTreino() {
         .animate-blur-fade { animation: blurFadeInLight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .dark .animate-blur-fade { animation: blurFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        .responsive-caixinha-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          transform-origin: center center;
+          transition: transform 0.3s ease-out;
+        }
+        @media (max-height: 900px) { .responsive-caixinha-wrapper { transform: scale(0.95); } }
+        @media (max-height: 800px) { .responsive-caixinha-wrapper { transform: scale(0.85); } }
+        @media (max-height: 700px) { .responsive-caixinha-wrapper { transform: scale(0.75); } }
+        @media (max-height: 600px) { .responsive-caixinha-wrapper { transform: scale(0.65); } }
       `}</style>
 
-      {/* CONTAINER PRINCIPAL */}
-      <div className={`w-full max-w-2xl bg-white dark:bg-[#0c0c0c] border rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden transition-all duration-150 ${
-        screenShake === 'red' ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' :
-        screenShake === 'green' ? 'animate-cyber-shake border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]' :
-        'border-neutral-200 dark:border-neutral-800'
-      }`}>
+      <div className="responsive-caixinha-wrapper">
         
-        {/* CABEÇALHO */}
-        <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-sm font-bold tracking-wide font-mono relative transition-colors">
-          <svg 
-            width="14" 
-            height="14" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="#ef4444" 
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] dark:drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]"
-          >
-            <circle cx="11" cy="13" r="9"></circle>
-            <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
-            <path d="m22 2-1.5 1.5"></path>
-          </svg>
-          Digite a Sequência Correta
+        {/* CONTAINER PRINCIPAL */}
+        <div className={`w-full max-w-2xl bg-white dark:bg-[#0c0c0c] border rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden transition-all duration-150 ${
+          screenShake === 'red' ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' :
+          screenShake === 'green' ? 'animate-cyber-shake border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]' :
+          'border-neutral-200 dark:border-neutral-800'
+        }`}>
           
-          {gameState === 'playing' && (
-            <div className="absolute right-4 text-[9px] bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-black tracking-widest transition-all">
-              ETAPA: {stage} / 3
-            </div>
-          )}
-        </div>
-
-        {/* CORPO DO MINIGAME */}
-        <div className="flex flex-col w-full pb-6 pt-6 relative">
-          
-          {/* CRONÔMETRO COM O RELÓGIO */}
-          <div className="flex flex-col items-center gap-2 px-8 mb-4">
+          {/* CABEÇALHO */}
+          <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-sm font-bold tracking-wide font-mono relative transition-colors">
             <svg 
-              width="15" 
-              height="15" 
+              width="14" 
+              height="14" 
               viewBox="0 0 24 24" 
               fill="none" 
-              stroke={timerColor} 
+              stroke="#ef4444" 
               strokeWidth="2.5" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
-              className="transition-colors duration-200"
+              className="drop-shadow-[0_0_8px_rgba(239,68,68,0.3)] dark:drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]"
             >
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
+              <circle cx="11" cy="13" r="9"></circle>
+              <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
+              <path d="m22 2-1.5 1.5"></path>
             </svg>
-            <div className="w-full h-3 bg-neutral-200 dark:bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-800/60 transition-colors">
-              <div 
-                className="h-full transition-all duration-75 ease-linear" 
-                style={{ 
-                  width: `${progress}%`, 
-                  backgroundColor: timerColor,
-                  boxShadow: `0 0 14px ${timerColor}` 
-                }} 
-              />
-            </div>
+            Digite a Sequência Correta
+            
+            {gameState === 'playing' && (
+              <div className="absolute right-4 text-[9px] bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-black tracking-widest transition-all">
+                ETAPA: {stage} / 3
+              </div>
+            )}
           </div>
 
-          {/* GRADE DE TECLAS */}
-          <div className="px-8 mb-10 mt-8">
-            <div className="grid grid-cols-8 gap-3.5">
-              {sequence.map((letter, idx) => {
-                const isCompleted = gameState === 'playing' && idx < currentIndex;
-                const isCurrent = gameState === 'playing' && idx === currentIndex;
+          {/* CORPO DO MINIGAME */}
+          <div className="flex flex-col w-full pb-6 pt-6 relative">
+            
+            {/* CRONÔMETRO COM O RELÓGIO */}
+            <div className="flex flex-col items-center gap-2 px-8 mb-4">
+              <svg 
+                width="15" 
+                height="15" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke={timerColor} 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="transition-colors duration-200"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <div className="w-full h-3 bg-neutral-200 dark:bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-300 dark:border-neutral-800/60 transition-colors">
+                <div 
+                  className="h-full transition-all duration-75 ease-linear" 
+                  style={{ 
+                    width: `${progress}%`, 
+                    backgroundColor: timerColor,
+                    boxShadow: `0 0 14px ${timerColor}` 
+                  }} 
+                />
+              </div>
+            </div>
+
+            {/* GRADE DE TECLAS */}
+            <div className="px-8 mb-10 mt-8">
+              <div className="grid grid-cols-8 gap-3.5">
+                {sequence.map((letter, idx) => {
+                  const isCompleted = gameState === 'playing' && idx < currentIndex;
+                  const isCurrent = gameState === 'playing' && idx === currentIndex;
+                  
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`h-16 flex items-center justify-center font-black text-2xl rounded-xl font-mono transition-all duration-300 ease-out ${
+                        isCompleted 
+                          ? 'bg-neutral-200 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-600 opacity-60 dark:opacity-40 scale-95' 
+                          : isCurrent 
+                            ? 'bg-white text-black ring-4 ring-amber-400 dark:ring-amber-500 -translate-y-6 shadow-[0_15px_25px_rgba(245,158,11,0.15)] dark:shadow-[0_15px_25px_rgba(245,158,11,0.25)] z-10 scale-105' 
+                            : 'bg-white dark:bg-white text-black shadow-md dark:shadow-md border border-neutral-200 dark:border-transparent'
+                      }`}
+                      style={{ opacity: gameState === 'idle' ? 0.35 : 1 }}
+                    >
+                      {letter}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <div className="text-center text-neutral-500 dark:text-neutral-500 text-[8px] font-black tracking-widest uppercase">
+              {gameState === 'playing' ? 'Insira a combinação no teclado' : 'Pressione INICIAR ou ENTER para descriptografar'}
+            </div>
+
+            {/* OVERLAY DE STATUS */}
+            {(gameState === 'lost' || gameState === 'won') && (
+              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
                 
-                return (
-                  <div 
-                    key={idx} 
-                    className={`h-16 flex items-center justify-center font-black text-2xl rounded-xl font-mono transition-all duration-300 ease-out ${
-                      isCompleted 
-                        ? 'bg-neutral-200 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-600 opacity-60 dark:opacity-40 scale-95' 
-                        : isCurrent 
-                          ? 'bg-white text-black ring-4 ring-amber-400 dark:ring-amber-500 -translate-y-6 shadow-[0_15px_25px_rgba(245,158,11,0.15)] dark:shadow-[0_15px_25px_rgba(245,158,11,0.25)] z-10 scale-105' 
-                          : 'bg-white dark:bg-white text-black shadow-md dark:shadow-md border border-neutral-200 dark:border-transparent'
-                    }`}
-                    style={{ opacity: gameState === 'idle' ? 0.35 : 1 }}
-                  >
-                    {letter}
+                {gameState === 'lost' && (
+                  <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    失敗 SISTEMA FALHOU | NÃO FOI POSSÍVEL ARMAR A BOMBA
                   </div>
-                );
-              })}
-            </div>
-          </div>
-          
-          <div className="text-center text-neutral-500 dark:text-neutral-500 text-[8px] font-black tracking-widest uppercase">
-            {gameState === 'playing' ? 'Insira a combinação no teclado' : 'Pressione INICIAR ou ENTER para descriptografar'}
+                )}
+                
+                {gameState === 'won' && (
+                  <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    駭客 SISTEMA HACKEADO | INICIANDO CONTAGEM...
+                  </div>
+                )}
+                
+              </div>
+            )}
+
           </div>
 
-          {/* OVERLAY DE STATUS */}
-          {(gameState === 'lost' || gameState === 'won') && (
-            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade">
-              
-              {gameState === 'lost' && (
-                <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
-                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                  </svg>
-                  失敗 SISTEMA FALHOU | NÃO FOI POSSÍVEL ARMAR A BOMBA
-                </div>
-              )}
-              
-              {gameState === 'won' && (
-                <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-4 rounded-xl w-[80%] flex items-center justify-center gap-2 shadow-xl animate-elastic-pop">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  駭客 SISTEMA HACKEADO | INICIANDO CONTAGEM...
-                </div>
-              )}
-              
-            </div>
-          )}
+          {/* RODAPÉ DE CONTROLES */}
+          <div className="flex justify-center border-t border-neutral-200 dark:border-neutral-900/40 p-4 bg-neutral-100 dark:bg-[#101010] z-20 transition-colors">
+            {gameState === 'playing' ? (
+              <button onClick={pararJogo} className="px-10 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-bold text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out">
+                Abortar
+              </button>
+            ) : gameState === 'won' || gameState === 'lost' ? (
+              <button onClick={pararJogo} className="px-10 py-2.5 bg-neutral-800 text-white hover:bg-neutral-700 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent dark:border-white font-mono font-bold text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out">
+                Voltar ao Menu
+              </button>
+            ) : (
+              <button onClick={iniciarSistemaCompleto} className="px-12 py-2.5 bg-amber-400 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400 hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-amber-400/30 dark:shadow-amber-500/30 transition-all duration-300 ease-out">
+                Iniciar Sequência
+              </button>
+            )}
+          </div>
 
         </div>
-
-        {/* RODAPÉ DE CONTROLES */}
-        <div className="flex justify-center border-t border-neutral-200 dark:border-neutral-900/40 p-4 bg-neutral-100 dark:bg-[#101010] z-20 transition-colors">
-          {gameState === 'playing' ? (
-            <button onClick={pararJogo} className="px-10 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-bold text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out">
-              Abortar
-            </button>
-          ) : gameState === 'won' || gameState === 'lost' ? (
-            <button onClick={pararJogo} className="px-10 py-2.5 bg-neutral-800 text-white hover:bg-neutral-700 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent dark:border-white font-mono font-bold text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out">
-              Voltar ao Menu
-            </button>
-          ) : (
-            <button onClick={iniciarSistemaCompleto} className="px-12 py-2.5 bg-amber-400 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400 hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-amber-400/30 dark:shadow-amber-500/30 transition-all duration-300 ease-out">
-              Iniciar Sequência
-            </button>
-          )}
-        </div>
-
       </div>
 
       {/* PAINEL DE ASSISTÊNCIA E INSTRUÇÃO */}
-      <div className="fixed bottom-6 right-6 z-40 font-mono transition-all duration-500 ease-out">
+      <div className="fixed bottom-6 right-6 z-[100] font-mono transition-all duration-500 ease-out">
         {showHint ? (
           <div className="w-64 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-2xl flex flex-col gap-3 animate-elastic-pop transition-colors">
             <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-900 pb-2">
