@@ -7,7 +7,7 @@ const getCoords = (angle, radius, center = 200) => {
   return { x: center + radius * Math.cos(rad), y: center + radius * Math.sin(rad) };
 };
 
-// --- MOTOR PROCEDURAL ---
+// --- MOTOR PROCEDURAL AJUSTADO ---
 const generatePuzzle = () => {
   const numRings = 3; 
   const possibleAngles = Array.from({ length: 24 }, (_, i) => i * 15); 
@@ -266,28 +266,29 @@ export default function Digipick() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 dark:bg-black p-4 font-sans selection:bg-transparent select-none transition-colors duration-300 animate-page-reveal overflow-hidden">
       
+      {/* ANIMAÇÕES E RESPONSIVIDADE */}
       <style>{`
         @keyframes pageReveal {
-          from { opacity: 0; filter: blur(8px); transform: translateY(15px) scale(0.98); }
+          from { opacity: 0; filter: blur(6px); transform: translateY(10px) scale(0.99); }
           to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
         }
-        .animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-page-reveal { animation: pageReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes blurFadeIn {
           from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
+          to { opacity: 1; background-color: rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
         }
         @keyframes blurFadeInLight {
           from { opacity: 0; background-color: rgba(255,255,255,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(255,255,255,0.7); backdrop-filter: blur(8px); }
+          to { opacity: 1; background-color: rgba(255,255,255,0.4); backdrop-filter: blur(8px); }
         }
-        @keyframes elasticPopUp {
-          from { transform: scale(0.94); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+        @keyframes smoothRevealUp {
+          from { transform: translateY(8px) scale(0.98); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
         }
-        .animate-blur-fade { animation: blurFadeInLight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .dark .animate-blur-fade { animation: blurFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-elastic-pop { animation: elasticPopUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-blur-fade { animation: blurFadeInLight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .dark .animate-blur-fade { animation: blurFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-elastic-pop { animation: smoothRevealUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .responsive-wrapper {
           display: flex;
@@ -298,20 +299,20 @@ export default function Digipick() {
           transform-origin: center center;
           transition: transform 0.3s ease-out;
         }
-        @media (max-height: 900px) { .responsive-wrapper { transform: scale(0.9); } }
-        @media (max-height: 800px) { .responsive-wrapper { transform: scale(0.8); } }
-        @media (max-height: 700px) { .responsive-wrapper { transform: scale(0.7); } }
-        @media (max-height: 600px) { .responsive-wrapper { transform: scale(0.6); } }
+        @media (max-height: 900px) { .responsive-wrapper { transform: scale(0.95); } }
+        @media (max-height: 800px) { .responsive-wrapper { transform: scale(0.85); } }
+        @media (max-height: 700px) { .responsive-wrapper { transform: scale(0.75); } }
+        @media (max-height: 600px) { .responsive-wrapper { transform: scale(0.65); } }
         @media (max-width: 520px) { .responsive-wrapper { transform: scale(0.75); } }
         @media (max-width: 400px) { .responsive-wrapper { transform: scale(0.65); } }
       `}</style>
 
+      {/* WRAPPER */}
       <div className="responsive-wrapper">
         
-        {/* WRAPPER DO COFRE E OVERLAY */}
+        {/* WRAPPER DO COFRE */}
         <div className="relative flex items-center justify-center w-full max-w-[500px] mb-12">
           
-          {/* COFRE CENTRAL */}
           <div className={`relative w-[420px] h-[420px] flex items-center justify-center rounded-full bg-white dark:bg-[#070707] border transition-all duration-300 ${
             feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
             feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
@@ -361,131 +362,128 @@ export default function Digipick() {
               <text x="200" y="203" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest fill-neutral-400 dark:fill-[#1f222e]">LOCKPICK</text>
             </svg>
           </div>
-
-          {/* OVERLAY DE STATUS */}
-          {(gameState === 'won' || gameState === 'lost') && (
-            <div className="absolute inset-[-30px] z-[50] flex flex-col items-center justify-center animate-blur-fade rounded-full pointer-events-none">
-              {gameState === 'lost' && (
-                <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/20 p-5 rounded-xl w-full max-w-[340px] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
-                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                  </svg>
-                  CHAVES ESGOTADAS
-                </div>
-              )}
-              {gameState === 'won' && (
-                <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/20 p-5 rounded-xl w-full max-w-[340px] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-                  </svg>
-                  CRIPTOGRAFIA QUEBRADA
-                </div>
-              )}
-            </div>
-          )}
-
         </div>
 
         {/* PAINEL DE CONTROLE INFERIOR */}
-        <div className="w-[480px] bg-white dark:bg-[#0c0c0c] p-6 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative z-[60] overflow-hidden transition-colors duration-300">
+        <div className="w-[480px] bg-white dark:bg-[#0c0c0c] rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative z-[60] overflow-hidden transition-colors duration-300">
           
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-baseline gap-2">
-               <h2 className="text-neutral-800 dark:text-neutral-400 font-black text-lg tracking-widest uppercase font-mono">LOCKPICK</h2>
+          {/* MÓDULO SUPERIOR */}
+          <div className="p-6 relative">
+            
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-baseline gap-2">
+                 <h2 className="text-neutral-800 dark:text-neutral-400 font-black text-lg tracking-widest uppercase font-mono">LOCKPICK</h2>
+              </div>
+              <div className="flex gap-2">
+                <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
+                <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
-              <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
-            </div>
-          </div>
 
-          <div className={`grid grid-cols-6 gap-x-[11px] gap-y-3.5 mb-8 w-full max-w-[360px] mx-auto transition-all duration-700 ease-out ${
-            (gameState === 'won' || gameState === 'lost') ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
-          }`}>
-            {tools.map((t, i) => {
-              const isActive = i === activeToolIdx && gameState === 'playing';
-              const isUsed = t.used;
+            {/* GRID DE SLOTS */}
+            <div className="grid grid-cols-6 gap-x-[11px] gap-y-3.5 mb-2 w-full max-w-[360px] mx-auto">
+              {tools.map((t, i) => {
+                const isActive = i === activeToolIdx && gameState === 'playing';
+                const isUsed = t.used;
 
-              return (
-                <div 
-                  key={t.id} 
-                  className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ease-out ${
-                    t.isEmpty || isUsed 
-                      ? 'opacity-0 pointer-events-none' 
-                      : isActive 
-                        ? 'border-cyan-500 dark:border-[#3be8ff] bg-cyan-50 dark:bg-[#121212] scale-105 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
-                        : 'border-neutral-200 dark:border-neutral-800 bg-transparent'
-                  }`}
-                >
-                  {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-neutral-300 dark:bg-[#1f222e] rounded-full z-10 animate-ping" />}
-                  
-                  <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
-                    <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-neutral-300 dark:stroke-[#1f222e]" />
+                return (
+                  <div 
+                    key={t.id} 
+                    className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ease-out ${
+                      t.isEmpty || isUsed 
+                        ? 'border-transparent bg-neutral-100/40 dark:bg-neutral-900/40 opacity-100' 
+                        : isActive 
+                          ? 'border-cyan-500 dark:border-[#3be8ff] bg-cyan-50 dark:bg-[#121212] scale-105 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
+                          : 'border-neutral-200 dark:border-neutral-800 bg-transparent'
+                    }`}
+                  >
+                    {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-neutral-300 dark:bg-[#1f222e] rounded-full z-10 animate-ping" />}
                     
-                    {!isUsed && !t.isEmpty && isActive && (
-                      <g style={{ transform: `rotate(${toolRotations[i]}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
-                        {t.pins.map(p => {
-                          const { x: x1, y: y1 } = getCoords(p, 12, 22); 
-                          const { x: x2, y: y2 } = getCoords(p, 18, 22); 
-                          return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-cyan-500 dark:stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
-                        })}
-                      </g>
-                    )}
-                  </svg>
-                </div>
-              );
-            })}
+                    <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
+                      <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-neutral-300 dark:stroke-[#1f222e]" />
+                      
+                      {!isUsed && !t.isEmpty && isActive && (
+                        <g style={{ transform: `rotate(${toolRotations[i]}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
+                          {t.pins.map(p => {
+                            const { x: x1, y: y1 } = getCoords(p, 12, 22); 
+                            const { x: x2, y: y2 } = getCoords(p, 18, 22); 
+                            return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-cyan-500 dark:stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
+                          })}
+                        </g>
+                      )}
+                    </svg>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* OVERLAY */}
+            {(gameState === 'won' || gameState === 'lost') && (
+              <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-md z-50 flex items-center justify-center animate-blur-fade p-4">
+                {gameState === 'lost' && (
+                  <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    CHAVES ESGOTADAS | SISTEMA BLOQUEADO
+                  </div>
+                )}
+                {gameState === 'won' && (
+                  <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    </svg>
+                    CRIPTOGRAFIA QUEBRADA | SUCESSO
+                  </div>
+                )}
+              </div>
+            )}
+
           </div>
 
           {/* RODAPÉ */}
-          <div className={`flex items-center border-t border-neutral-200 dark:border-neutral-900 pt-5 w-full relative transition-colors ${
-            (gameState === 'won' || gameState === 'lost') ? 'justify-center' : 'justify-between gap-6'
-          }`}>
+          <div className="flex items-center justify-between border-t border-neutral-200 dark:border-neutral-900 p-6 pt-5 w-full relative transition-colors gap-6 bg-neutral-50/20 dark:bg-neutral-900/10">
+            <div className="text-[10px] font-bold text-neutral-500 dark:text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-5 gap-y-1 items-center flex-1 min-w-0">
+              {(gameState === 'won' || gameState === 'lost') ? (
+                <span>APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
+              ) : gameState === 'playing' ? (
+                <>
+                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[A/D]</span> Rotacionar</div>
+                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Q/E]</span> Mudar Escolha</div>
+                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Enter]</span> Encaixar</div>
+                </>
+              ) : (
+                <span className="text-neutral-500 font-bold">APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
+              )}
+            </div>
             
-            {(gameState === 'won' || gameState === 'lost') ? (
-              <button 
-                onClick={pararSistema} 
-                className="w-full py-4 bg-neutral-900 text-white hover:bg-black dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.98] dark:text-black font-mono font-black text-sm uppercase tracking-[0.1em] rounded-xl shadow-lg dark:shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out animate-blur-fade"
-              >
-                Voltar ao Menu Principal
-              </button>
-            ) : (
-              <>
-                <div className="text-[10px] font-bold text-neutral-500 dark:text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-4 gap-y-1 items-center flex-1 min-w-0">
-                  {gameState === 'playing' ? (
-                    <>
-                      <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[A/D]</span> ROTACIONAR</div>
-                      <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[Q/E]</span> MUDAR</div>
-                      <div><span className="text-neutral-700 dark:text-neutral-400 font-black mr-1">[ENTER]</span> ENCAIXAR</div>
-                    </>
-                  ) : (
-                    <span className="text-neutral-500 font-bold">Aperte ESPAÇO ou ENTER para iniciar...</span>
-                  )}
-                </div>
-                
-                <div className="flex-shrink-0">
-                  {gameState === 'playing' ? (
-                    <button 
-                      onClick={pararSistema} 
-                      className="px-5 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out whitespace-nowrap"
-                    >
-                      Finalizar Sistema
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={iniciarSistema} 
-                      className="px-5 py-2.5 bg-cyan-400 hover:bg-cyan-300 dark:bg-[#3be8ff] dark:hover:bg-[#66f0ff] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(6,182,212,0.3)] dark:shadow-[0_0_25px_rgba(59,232,255,0.35)] transition-all duration-300 ease-out whitespace-nowrap"
-                    >
-                      Iniciar Sistema
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-
+            <div className="flex-shrink-0">
+              {gameState === 'playing' ? (
+                <button 
+                  onClick={pararSistema} 
+                  className="px-5 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out whitespace-nowrap"
+                >
+                  Finalizar Sistema
+                </button>
+              ) : gameState === 'won' || gameState === 'lost' ? (
+                <button 
+                  onClick={pararSistema} 
+                  className="px-6 py-2.5 bg-neutral-200 text-black hover:bg-neutral-300 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out whitespace-nowrap"
+                >
+                  Voltar ao Menu
+                </button>
+              ) : (
+                <button 
+                  onClick={iniciarSistema} 
+                  className="px-5 py-2.5 bg-cyan-400 hover:bg-cyan-300 dark:bg-[#3be8ff] dark:hover:bg-[#66f0ff] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(6,182,212,0.3)] dark:shadow-[0_0_25px_rgba(59,232,255,0.35)] transition-all duration-300 ease-out whitespace-nowrap"
+                >
+                  Iniciar Sistema
+                </button>
+              )}
+            </div>
           </div>
 
         </div>
@@ -503,7 +501,7 @@ export default function Digipick() {
                   <path d="M9 18h6"/>
                   <path d="M10 22h4"/>
                 </svg>
-                Guia da Lockpick
+                Guia do Minigame
               </div>
               <button 
                 onClick={() => setShowHint(false)} 
@@ -535,7 +533,7 @@ export default function Digipick() {
             </div>
 
             <p className="text-[10px] text-neutral-600 dark:text-neutral-400 leading-relaxed tracking-wide">
-              Selecione uma chave no grid inferior e use <span className="text-neutral-900 dark:text-neutral-200 font-bold">[A/D]</span> para girá-la até alinhar os dentes com as frestas vazias do anel ativo. Alterne entre as opções usando <span className="text-neutral-900 dark:text-neutral-200 font-bold">[Q/E]</span> e aperte <span className="text-amber-600 dark:text-amber-500 font-bold">ENTER</span> para encaixar. Planeje bem, pois chaves falsas estão misturadas!
+              Selecione uma chave no grid inferior e use <span className="text-neutral-900 dark:text-neutral-200 font-bold">[A/D]</span> para girá-la até alinhar os dentes com as frestas vazias do anel ativo. Alterne entre as opções usando <span className="text-neutral-900 dark:text-neutral-200 font-bold">[Q/E]</span> e aperte <span className="text-amber-600 dark:text-amber-500 font-bold">Enter</span> para encaixar. Planeje bem, pois chaves falsas estão misturadas!
             </p>
           </div>
         ) : (
@@ -544,7 +542,7 @@ export default function Digipick() {
             className="bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 text-cyan-600 dark:text-[#3be8ff] hover:text-cyan-500 dark:hover:text-[#66f0ff] hover:border-cyan-300 dark:hover:border-[#3be8ff]/40 hover:scale-[1.04] active:scale-[0.96] px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xl flex items-center gap-1.5 transition-all duration-300 ease-out"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5 2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
               <path d="M9 18h6"/>
               <path d="M10 22h4"/>
             </svg>

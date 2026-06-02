@@ -97,20 +97,20 @@ export default function Home() {
           {/* CARD CAIXINHA */}
           <button 
             onClick={() => navigate('/caixinha')} 
-            className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-emerald-400 dark:hover:border-emerald-400/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(52,211,153,0.08)]"
+            className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-red-400 dark:hover:border-red-400/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(239,68,68,0.08)]"
           >
-            <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-emerald-100 dark:group-hover:bg-emerald-950/30 group-hover:border-emerald-300 dark:group-hover:border-emerald-500/30 transition-all duration-300">
+            <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-red-600 dark:text-red-400 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-red-100 dark:group-hover:bg-red-950/30 group-hover:border-red-300 dark:group-hover:border-red-500/30 transition-all duration-300">
               CAIXINHA
             </div>
             <div className="pt-4">
-              <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-wider">
+              <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors uppercase tracking-wider">
                 Caixinha
               </h3>
               <p className="text-neutral-500 dark:text-neutral-500 text-[11px] leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-400 transition-colors">
                 Objetivo:<br/><br/> Sobrecarregue o circuito digitando sequências de 8 caracteres em 3 fases sem errar.<br/><br/> - Tempo limite: 4 segundos cada etapa<br/><br/>- Dificuldade: Alta
               </p>
             </div>
-            <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
+            <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-red-600 dark:group-hover:text-red-400 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
               Acessar Módulo <span className="animate-pulse">_</span>
             </span>
           </button>
@@ -118,20 +118,20 @@ export default function Home() {
           {/* CARD PORTA MALAS */}
           <button 
             onClick={() => navigate('/portamalas')} 
-            className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-blue-400 dark:hover:border-blue-400/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(59,130,246,0.08)]"
+            className="group relative p-5 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl flex flex-col justify-between aspect-square text-left transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.98] hover:border-emerald-400 dark:hover:border-emerald-400/50 shadow-md dark:shadow-none hover:shadow-lg dark:hover:shadow-[0_0_35px_rgba(16,185,129,0.08)]"
           >
-            <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-blue-500 dark:text-blue-300 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-blue-100 dark:group-hover:bg-blue-950/30 group-hover:border-blue-300 dark:group-hover:border-blue-500/30 transition-all duration-300">
+            <div className="absolute top-4 right-4 text-[8px] bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-emerald-500 dark:text-emerald-300 px-2 py-0.5 rounded font-black tracking-widest group-hover:bg-emerald-100 dark:group-hover:bg-emerald-950/30 group-hover:border-emerald-300 dark:group-hover:border-emerald-500/30 transition-all duration-300">
               PORTA MALAS
             </div>
             <div className="pt-4">
-              <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-wider">
+              <h3 className="text-sm font-black mb-3 text-neutral-800 dark:text-neutral-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors uppercase tracking-wider">
                 Porta Malas
               </h3>
               <p className="text-neutral-500 dark:text-neutral-500 text-[11px] leading-relaxed group-hover:text-neutral-700 dark:group-hover:text-neutral-400 transition-colors">
                 Objetivo:<br/><br/> Encaixe os pinos de forma aleatória até completar a sequência para abrir o porta malas.<br/><br/> - Tempo limite: 1 minuto<br/><br/> - Dificuldade: Média
               </p>
             </div>
-            <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
+            <span className="text-[9px] text-neutral-400 dark:text-neutral-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 font-black tracking-widest uppercase transition-colors flex items-center gap-1">
               Acessar Módulo <span className="animate-pulse">_</span>
             </span>
           </button>
@@ -190,8 +190,8 @@ export default function Home() {
               </h2>
               
               <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-[13px] leading-relaxed tracking-wide text-justify">
-                Este sistema foi desenvolvido com fins de estudo e, para aprimoramento dos sistemas utilizados no servidor Cidade Alta, dentro do FiveM. Trata-se de um projeto totalmente independente, sem qualquer vínculo, parceria ou associação com os desenvolvedores, administradores ou responsáveis pelo servidor.<br/><br/>
-                Esse projeto foi criado por um jogador entusiasta e estudante de Desenvolvimento de Sistemas, com o objetivo de aprendizado e prática dos usuários.<br/><br/>
+                Este sistema foi desenvolvido para auxiliar os usuários com testes dos sistemas presentes no servidor Cidade Alta dentro do FiveM. O projeto é totalmente independente e não possui qualquer vínculo com os desenvolvedores, administradores ou responsáveis pelo servidor.<br/><br/>
+                Criado por um jogador da comunidade e estudante de Desenvolvimento de Sistemas, o projeto surgiu da necessidade de ter um ambiente dedicado para treinar e aperfeiçoar o uso dos sistemas presentes no servidor.<br/><br/>
                 Em caso de dúvidas, sugestões ou problemas, entre em contato por meio do repositório do projeto no GitHub. Caso tenha interesse em conhecer o servidor <span className="text-amber-600 dark:text-amber-500">Cidade Alta</span>, utilize o link disponibilizado abaixo.
               </p>
               
@@ -199,7 +199,14 @@ export default function Home() {
                 
                 <div className="flex justify-between items-center text-xs font-bold tracking-widest uppercase">
                   <span className="text-neutral-500">Desenvolvedor:</span>
-                  <span className="text-purple-600 dark:text-purple-400">EliPe0</span>
+                  <a 
+                    href="https://discord.com/users/432954675734511626" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 hover:underline dark:hover:drop-shadow-[0_0_6px_rgba(96,165,250,0.4)] transition-all duration-200"
+                  >
+                    EliPe0
+                  </a>
                 </div>
 
                 <div className="flex justify-between items-center text-xs font-bold tracking-widest uppercase border-t border-neutral-200 dark:border-neutral-900/60 pt-4">

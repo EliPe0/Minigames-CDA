@@ -86,11 +86,11 @@ export default function Sidebar() {
               <Icons.Key /> Lockpick
             </button>
             
-            <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-400/40 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-4０ dark:hover:bg-neutral-9００/6０'}`}>
+            <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-red-100 border-red-300 text-red-700 dark:bg-red-500/10 dark:border-red-400/40 dark:text-red-400 dark:shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-neutral-900/60'}`}>
               <Icons.Bomb /> Caixinha
             </button>
 
-            <button onClick={() => handleNavigate('/portamalas')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-500/10 dark:border-blue-400/40 dark:text-blue-400 dark:shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-neutral-900/60'}`}>
+            <button onClick={() => handleNavigate('/portamalas')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-400 dark:hover:bg-neutral-900/60'}`}>
               <Icons.Car /> Porta Malas
             </button>
             
