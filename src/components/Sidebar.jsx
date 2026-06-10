@@ -44,6 +44,12 @@ export default function Sidebar() {
         <circle cx="7" cy="17" r="2"/>
         <circle cx="17" cy="17" r="2"/>
       </svg>
+    ),
+    Laptop: () => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 transition-transform duration-300 group-hover:scale-110">
+        <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="1" y1="20" x2="23" y2="20"></line>
+      </svg>
     )
   };
 
@@ -92,6 +98,10 @@ export default function Sidebar() {
 
             <button onClick={() => handleNavigate('/portamalas')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-400 dark:shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-400 dark:hover:bg-neutral-900/60'}`}>
               <Icons.Car /> Porta Malas
+            </button>
+
+            <button onClick={() => handleNavigate('/hacking')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/hacking' ? 'bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-500/10 dark:border-purple-500/30 dark:text-purple-400 dark:shadow-[0_0_15px_rgba(168,85,247,0.1)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-neutral-900/60'}`}>
+              <Icons.Laptop /> Hacking
             </button>
             
           </div>

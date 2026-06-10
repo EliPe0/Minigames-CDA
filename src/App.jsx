@@ -6,6 +6,7 @@ import Lockpick from './components/Lockpick';
 import Caixinha from './components/Caixinha';
 import PortaMalas from './components/PortaMalas';
 import Sidebar from './components/Sidebar';
+import Hacking from './components/Hacking';
 
 export const ThemeContext = createContext();
 
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/lockpick" element={<Lockpick />} />
               <Route path="/caixinha" element={<Caixinha />} />
               <Route path="/portamalas" element={<PortaMalas />} />
+              <Route path="/hacking" element={<Hacking />} />
             </Routes>
           </main>
         </div>
