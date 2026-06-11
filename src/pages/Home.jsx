@@ -7,7 +7,6 @@ export default function Home() {
   const [showAbout, setShowAbout] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 📂 Dados dos módulos configurados com cores puras e vibrantes
   const modules = [
     {
       title: "Lockpick",
@@ -76,7 +75,7 @@ export default function Home() {
   return (
     <div className="relative flex-1 bg-neutral-50 dark:bg-[#050505] text-neutral-900 dark:text-white flex flex-col items-center justify-center p-6 overflow-hidden select-none transition-colors duration-300 animate-page-reveal">
       
-      {/* ANIMAÇÕES E RESPONSIVIDADE ULTRA FLUÍDA */}
+      {/* ANIMAÇÕES E RESPONSIVIDADE */}
       <style>{`
         @keyframes pageReveal {
           from { opacity: 0; filter: blur(4px); transform: translateY(6px); }
@@ -131,11 +130,11 @@ export default function Home() {
 
       <div className="responsive-wrapper z-10 w-full max-w-xl">
         
-        <div className="text-center mb-8 max-w-sm font-mono animate-page-reveal">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 dark:text-neutral-500 mb-2">
+        <div className="text-center mb-8 max-w font-mono animate-page-reveal">
+          <p className="text-[13px] font-black uppercase tracking-[0.3em] text-neutral-400 dark:text-neutral-500 mb-2">
             Sistema de Treinamento
           </p>
-          <p className="text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400 font-medium px-4">
+          <p className="text-[12px] leading-relaxed text-neutral-500 dark:text-neutral-400 font-medium px-4">
             Selecione um dos módulos abaixo para acessar os desafios de cada sistema do servidor Cidade Alta. Cada módulo foi projetado para simular as mecânicas reais presentes no servidor, permitindo que você pratique e aperfeiçoe suas habilidades em um ambiente dedicado.
           </p>
         </div>

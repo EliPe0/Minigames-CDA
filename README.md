@@ -19,6 +19,10 @@ Um portal minigames inspirado nas mecânicas do servidor **Cidade Alta**. Desenv
 
 ---
 
-## 2. Porta Malas 🚗
+## 3. Porta Malas 🚗
+
+---
+
+## 4. Hacking 💻
 
 ---

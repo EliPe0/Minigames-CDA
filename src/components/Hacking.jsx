@@ -289,13 +289,13 @@ export default function Hacking() {
         <div className="w-full max-w-[640px] bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl dark:shadow-2xl flex flex-col relative overflow-hidden transition-all duration-300">
           
           {/* CABEÇALHO DO COFRE DE DADOS */}
-          <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-between px-6 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-xs font-mono font-black tracking-wider transition-colors">
+          <div className="h-11 bg-neutral-50 dark:bg-[#141414] flex items-center justify-between px-6 border-b border-neutral-200 dark:border-neutral-800/40 text-neutral-600 dark:text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
             <div className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">
                 <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect>
                 <line x1="1" y1="20" x2="23" y2="20"></line>
               </svg>
-              Encontre a Chave para Hackear o Sistema
+              ENCONTRE A CHAVE PARA HACKEAR O SISTEMA
             </div>
             
             <div className="flex gap-4 text-[10px] text-neutral-400">
@@ -332,7 +332,8 @@ export default function Hacking() {
                     <div key={i} className="bg-neutral-100/80 dark:bg-purple-950/10 text-neutral-800 dark:text-purple-400 font-mono font-black text-3xl px-4 py-1.5 rounded-xl border border-neutral-200 dark:border-purple-500/30 backdrop-blur-sm shadow-sm min-w-[64px] text-center">{char}</div>
                   ))
                 ) : (
-                  <span className="text-neutral-400 dark:text-neutral-700 font-mono font-black text-xs tracking-[0.25em] uppercase animate-pulse">[ SINAL INTERROMPIDO ]</span>
+                  /* 🎯 CORRIGIDO: Removido indicador em colchetes poluído por uma badge minimalista limpa */
+                  <span className="text-red-500 border border-red-500/20 bg-red-500/5 px-4 py-1.5 rounded-xl text-xs font-mono font-black tracking-widest uppercase animate-pulse">SINAL INTERROMPIDO</span>
                 )
               ) : (
                 <div className="text-neutral-400 dark:text-neutral-600 font-mono text-[10px] font-black tracking-widest uppercase py-3 transition-all duration-200">
@@ -361,7 +362,6 @@ export default function Hacking() {
                       cellColorClass = "text-purple-600 dark:text-purple-400 font-black drop-shadow-[0_0_10px_rgba(168,85,247,0.4)] scale-110 opacity-100 z-10";
                     } else if (gameState === 'won' && isSelected) {
                       cellColorClass = "text-emerald-500 font-black drop-shadow-[0_0_8px_rgba(16,185,129,0.6)] opacity-100";
-                    /* 🎯 CORRIGIDO: Alterado codesPosRef.current para o estado codesPos reativo */
                     } else if (gameState === 'lost' && idx === ((correctPosRef.current - codesPos + 80) % 80)) {
                       cellColorClass = "text-emerald-500 font-black drop-shadow-[0_0_8px_rgba(16,185,129,0.6)] opacity-100";
                     }
@@ -374,8 +374,13 @@ export default function Hacking() {
                   })}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center font-mono text-center gap-2 z-30">
-                  <div className="text-4xl text-neutral-300 dark:text-neutral-800 animate-pulse">⚡</div>
+                /* 🎯 CORRIGIDO: Emoji de raio deletado. Inserido um vetor SVG geométrico encapsulado premium */
+                <div className="flex flex-col items-center justify-center font-mono text-center gap-3 z-30">
+                  <div className="p-3 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-800 rounded-2xl shadow-sm">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500 dark:text-purple-400">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
                   <div className="text-[10px] text-neutral-400 dark:text-neutral-600 font-black tracking-widest uppercase">RECORD DE VELOCIDADE: {bestTime === 99.999 ? '0.000' : bestTime}s</div>
                 </div>
               )}
@@ -399,7 +404,7 @@ export default function Hacking() {
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                         <polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
-                      SISTEMA HACKEADO | CHAVE DE SINAL LOCALIZADA
+                      SISTEMA IGNORADO | CHAVE DE SINAL LOCALIZADA
                     </div>
                   )}
                 </div>
@@ -494,7 +499,7 @@ export default function Hacking() {
             </div>
 
             <p className="text-[10px] text-neutral-600 dark:text-neutral-400 leading-relaxed tracking-wide">
-              Encontre o bloco de caracteres destacado no topo navegando pela sopa de códigos com <span className="text-neutral-900 dark:text-neutral-200 font-bold">WASD</span>. Aperte <span className="text-purple-600 dark:text-purple-400 font-bold">ENTER</span> exatamente quando sua selection roxa estiver em cima da resposta correta!
+              Encontre o bloco de caracteres destacado no topo navegando pela sopa de códigos com <span className="text-neutral-900 dark:text-neutral-200 font-bold">WASD</span>. Aperte <span className="text-purple-600 dark:text-purple-400 font-bold">ENTER</span> exatamente quando sua seleção roxa estiver em cima da resposta correta!
             </p>
           </div>
         ) : (
