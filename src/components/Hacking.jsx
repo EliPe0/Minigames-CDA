@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const LETTERS = ['A', 'S', 'D', 'Q', 'W', 'E'];
 const CHAR_SETS = {
   numeric: "0123456789",
   alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -15,22 +13,21 @@ const CHAR_SETS = {
 const TEMPO_TOTAL_MS = 15000; 
 
 export default function Hacking() {
-  const navigate = useNavigate();
 
   // --- ESTADOS DE PONTUAÇÃO ---
   const [gameState, setGameState] = useState('idle'); 
   const [streak, setStreak] = useState(0);
   const [showHint, setShowHint] = useState(true);
   const [maxStreak, setMaxStreak] = useState(() => {
-    const match = document.cookie.match(/max-streak_hacking=(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
+    const saved = localStorage.getItem('max-streak_hacking');
+    return saved ? parseInt(saved, 10) : 0;
   });
   const [bestTime, setBestTime] = useState(() => {
-    const match = document.cookie.match(/best-time_hacking=([\d.]+)/);
-    return match ? parseFloat(match[1]) : 99.999;
+    const saved = localStorage.getItem('best-time_hacking');
+    return saved ? parseFloat(saved) : 99.999;
   });
 
-  // --- ENGINE TOTALMENTE REATIVA ---
+  // --- ENGINE ---
   const [isMirroredActive, setIsMirroredActive] = useState(false);
   const [codes, setCodes] = useState([]);
   const [codesPos, setCodesPos] = useState(0);
@@ -96,14 +93,14 @@ export default function Hacking() {
         const next = prev + 1;
         if (next > maxStreak) {
           setMaxStreak(next);
-          document.cookie = "max-streak_hacking=" + next + "; max-age=31536000; path=/";
+          localStorage.setItem('max-streak_hacking', String(next));
         }
         return next;
       });
 
       if (tempoDecorrido < bestTime) {
         setBestTime(parseFloat(tempoDecorrido.toFixed(3)));
-        document.cookie = "best-time_hacking=" + tempoDecorrido.toFixed(3) + "; max-age=31536000; path=/";
+        localStorage.setItem('best-time_hacking', tempoDecorrido.toFixed(3));
       }
       setGameState('won');
     } else {
@@ -306,7 +303,7 @@ export default function Hacking() {
 
           <div className="flex flex-col w-full pb-6 pt-5 relative">
             
-            {/* SISTEMA DE CRONÔMETRO FLUIDO */}
+            {/* CRONÔMETRO */}
             <div className="flex flex-col items-center gap-2 px-8 mb-6">
               <div className="flex justify-between w-full text-[10px] font-mono font-black text-neutral-400 uppercase tracking-widest px-0.5">
                 <span className="flex items-center gap-1">
@@ -324,7 +321,7 @@ export default function Hacking() {
               </div>
             </div>
 
-            {/* BLOCO CENTRALIZADO DO ALVO (FIND) */}
+            {/* BLOCO DO ALVO*/}
             <div className="flex gap-3 items-center justify-center h-20 mb-4 w-full px-8">
               {gameState === 'playing' ? (
                 !isTargetHidden ? (
@@ -332,7 +329,6 @@ export default function Hacking() {
                     <div key={i} className="bg-neutral-100/80 dark:bg-purple-950/10 text-neutral-800 dark:text-purple-400 font-mono font-black text-3xl px-4 py-1.5 rounded-xl border border-neutral-200 dark:border-purple-500/30 backdrop-blur-sm shadow-sm min-w-[64px] text-center">{char}</div>
                   ))
                 ) : (
-                  /* 🎯 CORRIGIDO: Removido indicador em colchetes poluído por uma badge minimalista limpa */
                   <span className="text-red-500 border border-red-500/20 bg-red-500/5 px-4 py-1.5 rounded-xl text-xs font-mono font-black tracking-widest uppercase animate-pulse">SINAL INTERROMPIDO</span>
                 )
               ) : (
@@ -343,7 +339,7 @@ export default function Hacking() {
               )}
             </div>
 
-            {/* MATRIZ IMPRESSA COM TEXTO DE ALTA VISIBILIDADE */}
+            {/* MATRIZ */}
             <div className="relative px-8 min-h-[220px] flex items-center justify-center crt-matrix">
               
               <div className="absolute top-1 left-7 w-3 h-3 border-t-2 border-l-2 border-neutral-300 dark:border-neutral-800 pointer-events-none" />
@@ -374,18 +370,17 @@ export default function Hacking() {
                   })}
                 </div>
               ) : (
-                /* 🎯 CORRIGIDO: Emoji de raio deletado. Inserido um vetor SVG geométrico encapsulado premium */
                 <div className="flex flex-col items-center justify-center font-mono text-center gap-3 z-30">
                   <div className="p-3 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-800 rounded-2xl shadow-sm">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500 dark:text-purple-400">
                       <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                     </svg>
                   </div>
-                  <div className="text-[10px] text-neutral-400 dark:text-neutral-600 font-black tracking-widest uppercase">RECORD DE VELOCIDADE: {bestTime === 99.999 ? '0.000' : bestTime}s</div>
+                  <div className="text-[10px] text-neutral-400 dark:text-neutral-600 font-black tracking-widest uppercase">RECORD DE VELOCIDADE: {bestTime === 99.999 ? '0.000' : bestTime.toFixed(3)}s</div>
                 </div>
               )}
 
-              {/* OVERLAYS DE STATUS PREMIUM */}
+              {/* OVERLAYS DE STATUS */}
               {(gameState === 'won' || gameState === 'lost') && (
                 <div className="absolute inset-0 z-50 bg-white/5 dark:bg-black/10 backdrop-blur-sm flex items-center justify-center p-6 animate-blur-fade">
                   {gameState === 'lost' && (

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const TOTAL_PINS = 8;
 const MAX_LEVEL = 3; 
@@ -12,7 +11,6 @@ const gerarPinosIniciais = () => {
 };
 
 export default function PortaMalas() {
-  const navigate = useNavigate();
   const [gameState, setGameState] = useState('idle'); 
   const [pinsProgress, setPinsProgress] = useState(Array(TOTAL_PINS).fill(0)); 
   const [timerProgress, setTimerProgress] = useState(100); 
@@ -32,6 +30,7 @@ export default function PortaMalas() {
 
   const cooldownRef = useRef(false);
   const cooldownTimeoutRef = useRef(null);
+  const shakeTimeoutRef = useRef(null);
 
   useEffect(() => {
     stateRef.current = { gameState, pinsProgress };
@@ -41,6 +40,7 @@ export default function PortaMalas() {
     return () => {
       clearTimeout(clickTimeoutRef.current);
       clearTimeout(cooldownTimeoutRef.current);
+      clearTimeout(shakeTimeoutRef.current);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, []);
@@ -203,7 +203,8 @@ export default function PortaMalas() {
           setPinsProgress(novosPinos);
 
           setScreenShake(true);
-          setTimeout(() => setScreenShake(false), 180);
+          clearTimeout(shakeTimeoutRef.current);
+          shakeTimeoutRef.current = setTimeout(() => setScreenShake(false), 180);
         }
       }
     }

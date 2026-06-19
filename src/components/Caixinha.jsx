@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const LETTERS = ['A', 'S', 'D', 'Q', 'W', 'E'];
 
 export default function CaixinhaTreino() {
-  const navigate = useNavigate();
   const [gameState, setGameState] = useState('idle'); 
   const [sequence, setSequence] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -16,6 +14,7 @@ export default function CaixinhaTreino() {
 
   const timerRef = useRef(null);
   const stateRef = useRef({});
+  const shakeTimeoutRef = useRef(null);
 
   useEffect(() => {
     setSequence(Array(8).fill().map(() => LETTERS[Math.floor(Math.random() * LETTERS.length)]));
@@ -26,7 +25,10 @@ export default function CaixinhaTreino() {
   }, [gameState, sequence, currentIndex, stage]);
 
   useEffect(() => {
-    return () => clearInterval(timerRef.current);
+    return () => {
+      clearInterval(timerRef.current);
+      clearTimeout(shakeTimeoutRef.current);
+    };
   }, []);
 
   const gerarSequencia = () => {
@@ -45,7 +47,7 @@ export default function CaixinhaTreino() {
         }
         return prev - 1;
       });
-    }, 53); 
+    }, 40); 
   };
 
   const iniciarSistemaCompleto = () => {
@@ -85,7 +87,8 @@ export default function CaixinhaTreino() {
 
       if (nextIndex === 8) {
         setScreenShake('green');
-        setTimeout(() => setScreenShake(false), 160);
+        clearTimeout(shakeTimeoutRef.current);
+        shakeTimeoutRef.current = setTimeout(() => setScreenShake(false), 160);
 
         if (stg < 3) {
           const proximaEtapa = stg + 1;
@@ -103,7 +106,8 @@ export default function CaixinhaTreino() {
       setCurrentIndex(0);
       
       setScreenShake('red');
-      setTimeout(() => setScreenShake(false), 160);
+      clearTimeout(shakeTimeoutRef.current);
+      shakeTimeoutRef.current = setTimeout(() => setScreenShake(false), 160);
     }
   }, []);
 

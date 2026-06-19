@@ -183,8 +183,7 @@ export default function Digipick() {
       feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 300);
 
       const newSlotted = [...slottedPins, ...rotatedPins];
-      const newTools = [...tools];
-      newTools[activeToolIdx].used = true;
+      const newTools = tools.map((t, idx) => idx === activeToolIdx ? { ...t, used: true } : t);
       setTools(newTools);
 
       if (newSlotted.length === rings[activeRingIdx].length) {
@@ -542,7 +541,7 @@ export default function Digipick() {
             className="bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 text-cyan-600 dark:text-[#3be8ff] hover:text-cyan-500 dark:hover:text-[#66f0ff] hover:border-cyan-300 dark:hover:border-[#3be8ff]/40 hover:scale-[1.04] active:scale-[0.96] px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xl flex items-center gap-1.5 transition-all duration-300 ease-out"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5 2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
               <path d="M9 18h6"/>
               <path d="M10 22h4"/>
             </svg>
