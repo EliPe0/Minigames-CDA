@@ -106,7 +106,7 @@ export default function Sidebar() {
               : 'bg-transparent border-transparent text-neutral-500 hover:text-amber-500 hover:bg-neutral-900/60'
           }`}
         >
-          <Icons.Medal /> Ranking
+          <Icons.Trophy /> Ranking
         </button>
       </div>
       
