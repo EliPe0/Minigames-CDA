@@ -97,7 +97,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* 🎯 SEÇÃO INFERIOR COESA: O RANKING GLOBAL AGORA É FIXADO NO RODAPÉ UTILITÁRIO */}
       <div className="mt-auto text-xs font-bold uppercase tracking-widest border-t border-neutral-900 pt-4">
         <button 
           onClick={() => handleNavigate('/ranking')} 
@@ -107,7 +106,7 @@ export default function Sidebar() {
               : 'bg-transparent border-transparent text-neutral-500 hover:text-amber-500 hover:bg-neutral-900/60'
           }`}
         >
-          <Icons.Trophy /> Ranking Global
+          <Icons.Medal /> Ranking
         </button>
       </div>
       

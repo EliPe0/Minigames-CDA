@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// 🎯 Importação do novo serviço consolidado de telemetria
 import { registerAttempt } from '../services/rankingService';
 
 const CHAR_SETS = {

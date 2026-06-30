@@ -144,7 +144,7 @@ export default function CaixinhaTreino() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-[#050505] p-6 font-sans select-none w-full relative overflow-hidden text-white animate-page-reveal">
       
-      {/* TRIGGER DA GAVETA DE GUIA */}
+      {/* DICA*/}
       {!showHint && (
         <button
           onClick={() => setShowHint(true)}

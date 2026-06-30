@@ -121,7 +121,7 @@ export default function Digipick() {
   const [feedback, setFeedback] = useState(null); 
   const [showHint, setShowHint] = useState(false);
   
-  const [streak, setStreak] = useState(0); // Rodando oculto em background
+  const [streak, setStreak] = useState(0);
 
   const [toolRotations, setToolRotations] = useState(Array(12).fill(0));
 
@@ -147,7 +147,6 @@ export default function Digipick() {
   };
 
   const pararSistema = () => {
-    // 🎯 REGRA APLICADA: Abortou no meio = Perdeu
     if (gameState === 'playing') {
       registerAttempt('lockpick', false, 0, null);
       setStreak(0);
@@ -350,7 +349,7 @@ export default function Digipick() {
           </div>
         </div>
 
-        {/* PAINEL DE CONTROLE ORIGINAL INTACTO */}
+        {/* PAINEL DE CONTROLE */}
         <div className="w-[480px] bg-[#0c0c0c] rounded-xl border border-neutral-800 shadow-2xl overflow-hidden font-mono">
           
           <div className="p-6 relative">
@@ -401,7 +400,7 @@ export default function Digipick() {
               })}
             </div>
 
-            {/* OVERLAY DE STATUS ESTÁTICO */}
+            {/* OVERLAY DE STATUS */}
             {(gameState === 'won' || gameState === 'lost') && (
               <div className="absolute inset-0 bg-black/20 backdrop-blur-md z-50 flex items-center justify-center animate-blur-fade p-4">
                 {gameState === 'lost' && (
@@ -425,7 +424,7 @@ export default function Digipick() {
 
           </div>
 
-          {/* RODAPÉ KBD KEYS ORIGINAL INTACTO */}
+          {/* RODAPÉ */}
           <div className="flex items-center justify-between border-t border-neutral-900 p-6 pt-5 w-full relative transition-colors gap-6 bg-neutral-900/10">
             <div className="flex flex-wrap gap-x-4 gap-y-2 items-center flex-1 text-[10px] font-bold tracking-wider uppercase text-neutral-500">
               {gameState === 'playing' ? (
@@ -475,7 +474,7 @@ export default function Digipick() {
 
       </div>
 
-      {/* GAVETA TÁTICA RETRÁTIL COM TEXTO COMPLETO RESTAURADO */}
+      {/* DICA */}
       <div className={`fixed top-0 right-0 h-full w-[340px] bg-[#0c0c0c] border-l border-neutral-800 z-50 flex flex-col font-mono shadow-2xl transition-transform duration-300 ease-in-out ${showHint ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="h-14 bg-[#141414] border-b border-neutral-800/60 flex items-center justify-between px-5 text-[#3be8ff] text-[11px] font-black uppercase tracking-wider shrink-0">
           <div className="flex items-center gap-1.5">

@@ -20,7 +20,6 @@ export default function PortaMalas() {
   const [showHint, setShowHint] = useState(false); 
   const [screenShake, setScreenShake] = useState(false); 
   
-  // Streak roda em background para o banco, sem poluir a interface
   const [streak, setStreak] = useState(0);
 
   const cursorRef = useRef(null);
@@ -73,7 +72,6 @@ export default function PortaMalas() {
     setGameState('playing');
   };
 
-  // 🎯 REGRA APLICADA: Abortou no meio = Perdeu
   const pararSistema = () => {
     if (gameState === 'playing') {
       registerAttempt('portamalas', false, 0, null);

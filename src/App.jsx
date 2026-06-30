@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Importação dos seus componentes e páginas
 import Sidebar from './components/Sidebar';
-import Home from './pages/Home'; // Supondo que você tenha uma página inicial
+import Home from './pages/Home';
 import Ranking from './pages/Ranking';
 import Lockpick from './components/Lockpick';
 import Caixinha from './components/Caixinha';
@@ -13,18 +12,15 @@ import Hacking from './components/Hacking';
 export default function App() {
   return (
     <Router>
-      {/* 📱 TELA DE BLOQUEIO MOBILE (Só aparece em telas menores que 768px) */}
+      {/* 📱 TELA DE BLOQUEIO MOBILE */}
       <div className="flex md:hidden flex-col items-center justify-center min-h-screen bg-[#050505] text-white p-6 font-mono select-none text-center relative overflow-hidden z-[999]">
         
-        {/* Efeito de grade no fundo */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
 
         <div className="w-full max-w-sm bg-[#0c0c0c] border border-red-900/40 p-8 rounded-2xl shadow-[0_0_50px_rgba(220,38,38,0.15)] relative flex flex-col items-center gap-6 animate-page-reveal">
           
-          {/* Barra de Alerta Superior */}
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-900 via-red-500 to-red-900 opacity-80" />
 
-          {/* Ícone de Terminal Bloqueado (Animado) */}
           <div className="relative">
             <div className="absolute inset-0 bg-red-500 rounded-full blur-xl opacity-20 animate-pulse" />
             <div className="w-20 h-20 bg-[#141414] border border-red-500/30 rounded-full flex items-center justify-center text-red-500 relative z-10">
@@ -37,7 +33,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Textos Táticos */}
           <div className="flex flex-col gap-3">
             <h2 className="text-red-500 font-black text-xl tracking-widest uppercase">
               Acesso Restrito
@@ -59,13 +54,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* 💻 APLICAÇÃO DESKTOP (Só aparece em telas maiores que 768px) */}
+      {/* 💻 APLICAÇÃO DESKTOP */}
       <div className="hidden md:flex h-screen w-full bg-[#050505] overflow-hidden">
         
         {/* Menu Lateral */}
         <Sidebar />
 
-        {/* Área Principal onde as rotas são renderizadas */}
+        {/* Área Principal */}
         <main className="flex-1 flex flex-col relative h-full overflow-hidden">
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />

@@ -97,7 +97,7 @@ export default function Ranking() {
           )}
         </div>
 
-        {/* CONTÊINER PRINCIPAL DA CLASSIFICAÇÃO */}
+        {/* CONTÊINER PRINCIPAL */}
         <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-2xl flex flex-col shadow-2xl min-h-[482px] relative overflow-hidden">
           <div className={`h-[2px] w-full transition-colors duration-500 ${currentConfig.bgAccent.replace('10', '50')}`} />
 
@@ -117,7 +117,7 @@ export default function Ranking() {
             })}
           </div>
 
-          {/* TABELA TELEMÉTRICA PREMIUM */}
+          {/* TABELA TELEMÉTRICA */}
           <div className="p-2 flex-1 flex flex-col justify-start">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
@@ -135,7 +135,6 @@ export default function Ranking() {
                     const position = idx + 1;
                     const posColor = position === 1 ? 'text-amber-400 font-black' : position === 2 ? 'text-neutral-300' : position === 3 ? 'text-amber-600' : 'text-neutral-600';
                     
-                    // Tratamento seguro do tempo recorde
                     const formatTime = row.best_time === 999.99 ? '--' : `${row.best_time.toFixed(2)}s`;
                     
                     return (
