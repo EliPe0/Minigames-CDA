@@ -82,8 +82,8 @@ export default function Ranking() {
             </div>
           ) : (
             <div className="flex flex-col gap-0.5">
-              <div className="text-[10px] text-neutral-400 font-black uppercase tracking-wider">Sincronização de Rede</div>
-              <div className="text-xs text-neutral-500">Vincule sua conta para registrar recordes.</div>
+              <div className="text-[10px] text-neutral-400 font-black uppercase tracking-wider">Leaderboard</div>
+              <div className="text-xs text-neutral-500">Vincule sua conta para registrar seu desempenho.</div>
             </div>
           )}
 
@@ -153,8 +153,8 @@ export default function Ranking() {
                 ) : !loading ? (
                   <tr>
                     <td colSpan="5" className="py-36 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest px-6 leading-relaxed">
-                      Nenhum bypass registrado neste módulo.<br />
-                      <span className="text-neutral-700 font-normal lowercase">Aguardando quebra de assinatura de circuito...</span>
+                      Nenhum registro encontrado ainda.<br />
+                      <span className="text-neutral-700 font-normal lowercase">Aguardando novos participantes...</span>
                     </td>
                   </tr>
                 ) : null}
