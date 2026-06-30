@@ -10,3 +10,45 @@ html, body, #root {
   height: 100vh;
   overflow: hidden; 
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes pageReveal {
+  from { opacity: 0; filter: blur(4px); transform: translateY(6px); }
+  to { opacity: 1; filter: blur(0px); transform: translateY(0); }
+}
+@keyframes blurFadeIn {
+  from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
+  to { opacity: 1; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
+}
+@keyframes smoothRevealUp {
+  from { transform: scale(0.97) translateY(5px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.animate-page-reveal { animation: pageReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-blur-fade { animation: blurFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-elastic-pop { animation: smoothRevealUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.responsive-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transform-origin: center center;
+  transition: transform 0.3s ease-out;
+}
+@media (max-height: 900px) { .responsive-wrapper { transform: scale(0.95); } }
+@media (max-height: 800px) { .responsive-wrapper { transform: scale(0.85); } }
+@media (max-height: 700px) { .responsive-wrapper { transform: scale(0.72); } }
+@media (max-height: 600px) { .responsive-wrapper { transform: scale(0.60); } }
+
+@keyframes routeLoad {
+  0% { width: 0%; opacity: 1; }
+  70% { width: 70%; opacity: 1; }
+  100% { width: 100%; opacity: 0; }
+}
+.animate-route-load { animation: routeLoad 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards; }

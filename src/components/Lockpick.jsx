@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registerAttempt } from '../services/rankingService';
 
 // --- MATEMÁTICA DO CÍRCULO ---
 const getCoords = (angle, radius, center = 200) => {
@@ -7,7 +8,7 @@ const getCoords = (angle, radius, center = 200) => {
   return { x: center + radius * Math.cos(rad), y: center + radius * Math.sin(rad) };
 };
 
-// --- MOTOR PROCEDURAL AJUSTADO ---
+// --- MOTOR PROCEDURAL ---
 const generatePuzzle = () => {
   const numRings = 3; 
   const possibleAngles = Array.from({ length: 24 }, (_, i) => i * 15); 
@@ -20,13 +21,9 @@ const generatePuzzle = () => {
     const roll = Math.random();
 
     if (r === 0) {
-      if (roll < 0.90) {
-        toolsForThisRing = 1; 
-      } else if (roll < 0.97) {
-        toolsForThisRing = 2; 
-      } else {
-        toolsForThisRing = 3; 
-      }
+      if (roll < 0.90) toolsForThisRing = 1; 
+      else if (roll < 0.97) toolsForThisRing = 2; 
+      else toolsForThisRing = 3;
     } else {
       if (roll < 0.05) toolsForThisRing = 1; 
       else if (roll < 0.60) toolsForThisRing = 2;
@@ -122,9 +119,10 @@ export default function Digipick() {
   const [slottedPins, setSlottedPins] = useState([]); 
   const [timer, setTimer] = useState(90); 
   const [feedback, setFeedback] = useState(null); 
-  const [showHint, setShowHint] = useState(true);
+  const [showHint, setShowHint] = useState(false);
+  
+  const [streak, setStreak] = useState(0); // Rodando oculto em background
 
-  // 🧠 MEMÓRIA DE ROTAÇÃO
   const [toolRotations, setToolRotations] = useState(Array(12).fill(0));
 
   const intervalRef = useRef(null);
@@ -149,6 +147,11 @@ export default function Digipick() {
   };
 
   const pararSistema = () => {
+    // 🎯 REGRA APLICADA: Abortou no meio = Perdeu
+    if (gameState === 'playing') {
+      registerAttempt('lockpick', false, 0, null);
+      setStreak(0);
+    }
     setGameState('idle');
     setActiveRingIdx(0); setActiveToolIdx(0);
     setToolRotations(Array(12).fill(0));
@@ -188,6 +191,12 @@ export default function Digipick() {
 
       if (newSlotted.length === rings[activeRingIdx].length) {
         if (activeRingIdx + 1 === rings.length) { 
+          const tempoDecorrido = 90 - timer;
+          const nextStreak = streak + 1;
+          
+          setStreak(nextStreak);
+          registerAttempt('lockpick', true, nextStreak, tempoDecorrido);
+
           setGameState('won'); 
         } else { 
           setActiveRingIdx(p => p + 1); 
@@ -202,7 +211,7 @@ export default function Digipick() {
       setFeedback('incorrect');
       feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 300);
     }
-  }, [activeToolIdx, activeRingIdx, rings, slottedPins, tools, toolRotations, cycleTool]);
+  }, [activeToolIdx, activeRingIdx, rings, slottedPins, tools, toolRotations, timer, cycleTool, streak]);
 
   const handleInput = useCallback((action) => {
     if (gameState !== 'playing') return;
@@ -254,7 +263,15 @@ export default function Digipick() {
   useEffect(() => {
     if (gameState === 'playing') {
       intervalRef.current = setInterval(() => {
-        setTimer(p => { if (p <= 1) { setGameState('lost'); return 0; } return p - 1; });
+        setTimer(p => { 
+          if (p <= 1) { 
+            registerAttempt('lockpick', false, 0, null);
+            setStreak(0);
+            setGameState('lost'); 
+            return 0; 
+          } 
+          return p - 1; 
+        });
       }, 1000);
     } else clearInterval(intervalRef.current);
     return () => clearInterval(intervalRef.current);
@@ -263,67 +280,38 @@ export default function Digipick() {
   if (rings.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 dark:bg-black p-4 font-sans selection:bg-transparent select-none transition-colors duration-300 animate-page-reveal overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black p-4 font-sans selection:bg-transparent select-none animate-page-reveal overflow-hidden text-white">
       
-      {/* ANIMAÇÕES E RESPONSIVIDADE */}
-      <style>{`
-        @keyframes pageReveal {
-          from { opacity: 0; filter: blur(6px); transform: translateY(10px) scale(0.99); }
-          to { opacity: 1; filter: blur(0px); transform: translateY(0) scale(1); }
-        }
-        .animate-page-reveal { animation: pageReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      {!showHint && (
+        <button
+          onClick={() => setShowHint(true)}
+          className="absolute top-6 right-6 z-40 flex items-center gap-2 px-4 py-2 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 hover:text-[#3be8ff] hover:border-[#3be8ff]/40 transition-all font-mono text-[11px] font-bold uppercase tracking-wider"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+            <path d="M9 18h6"/><path d="M10 22h4"/>
+          </svg>
+          Ver Guia
+        </button>
+      )}
 
-        @keyframes blurFadeIn {
-          from { opacity: 0; background-color: rgba(0,0,0,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(0,0,0,0.15); backdrop-filter: blur(8px); }
-        }
-        @keyframes blurFadeInLight {
-          from { opacity: 0; background-color: rgba(255,255,255,0); backdrop-filter: blur(0px); }
-          to { opacity: 1; background-color: rgba(255,255,255,0.4); backdrop-filter: blur(8px); }
-        }
-        @keyframes smoothRevealUp {
-          from { transform: translateY(8px) scale(0.98); opacity: 0; }
-          to { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .animate-blur-fade { animation: blurFadeInLight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .dark .animate-blur-fade { animation: blurFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-elastic-pop { animation: smoothRevealUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        .responsive-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          transform-origin: center center;
-          transition: transform 0.3s ease-out;
-        }
-        @media (max-height: 900px) { .responsive-wrapper { transform: scale(0.95); } }
-        @media (max-height: 800px) { .responsive-wrapper { transform: scale(0.85); } }
-        @media (max-height: 700px) { .responsive-wrapper { transform: scale(0.75); } }
-        @media (max-height: 600px) { .responsive-wrapper { transform: scale(0.65); } }
-        @media (max-width: 520px) { .responsive-wrapper { transform: scale(0.75); } }
-        @media (max-width: 400px) { .responsive-wrapper { transform: scale(0.65); } }
-      `}</style>
-
-      {/* WRAPPER */}
-      <div className="responsive-wrapper">
+      <div className={`transition-all duration-300 responsive-wrapper ${showHint ? 'pr-[340px]' : ''}`}>
         
         {/* WRAPPER DO COFRE */}
         <div className="relative flex items-center justify-center w-full max-w-[500px] mb-12">
           
-          <div className={`relative w-[420px] h-[420px] flex items-center justify-center rounded-full bg-white dark:bg-[#070707] border transition-all duration-300 ${
+          <div className={`relative w-[420px] h-[420px] flex items-center justify-center rounded-full bg-[#070707] border transition-all duration-300 ${
             feedback === 'correct' ? 'border-emerald-500/40 shadow-[0_0_60px_rgba(16,185,129,0.25)]' :
             feedback === 'incorrect' ? 'border-red-500/40 shadow-[0_0_60px_rgba(239,68,68,0.25)]' :
-            'border-neutral-200 dark:border-neutral-900 shadow-xl dark:shadow-[0_0_80px_rgba(0,0,0,0.9)]'
+            'border-neutral-900 shadow-xl'
           }`}>
             
-            {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-500/5 pointer-events-none animate-pulse" />}
-            {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/10 dark:bg-red-500/5 pointer-events-none animate-pulse" />}
+            {feedback === 'correct' && <div className="absolute inset-0 rounded-full bg-emerald-500/5 pointer-events-none animate-pulse" />}
+            {feedback === 'incorrect' && <div className="absolute inset-0 rounded-full bg-red-500/5 pointer-events-none animate-pulse" />}
 
             <svg width="400" height="400" viewBox="0 0 400 400">
-              <circle cx="200" cy="200" r="185" fill="none" strokeWidth="1" className="stroke-cyan-500 dark:stroke-[#3be8ff] opacity-20" />
-              <circle cx="200" cy="200" r="175" className="fill-neutral-100 dark:fill-[#030303] transition-colors duration-300" />
+              <circle cx="200" cy="200" r="185" fill="none" strokeWidth="1" className="stroke-[#3be8ff] opacity-20" />
+              <circle cx="200" cy="200" r="175" className="fill-[#030303]" />
 
               {rings.map((holes, i) => {
                 if (i < activeRingIdx) return null;
@@ -337,45 +325,42 @@ export default function Digipick() {
 
                 return (
                   <g key={i}>
-                    <circle cx="200" cy="200" r={radius} fill="none" strokeWidth={strokeThickness} className={`transition-all duration-300 ${isActive ? "stroke-neutral-300 dark:stroke-[#1f222e]" : "stroke-neutral-200 dark:stroke-[#0d0f14]"}`} />
+                    <circle cx="200" cy="200" r={radius} fill="none" strokeWidth={strokeThickness} className={`transition-all duration-300 ${isActive ? "stroke-[#1f222e]" : "stroke-[#0d0f14]"}`} />
                     {remainingHoles.map(holeAngle => {
                       const p1 = getCoords(holeAngle, radius - strokeThickness - 6);
                       const p2 = getCoords(holeAngle, radius + strokeThickness + 6);
-                      return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} strokeWidth={radius * 0.32} strokeLinecap="butt" className="stroke-neutral-100 dark:stroke-[#030303] transition-colors duration-300" />;
+                      return <line key={holeAngle} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} strokeWidth={radius * 0.32} strokeLinecap="butt" className="stroke-[#030303]" />;
                     })}
                   </g>
                 );
               })}
 
-              {/* PALITINHOS DA CHAVE ATIVA */}
               {gameState === 'playing' && tools[activeToolIdx] && !tools[activeToolIdx].used && !tools[activeToolIdx].isEmpty && (
                 <g style={{ transform: `rotate(${toolRotations[activeToolIdx]}deg)`, transformOrigin: '200px 200px' }} className="transition-transform duration-75">
                   {tools[activeToolIdx].pins.map(p => {
                     const { x, y } = getCoords(p, 185);
-                    return <rect key={p} x={x - 4} y={y - 10} width="8" height="20" rx="2" className="fill-cyan-500 dark:fill-[#3be8ff] drop-shadow-[0_0_8px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
+                    return <rect key={p} x={x - 4} y={y - 10} width="8" height="20" rx="2" className="fill-[#3be8ff] drop-shadow-[0_0_8px_rgba(59,232,255,1)]" style={{ transform: `rotate(${p}deg)`, transformOrigin: `${x}px ${y}px` }} />;
                   })}
                 </g>
               )}
 
-              <rect x="150" y="190" width="100" height="20" rx="10" fill="none" strokeWidth="1" className="stroke-neutral-300 dark:stroke-[#1f222e]" />
-              <text x="200" y="203" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest fill-neutral-400 dark:fill-[#1f222e]">LOCKPICK</text>
+              <rect x="150" y="190" width="100" height="20" rx="10" fill="none" strokeWidth="1" className="stroke-[#1f222e]" />
+              <text x="200" y="203" fontSize="10" fontWeight="900" textAnchor="middle" className="tracking-widest fill-[#1f222e]">LOCKPICK</text>
             </svg>
           </div>
         </div>
 
-        {/* PAINEL DE CONTROLE INFERIOR */}
-        <div className="w-[480px] bg-white dark:bg-[#0c0c0c] rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl relative z-[60] overflow-hidden transition-colors duration-300">
+        {/* PAINEL DE CONTROLE ORIGINAL INTACTO */}
+        <div className="w-[480px] bg-[#0c0c0c] rounded-xl border border-neutral-800 shadow-2xl overflow-hidden font-mono">
           
-          {/* MÓDULO SUPERIOR */}
           <div className="p-6 relative">
-            
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-baseline gap-2">
-                 <h2 className="text-neutral-800 dark:text-neutral-400 font-black text-lg tracking-widest uppercase font-mono">LOCKPICK</h2>
+                 <h2 className="text-neutral-400 font-black text-lg tracking-widest uppercase">LOCKPICK</h2>
               </div>
               <div className="flex gap-2">
-                <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
-                <div className="bg-neutral-100 dark:bg-[#141414] px-3 py-1.5 rounded border border-neutral-200 dark:border-neutral-800 font-mono text-neutral-700 dark:text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
+                <div className="bg-[#141414] px-3 py-1.5 rounded border border-neutral-800 text-neutral-400 text-xs font-bold transition-colors">{Math.floor(timer / 60)}:{ (timer % 60).toString().padStart(2, '0') }</div>
+                <div className="bg-[#141414] px-3 py-1.5 rounded border border-neutral-800 text-neutral-400 text-xs font-bold transition-colors">{gameState === 'playing' ? activeRingIdx + 1 : 0}</div>
               </div>
             </div>
 
@@ -390,23 +375,23 @@ export default function Digipick() {
                     key={t.id} 
                     className={`relative w-[44px] h-[44px] rounded-full border-2 flex items-center justify-center transition-all duration-300 ease-out ${
                       t.isEmpty || isUsed 
-                        ? 'border-transparent bg-neutral-100/40 dark:bg-neutral-900/40 opacity-100' 
+                        ? 'border-transparent bg-neutral-900/40 opacity-100' 
                         : isActive 
-                          ? 'border-cyan-500 dark:border-[#3be8ff] bg-cyan-50 dark:bg-[#121212] scale-105 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
-                          : 'border-neutral-200 dark:border-neutral-800 bg-transparent'
+                          ? 'border-[#3be8ff] bg-[#121212] shadow-[0_0_15px_rgba(59,232,255,0.2)]' 
+                          : 'border-neutral-800 bg-transparent'
                     }`}
                   >
-                    {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-neutral-300 dark:bg-[#1f222e] rounded-full z-10 animate-ping" />}
+                    {isActive && !isUsed && !t.isEmpty && <div className="absolute w-2.5 h-2.5 bg-[#1f222e] rounded-full z-10 animate-ping" />}
                     
                     <svg viewBox="0 0 44 44" className="absolute inset-0 w-full h-full">
-                      <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-neutral-300 dark:stroke-[#1f222e]" />
+                      <circle cx="22" cy="22" r="16" fill="none" strokeWidth="1" className="opacity-40 stroke-[#1f222e]" />
                       
                       {!isUsed && !t.isEmpty && isActive && (
                         <g style={{ transform: `rotate(${toolRotations[i]}deg)`, transformOrigin: '22px 22px' }} className="transition-transform duration-75">
                           {t.pins.map(p => {
                             const { x: x1, y: y1 } = getCoords(p, 12, 22); 
                             const { x: x2, y: y2 } = getCoords(p, 18, 22); 
-                            return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-cyan-500 dark:stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(6,182,212,0.6)] dark:drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
+                            return <line key={p} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="2.5" strokeLinecap="round" className="stroke-[#3be8ff] drop-shadow-[0_0_3px_rgba(59,232,255,0.8)]" />;
                           })}
                         </g>
                       )}
@@ -416,24 +401,21 @@ export default function Digipick() {
               })}
             </div>
 
-            {/* OVERLAY */}
+            {/* OVERLAY DE STATUS ESTÁTICO */}
             {(gameState === 'won' || gameState === 'lost') && (
-              <div className="absolute inset-0 bg-white/10 dark:bg-black/20 backdrop-blur-md z-50 flex items-center justify-center animate-blur-fade p-4">
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-md z-50 flex items-center justify-center animate-blur-fade p-4">
                 {gameState === 'lost' && (
-                  <div className="text-red-600 dark:text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/30 dark:border-red-500/20 bg-red-50/90 dark:bg-red-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(239,68,68,0.4)] dark:drop-shadow-[0_0_6px_rgba(239,68,68,0.8)]">
-                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                      <line x1="12" y1="9" x2="12" y2="13"/>
-                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
                     CHAVES ESGOTADAS | SISTEMA BLOQUEADO
                   </div>
                 )}
                 {gameState === 'won' && (
-                  <div className="text-emerald-600 dark:text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/90 dark:bg-emerald-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_6px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_6px_rgba(163,239,82,0.8)]">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/40 p-4 rounded-xl w-full max-w-[430px] whitespace-nowrap flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
                     </svg>
                     CRIPTOGRAFIA QUEBRADA | SUCESSO
                   </div>
@@ -443,42 +425,46 @@ export default function Digipick() {
 
           </div>
 
-          {/* RODAPÉ */}
-          <div className="flex items-center justify-between border-t border-neutral-200 dark:border-neutral-900 p-6 pt-5 w-full relative transition-colors gap-6 bg-neutral-50/20 dark:bg-neutral-900/10">
-            <div className="text-[10px] font-bold text-neutral-500 dark:text-neutral-600 tracking-widest uppercase flex flex-wrap gap-x-5 gap-y-1 items-center flex-1 min-w-0">
-              {(gameState === 'won' || gameState === 'lost') ? (
-                <span>APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
-              ) : gameState === 'playing' ? (
+          {/* RODAPÉ KBD KEYS ORIGINAL INTACTO */}
+          <div className="flex items-center justify-between border-t border-neutral-900 p-6 pt-5 w-full relative transition-colors gap-6 bg-neutral-900/10">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 items-center flex-1 text-[10px] font-bold tracking-wider uppercase text-neutral-500">
+              {gameState === 'playing' ? (
                 <>
-                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[A/D]</span> Rotacionar</div>
-                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Q/E]</span> Mudar Escolha</div>
-                  <div className="flex items-center gap-1.5"><span className="text-neutral-800 dark:text-neutral-400 font-black">[Enter]</span> Encaixar</div>
+                  <div className="flex items-center gap-1.5">
+                    <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-[9px] font-black font-mono">A</kbd>
+                    <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-[9px] font-black font-mono">D</kbd>
+                    <span className="text-neutral-500">Girar</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-[9px] font-black font-mono">Q</kbd>
+                    <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-1.5 py-0.5 rounded text-[9px] font-black font-mono">E</kbd>
+                    <span className="text-neutral-500">Mudar Chave</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ENTER</kbd>
+                    <span className="text-neutral-500">Encaixar</span>
+                  </div>
                 </>
               ) : (
-                <span className="text-neutral-500 font-bold">APERTE ESPAÇO OU ENTER PARA INICIAR...</span>
+                <div className="flex items-center gap-1.5">
+                  <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ENTER</kbd>
+                  <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ESPAÇO</kbd>
+                  <span className="text-neutral-500">Iniciar Sistema</span>
+                </div>
               )}
             </div>
             
             <div className="flex-shrink-0">
               {gameState === 'playing' ? (
-                <button 
-                  onClick={pararSistema} 
-                  className="px-5 py-2.5 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 hover:scale-[1.02] active:scale-[0.97] text-white border border-transparent dark:border-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.2)] dark:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all duration-300 ease-out whitespace-nowrap"
-                >
-                  Finalizar Sistema
+                <button onClick={pararSistema} className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
+                  Finalizar System
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
-                <button 
-                  onClick={pararSistema} 
-                  className="px-6 py-2.5 bg-neutral-200 text-black hover:bg-neutral-300 dark:bg-neutral-200 dark:hover:bg-white hover:scale-[1.02] active:scale-[0.97] dark:text-black border border-transparent font-mono font-black text-xs uppercase tracking-widest rounded-xl shadow-md dark:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-300 ease-out whitespace-nowrap"
-                >
+                <button onClick={pararSistema} className="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Voltar ao Menu
                 </button>
               ) : (
-                <button 
-                  onClick={iniciarSistema} 
-                  className="px-5 py-2.5 bg-cyan-400 hover:bg-cyan-300 dark:bg-[#3be8ff] dark:hover:bg-[#66f0ff] hover:scale-[1.02] active:scale-[0.97] text-black font-mono font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(6,182,212,0.3)] dark:shadow-[0_0_25px_rgba(59,232,255,0.35)] transition-all duration-300 ease-out whitespace-nowrap"
-                >
+                <button onClick={iniciarSistema} className="px-5 py-2.5 bg-[#3be8ff] hover:bg-[#2ad8ef] text-black font-mono font-black text-xs uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap">
                   Iniciar Sistema
                 </button>
               )}
@@ -489,65 +475,38 @@ export default function Digipick() {
 
       </div>
 
-      {/* PAINEL DE ASSISTÊNCIA E INSTRUÇÃO */}
-      <div className="fixed bottom-6 right-6 z-[100] font-mono transition-all duration-500 ease-out">
-        {showHint ? (
-          <div className="w-64 bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 shadow-2xl flex flex-col gap-3 animate-elastic-pop transition-colors">
-            <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-900 pb-2">
-              <div className="flex items-center gap-1.5 text-cyan-600 dark:text-[#3be8ff] text-[11px] font-black uppercase tracking-wider">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                  <path d="M9 18h6"/>
-                  <path d="M10 22h4"/>
-                </svg>
-                Guia do Minigame
-              </div>
-              <button 
-                onClick={() => setShowHint(false)} 
-                className="text-neutral-400 hover:text-black dark:text-neutral-500 dark:hover:text-neutral-300 text-xs font-bold transition-colors duration-200 px-1"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="w-full h-32 bg-neutral-100 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-900 rounded-lg overflow-hidden relative flex items-center justify-center transition-colors">
-              <img 
-                src="dica_lockpick.gif" 
-                alt="Tutorial do Lockpick" 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-              <div className="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-2 text-[9px] text-neutral-500 gap-1 select-none bg-neutral-100 dark:bg-[#050505]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 dark:text-neutral-800 animate-pulse mb-1">
-                  <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
-                  <line x1="7" y1="2" x2="7" y2="22"></line>
-                  <line x1="17" y1="2" x2="17" y2="22"></line>
-                  <line x1="2" y1="12" x2="22" y2="12"></line>
-                </svg>
-                [ dica_lockpick.gif ]
-              </div>
-            </div>
+      {/* GAVETA TÁTICA RETRÁTIL COM TEXTO COMPLETO RESTAURADO */}
+      <div className={`fixed top-0 right-0 h-full w-[340px] bg-[#0c0c0c] border-l border-neutral-800 z-50 flex flex-col font-mono shadow-2xl transition-transform duration-300 ease-in-out ${showHint ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="h-14 bg-[#141414] border-b border-neutral-800/60 flex items-center justify-between px-5 text-[#3be8ff] text-[11px] font-black uppercase tracking-wider shrink-0">
+          <div className="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+              <path d="M9 18h6"/><path d="M10 22h4"/>
+            </svg>
+            Banco de Dados: Lockpick
+          </div>
+          <button onClick={() => setShowHint(false)} className="text-neutral-500 hover:text-white transition-colors p-2 text-sm font-bold">✕</button>
+        </div>
 
-            <p className="text-[10px] text-neutral-600 dark:text-neutral-400 leading-relaxed tracking-wide">
-              Selecione uma chave no grid inferior e use <span className="text-neutral-900 dark:text-neutral-200 font-bold">[A/D]</span> para girá-la até alinhar os dentes com as frestas vazias do anel ativo. Alterne entre as opções usando <span className="text-neutral-900 dark:text-neutral-200 font-bold">[Q/E]</span> e aperte <span className="text-amber-600 dark:text-amber-500 font-bold">Enter</span> para encaixar. Planeje bem, pois chaves falsas estão misturadas!
+        <div className="p-5 flex flex-col gap-5 overflow-y-auto flex-1">
+          <div className="w-full aspect-video bg-neutral-950 border border-neutral-800 rounded-xl overflow-hidden relative shadow-inner shrink-0">
+            <img src="/dica_lockpick.gif" alt="Tutorial Lockpick" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+            <div className="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-2 text-[9px] text-neutral-600 select-none bg-[#050505]">[ dica_lockpick.gif ]</div>
+          </div>
+
+          <div className="flex flex-col gap-3 font-mono text-[11px] leading-relaxed text-neutral-400">
+            <div className="text-white font-black uppercase tracking-wider text-xs border-b border-neutral-900 pb-1.5">Diretrizes Operacionais:</div>
+            <p className="text-justify">
+              O destravamento mecânico do cofre consiste em alinhar perfeitamente os pinos metálicos da sua chave ativa com as frestas e cavidades vazias presentes no anel do circuito.
+            </p>
+            <p className="text-justify">
+              Selecione uma chave disponível no menu de slots inferior. Use <span className="text-white font-bold">A / D</span> para girar os dentes da ferramenta e <span className="text-white font-bold">Q / E</span> para alternar rapidamente entre outras opções de chaves para análise estrutural.
+            </p>
+            <p className="text-justify">
+              Quando todos os dentes coincirem perfeitamente com os espaços vazios do anel ativo atual, pressione <span className="text-[#3be8ff] font-bold">ENTER</span> para encaixar. Preste muita atenção, pois chaves falsas com dentes idênticos foram inseridas para confundir a invasão!
             </p>
           </div>
-        ) : (
-          <button 
-            onClick={() => setShowHint(true)} 
-            className="bg-white dark:bg-[#0c0c0c] border border-neutral-200 dark:border-neutral-800 text-cyan-600 dark:text-[#3be8ff] hover:text-cyan-500 dark:hover:text-[#66f0ff] hover:border-cyan-300 dark:hover:border-[#3be8ff]/40 hover:scale-[1.04] active:scale-[0.96] px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-xl flex items-center gap-1.5 transition-all duration-300 ease-out"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-              <path d="M9 18h6"/>
-              <path d="M10 22h4"/>
-            </svg>
-            Ver Ajuda
-          </button>
-        )}
+        </div>
       </div>
 
     </div>
