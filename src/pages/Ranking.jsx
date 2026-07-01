@@ -61,6 +61,15 @@ export default function Ranking() {
 
   const discordName = user?.user_metadata?.username || user?.user_metadata?.name;
   const discordAvatar = user?.user_metadata?.avatar_url;
+  
+  const providerId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+  const bannerHash = user?.user_metadata?.banner || user?.user_metadata?.custom_claims?.banner;
+  let discordBanner = null;
+  if (providerId && bannerHash) {
+    const isGif = bannerHash.startsWith('a_');
+    discordBanner = `https://cdn.discordapp.com/banners/${providerId}/${bannerHash}.${isGif ? 'gif' : 'png'}?size=512`;
+  }
+
   const currentConfig = minigamesConfig[activeTab];
 
   return (
@@ -68,37 +77,36 @@ export default function Ranking() {
       
       <div className="responsive-wrapper w-full max-w-2xl">
         
-        {/* CARD DE PERFIL DINÂMICO COM BANNER DE AVATAR */}
+        {/* CARD DE PERFIL */}
         <div className="w-full bg-[#0c0c0c] border border-neutral-800/80 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden p-8 gap-6 sm:gap-0">
           
-          {/* BANNER DE FUNDO (Avatar com Blur) */}
-          {user && discordAvatar && (
-            <div className="absolute inset-0 z-0">
+          {/* BANNER DE FUNDO */}
+          {user && (discordBanner || discordAvatar) && (
+            <div className="absolute inset-0 z-0 pointer-events-none">
               <img 
-                src={discordAvatar} 
+                src={discordBanner || discordAvatar} 
                 alt="Banner Background" 
-                className="w-full h-full object-cover opacity-[0.15] blur-3xl scale-150"
+                className={`w-full h-full object-cover ${!discordBanner ? 'opacity-[0.15] blur-3xl scale-150' : 'opacity-40'}`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/40 to-transparent"></div>
             </div>
           )}
 
           {user ? (
             <div className="flex items-center gap-6 z-10 w-full sm:w-auto animate-page-reveal">
-              <div className="relative shrink-0">
-                <div className="p-1 rounded-full bg-gradient-to-tr from-white/10 to-transparent border border-white/5 shadow-2xl">
-                  {discordAvatar ? (
-                    <img src={discordAvatar} alt="Perfil" className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] object-cover" />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] bg-neutral-800 flex items-center justify-center text-neutral-500 font-bold text-2xl">?</div>
-                  )}
-                </div>
+              <div className="relative shrink-0 p-1 rounded-full bg-gradient-to-tr from-white/10 to-transparent border border-white/5 shadow-2xl">
+                {discordAvatar ? (
+                  <img src={discordAvatar} alt="Perfil" className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] object-cover" />
+                ) : (
+                  <div className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] bg-neutral-800 flex items-center justify-center text-neutral-500 font-bold text-2xl">?</div>
+                )}
                 <div className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-[3px] border-[#0c0c0c] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
               </div>
               
               <div className="flex flex-col">
                 <div className="text-white font-black text-2xl font-sans tracking-tight leading-tight">{discordName}</div>
-                <div className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1 opacity-70">
+                <div className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1 opacity-80 drop-shadow-md">
                   Conta Discord Vinculada
                 </div>
               </div>
@@ -124,7 +132,7 @@ export default function Ranking() {
             {user ? (
               <button 
                 onClick={handleLogout} 
-                className="cursor-pointer w-full sm:w-auto px-6 py-2.5 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95"
+                className="cursor-pointer w-full sm:w-auto px-6 py-2.5 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/20 text-neutral-300 hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95"
               >
                 Sair da Conta
               </button>
@@ -142,7 +150,7 @@ export default function Ranking() {
           </div>
         </div>
 
-        {/* TABELA DE RECORDES */}
+        {/* CONTAINER DO PLACAR */}
         <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-3xl flex flex-col shadow-2xl min-h-[482px] relative overflow-hidden">
           <div className={`h-[2px] w-full transition-colors duration-500 ${currentConfig.bgAccent.replace('10', '50')}`} />
 
@@ -162,66 +170,97 @@ export default function Ranking() {
             })}
           </div>
 
-          {/* TABELA TELEMÉTRICA */}
-          <div className="p-4 flex-1 flex flex-col justify-start">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="text-neutral-500 font-black uppercase tracking-[0.15em] text-[9px] border-b border-neutral-900/60 bg-black/10">
-                  <th className="py-4 px-4 text-center w-16">RANK</th>
-                  <th className="py-4 px-4">JOGADOR</th>
-                  <th className="py-4 px-4 text-center">STREAK</th>
-                  <th className="py-4 px-4 text-right">TEMPO</th>
-                  <th className="py-4 px-4 text-right w-24">PRECISÃO</th>
-                </tr>
-              </thead>
-              <tbody className={`transition-all duration-300 ${loading ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}>
-                {list.length > 0 && !loading ? (
-                  list.map((row, idx) => {
-                    const position = idx + 1;
-                    const posColor = position === 1 ? 'text-amber-400' : position === 2 ? 'text-neutral-300' : position === 3 ? 'text-amber-600' : 'text-neutral-600';
-                    const formatTime = row.best_time === 999.99 ? '--' : `${row.best_time.toFixed(2)}s`;
-                    
-                    return (
-                      <tr key={row.id || idx} className="border-b border-neutral-900/30 hover:bg-white/[0.02] transition-colors group">
-                        <td className={`py-4 px-4 text-center font-black text-sm ${posColor}`}>
-                          #{position}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-3">
-                            {row.avatar_url ? (
-                              <img src={row.avatar_url} alt={row.name} className="w-7 h-7 rounded-full border border-white/5 object-cover" />
-                            ) : (
-                              <div className="w-7 h-7 rounded-full border border-white/5 bg-neutral-900 flex items-center justify-center text-neutral-600 text-[10px] font-bold">?</div>
-                            )}
-                            <span className="text-neutral-200 font-bold group-hover:text-white transition-colors">{row.name}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-center text-neutral-400 font-black">{row.max_streak || 0}</td>
-                        <td className={`py-4 px-4 text-right font-black ${minigamesConfig[activeTab].color}`}>{formatTime}</td>
-                        <td className="py-4 px-4 text-right text-neutral-500 font-mono text-[10px]">
-                          <span className="text-neutral-300 font-bold">{row.total_hits}</span>
-                          <span className="opacity-30"> / {row.total_attempts}</span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : !loading ? (
-                  <tr>
-                    <td colSpan="5" className="py-32 text-center text-neutral-600 text-[10px] font-black uppercase tracking-[0.2em] px-10">
-                      Nenhum dado capturado<br />
-                      <span className="text-neutral-700 font-normal lowercase tracking-normal">Aguardando quebra de segurança...</span>
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
+          {/* LISTA DE CARDS DO RANKING */}
+          <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3 justify-start overflow-y-auto">
+            {list.length > 0 && !loading ? (
+              list.map((row, idx) => {
+                const position = idx + 1;
+                const posColor = position === 1 ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]' : 
+                                 position === 2 ? 'text-neutral-300 drop-shadow-[0_0_8px_rgba(212,212,216,0.6)]' : 
+                                 position === 3 ? 'text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.6)]' : 'text-neutral-500';
+                
+                const formatTime = row.best_time === 999.99 ? '--' : `${row.best_time.toFixed(2)}s`;
+                
+                const bgImage = row.banner_url || row.avatar_url;
+                const isAvatarFallback = !row.banner_url;
 
-            {loading && (
-              <div className="flex-1 flex items-center justify-center py-32 text-neutral-600 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
+                return (
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
+                    
+                    {bgImage && (
+                      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                        <img 
+                          src={bgImage} 
+                          alt="Banner do Jogador" 
+                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-[0.08] blur-xl scale-125' : 'opacity-[0.25]'}`} 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#101010] via-[#101010]/80 to-transparent"></div>
+                      </div>
+                    )}
+
+                    {/* CONTEÚDO ESQUERDA */}
+                    <div className="relative z-10 flex items-center gap-4 w-full sm:w-auto">
+                      <div className={`font-black text-lg sm:text-xl w-8 text-center ${posColor}`}>
+                        #{position}
+                      </div>
+                      
+                      <div className="relative shrink-0">
+                        {row.avatar_url ? (
+                          <img src={row.avatar_url} alt={row.name} className="w-10 h-10 rounded-full border-2 border-[#141414] object-cover shadow-md" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full border-2 border-[#141414] bg-neutral-900 flex items-center justify-center text-neutral-600 text-xs font-bold shadow-md">?</div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-[120px]">
+                        <div className="text-neutral-200 font-bold tracking-wide truncate group-hover:text-white transition-colors">{row.name}</div>
+                      </div>
+                    </div>
+
+                    {/* CONTEÚDO DIREITA */}
+                    <div className="relative z-10 flex items-center justify-between sm:justify-end w-full sm:w-auto sm:ml-auto gap-6 sm:gap-10 mt-2 sm:mt-0 pl-12 sm:pl-0">
+                      
+                      <div className="flex flex-col items-start sm:items-end">
+                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Streak</span>
+                        <span className="text-neutral-300 font-black text-sm">{row.max_streak || 0}</span>
+                      </div>
+
+                      <div className="flex flex-col items-start sm:items-end">
+                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Tempo</span>
+                        <span className={`font-black text-sm drop-shadow-md ${minigamesConfig[activeTab].color}`}>{formatTime}</span>
+                      </div>
+
+                      <div className="flex flex-col items-start sm:items-end">
+                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Precisão</span>
+                        <div className="font-mono text-xs text-neutral-300 font-bold mt-0.5">
+                          {row.total_hits} <span className="text-neutral-600 font-normal">/ {row.total_attempts}</span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                );
+              })
+            ) : !loading ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="text-neutral-600 font-black uppercase tracking-[0.2em] text-[10px] mb-2">
+                  Nenhum dado capturado
+                </div>
+                <div className="text-neutral-700 font-medium text-xs">
+                  Aguardando quebra de segurança...
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {loading && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#0c0c0c]/80 backdrop-blur-sm">
+              <div className="text-neutral-500 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">
                 Sincronizando Uplink...
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>

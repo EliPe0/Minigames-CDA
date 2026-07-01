@@ -12,6 +12,15 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
   const playerName = user.user_metadata?.username || user.user_metadata?.name;
   const playerAvatar = user.user_metadata?.avatar_url || null; 
 
+  const providerId = user.user_metadata?.provider_id || user.user_metadata?.sub;
+  const bannerHash = user.user_metadata?.banner || user.user_metadata?.custom_claims?.banner;
+  
+  let playerBanner = null;
+  if (providerId && bannerHash) {
+    const isGif = bannerHash.startsWith('a_');
+    playerBanner = `https://cdn.discordapp.com/banners/${providerId}/${bannerHash}.${isGif ? 'gif' : 'png'}?size=512`;
+  }
+
   const { data: existing } = await supabase
     .from('rankings')
     .select('*')
@@ -34,6 +43,7 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
       name: playerName,
       minigame: minigame,
       avatar_url: playerAvatar,
+      banner_url: playerBanner,
       max_streak,
       best_time,
       total_attempts,
