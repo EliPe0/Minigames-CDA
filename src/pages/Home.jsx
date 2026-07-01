@@ -8,7 +8,7 @@ export default function Home() {
   const [showAbout, setShowAbout] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  const [stats, setStats] = useState({ operators: 0, attempts: 0 });
+  const [stats, setStats] = useState({ scores: 0, attempts: 0 });
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
@@ -19,10 +19,10 @@ export default function Home() {
         if (error) {
           console.error("Erro ao buscar estatísticas do Supabase:", error);
         } else if (data) {
-          const uniqueOperators = new Set(data.map(item => item.name)).size;
+          const totalScores = data.length;
           const totalAttempts = data.reduce((sum, current) => sum + (current.total_attempts || 0), 0);
           
-          setStats({ operators: uniqueOperators, attempts: totalAttempts });
+          setStats({ scores: totalScores, attempts: totalAttempts });
         }
       } catch (err) {
         console.error("Erro interno ao carregar estatísticas:", err);
@@ -56,7 +56,7 @@ export default function Home() {
       btnClass: "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/60 hover:from-emerald-500 hover:to-emerald-400 transform hover:-translate-y-0.5 focus:ring-emerald-500/50",
       objective: (
         <>
-          Objetivo:<br/><br/> Invadá o circuito digitando sequências de 8 caracteres sem errar.<br/><br/> - Tempo limite: 4 segundos cada etapa<br/><br/>- Dificuldade: Alta
+          Objetivo:<br/><br/> Invadir o circuito digitando sequências de 8 caracteres sem errar.<br/><br/> - Tempo limite: 4 segundos cada etapa<br/><br/>- Dificuldade: Alta
         </>
       )
     },
@@ -121,22 +121,22 @@ export default function Home() {
       {/* DASHBOARD */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-4xl mx-auto z-10 animate-page-reveal">
         
-        {/* WIDGETS DE TELEMETRIA */}
+        {/* WIDGETS DE TELEMETRIA REAIS */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           
           <div className="bg-[#0c0c0c] border border-neutral-800/60 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-neutral-700 transition-colors">
             <div className="p-3 bg-neutral-900 rounded-xl border border-neutral-800 text-neutral-400">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                <rect x="3" y="4" width="18" height="15" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </div>
             <div>
-              <div className="text-[10px] text-neutral-500 uppercase tracking-widest font-black">Contas Registradas</div>
+              <div className="text-[10px] text-neutral-500 uppercase tracking-widest font-black">Pontuações Registradas</div>
               <div className="text-xl font-bold text-neutral-200 mt-0.5">
-                {loadingStats ? <span className="animate-pulse opacity-50">...</span> : stats.operators}
+                {loadingStats ? <span className="animate-pulse opacity-50">...</span> : stats.scores}
               </div>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* CARD INFERIOR */}
+            {/* CARD DE DETALHES INFERIOR */}
             <div className="p-6 sm:p-8 flex flex-col justify-between">
               <div className="mb-8">
                 <h3 className={`text-lg font-black uppercase tracking-wider mb-4 transition-colors ${activeModule.textColor}`}>
@@ -246,7 +246,7 @@ export default function Home() {
 
         </div>
 
-        {/* CONTROLES MOBILE */}
+        {/* CONTROLES */}
         <div className="flex flex-col sm:flex-row items-center justify-between w-full mt-8 max-w-xl gap-6">
           <div className="flex sm:hidden gap-4">
             <button onClick={prevSlide} className="cursor-pointer px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
