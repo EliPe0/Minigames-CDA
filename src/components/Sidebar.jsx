@@ -64,41 +64,41 @@ export default function Sidebar() {
         </div>
 
         <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest">
-          {/* PAINEL INICIAL */}
-          <button onClick={() => handleNavigate('/home')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/home' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.08)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'}`}>
-            <Icons.House /> Painel Inicial
+          {/* INÍCIO */}
+          <button onClick={() => handleNavigate('/home')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/home' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.08)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'}`}>
+            <Icons.House /> Início
           </button>
 
-          {/* DIVISOR DA REDE */}
+          {/* DIVISOR */}
           <div className="h-[1px] bg-neutral-900 my-1 w-full" />
           
           {/* LOCKPICK */}
-          <button onClick={() => handleNavigate('/lockpick')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-cyan-400 hover:bg-neutral-900/60'}`}>
+          <button onClick={() => handleNavigate('/lockpick')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-cyan-400 hover:bg-neutral-900/60'}`}>
             <Icons.Key /> Lockpick
           </button>
           
           {/* CAIXINHA */}
-          <button onClick={() => handleNavigate('/caixinha')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-400 hover:bg-neutral-900/60'}`}>
+          <button onClick={() => handleNavigate('/caixinha')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-400 hover:bg-neutral-900/60'}`}>
             <Icons.Bomb /> Caixinha
           </button>
 
           {/* PORTA MALAS */}
-          <button onClick={() => handleNavigate('/portamalas')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-400 hover:bg-neutral-900/60'}`}>
+          <button onClick={() => handleNavigate('/portamalas')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-400 hover:bg-neutral-900/60'}`}>
             <Icons.Car /> Porta Malas
           </button>
 
           {/* HACKING */}
-          <button onClick={() => handleNavigate('/hacking')} className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/hacking' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-purple-400 hover:bg-neutral-900/60'}`}>
+          <button onClick={() => handleNavigate('/hacking')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/hacking' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-purple-400 hover:bg-neutral-900/60'}`}>
             <Icons.Laptop /> Hacking
           </button>
         </div>
       </div>
 
-      {/* RANKING GLOBAL */}
+      {/* RANKING */}
       <div className="mt-auto text-xs font-bold uppercase tracking-widest border-t border-neutral-900 pt-4">
         <button 
           onClick={() => handleNavigate('/ranking')} 
-          className={`w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
+          className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
             location.pathname === '/ranking' 
               ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
               : 'bg-transparent border-transparent text-neutral-500 hover:text-amber-500 hover:bg-neutral-900/60'

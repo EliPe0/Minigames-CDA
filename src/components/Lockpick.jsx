@@ -284,11 +284,12 @@ export default function Digipick() {
       {!showHint && (
         <button
           onClick={() => setShowHint(true)}
-          className="absolute top-6 right-6 z-40 flex items-center gap-2 px-4 py-2 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 hover:text-[#3be8ff] hover:border-[#3be8ff]/40 transition-all font-mono text-[11px] font-bold uppercase tracking-wider"
+          className="cursor-pointer absolute top-6 right-6 z-40 flex items-center gap-2 px-4 py-2 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 hover:text-[#3be8ff] hover:border-[#3be8ff]/40 transition-all font-mono text-[12px] font-bold uppercase tracking-wider"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-            <path d="M9 18h6"/><path d="M10 22h4"/>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
           </svg>
           Ver Guia
         </button>
@@ -455,15 +456,15 @@ export default function Digipick() {
             
             <div className="flex-shrink-0">
               {gameState === 'playing' ? (
-                <button onClick={pararSistema} className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
+                <button onClick={pararSistema} className="px-5 py-2.5 cursor-pointer bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Finalizar Sistema
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
-                <button onClick={pararSistema} className="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
+                <button onClick={pararSistema} className="px-6 py-2.5 cursor-pointer bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Voltar ao Menu
                 </button>
               ) : (
-                <button onClick={iniciarSistema} className="px-5 py-2.5 bg-[#3be8ff] hover:bg-[#2ad8ef] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
+                <button onClick={iniciarSistema} className="px-5 py-2.5 cursor-pointer bg-[#3be8ff] hover:bg-[#2ad8ef] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Iniciar Sistema
                 </button>
               )}
@@ -478,13 +479,14 @@ export default function Digipick() {
       <div className={`fixed top-0 right-0 h-full w-[340px] bg-[#0c0c0c] border-l border-neutral-800 z-50 flex flex-col font-mono shadow-2xl transition-transform duration-300 ease-in-out ${showHint ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="h-14 bg-[#141414] border-b border-neutral-800/60 flex items-center justify-between px-5 text-[#3be8ff] text-[11px] font-black uppercase tracking-wider shrink-0">
           <div className="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .6 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-              <path d="M9 18h6"/><path d="M10 22h4"/>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            Banco de Dados: Lockpick
+            Painel de Dica: Lockpick
           </div>
-          <button onClick={() => setShowHint(false)} className="text-neutral-500 hover:text-white transition-colors p-2 text-sm font-bold">✕</button>
+          <button onClick={() => setShowHint(false)} className="cursor-pointer text-neutral-500 hover:text-white transition-colors p-2 text-sm font-bold">✕</button>
         </div>
 
         <div className="p-5 flex flex-col gap-5 overflow-y-auto flex-1">
@@ -494,12 +496,12 @@ export default function Digipick() {
           </div>
 
           <div className="flex flex-col gap-3 font-mono text-[11px] leading-relaxed text-neutral-400">
-            <div className="text-white font-black uppercase tracking-wider text-xs border-b border-neutral-900 pb-1.5">Diretrizes Operacionais:</div>
+            <div className="text-white font-black uppercase tracking-wider text-xs border-b border-neutral-900 pb-1.5">Como funciona:</div>
             <p className="text-justify">
-              O destravamento mecânico do cofre consiste em alinhar perfeitamente os pinos metálicos da sua chave ativa com as frestas e cavidades vazias presentes no anel do circuito.
+              O destravamento do cofre consiste em alinhar perfeitamente os pinos metálicos da sua chave ativa com as frestas e cavidades vazias presentes no anel do circuito.
             </p>
             <p className="text-justify">
-              Selecione uma chave disponível no menu de slots inferior. Use <span className="text-white font-bold">A / D</span> para girar os dentes da ferramenta e <span className="text-white font-bold">Q / E</span> para alternar rapidamente entre outras opções de chaves para análise estrutural.
+              Selecione uma chave disponível no menu de slots inferior. Use <span className="text-white font-bold">A e D</span> para girar os dentes da ferramenta e <span className="text-white font-bold">Q e E</span> para alternar rapidamente entre outras opções de chaves para análise estrutural.
             </p>
             <p className="text-justify">
               Quando todos os dentes coincirem perfeitamente com os espaços vazios do anel ativo atual, pressione <span className="text-[#3be8ff] font-bold">ENTER</span> para encaixar. Preste muita atenção, pois chaves falsas com dentes idênticos foram inseridas para confundir a invasão!

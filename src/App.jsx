@@ -12,7 +12,7 @@ import Hacking from './components/Hacking';
 export default function App() {
   return (
     <Router>
-      {/* 📱 TELA DE BLOQUEIO MOBILE */}
+      {/* TELA DE BLOQUEIO */}
       <div className="flex md:hidden flex-col items-center justify-center min-h-screen bg-[#050505] text-white p-6 font-mono select-none text-center relative overflow-hidden z-[999]">
         
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
@@ -41,12 +41,12 @@ export default function App() {
             <div className="h-[1px] w-12 bg-red-900/50 mx-auto" />
             
             <p className="text-neutral-400 text-xs leading-relaxed mt-2">
-              Os módulos de invasão requerem um terminal com resolução estendida para operar corretamente.
+              Os módulos de um dispositivo móvel não são compatíveis com a execução de minigames. 
             </p>
             
             <div className="mt-4 bg-red-950/30 border border-red-900/30 px-4 py-3 rounded-xl">
               <p className="text-neutral-300 text-[10px] uppercase tracking-wider font-bold">
-                Por favor, conecte-se através de um PC ou Notebook.
+                Para acessar o conteúdo completo, utilize um PC ou Notebook.
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* 💻 APLICAÇÃO DESKTOP */}
+      {/* DESKTOP */}
       <div className="hidden md:flex h-screen w-full bg-[#050505] overflow-hidden">
         
         {/* Menu Lateral */}

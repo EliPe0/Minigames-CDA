@@ -100,7 +100,7 @@ export default function Home() {
       <header className="w-full h-16 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-neutral-800/60 flex items-center justify-end px-6 sm:px-10 z-20 shrink-0 sticky top-0">
         <button
           onClick={() => setShowAbout(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 hover:bg-amber-500/20 hover:text-amber-400 transition-all duration-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hover:shadow-[0_0_15px_rgba(245,158,11,0.2)] active:scale-95"
+          className="cursor-pointer flex items-center justify-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 hover:bg-amber-500/20 hover:text-amber-400 transition-all duration-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider hover:shadow-[0_0_15px_rgba(245,158,11,0.2)] active:scale-95"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
             <circle cx="12" cy="12" r="10"></circle>
@@ -177,7 +177,7 @@ export default function Home() {
           
           <button 
             onClick={prevSlide}
-            className="hidden sm:flex p-4 bg-[#0c0c0c] border border-neutral-800 rounded-2xl text-neutral-500 hover:text-white hover:border-neutral-600 active:scale-95 transition-all shadow-xl shrink-0"
+            className="cursor-pointer hidden sm:flex p-4 bg-[#0c0c0c] border border-neutral-800 rounded-2xl text-neutral-500 hover:text-white hover:border-neutral-600 active:scale-95 transition-all shadow-xl shrink-0"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
@@ -205,7 +205,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* CARD DE DETALHES INFERIOR */}
+            {/* CARD INFERIOR */}
             <div className="p-6 sm:p-8 flex flex-col justify-between">
               <div className="mb-8">
                 <h3 className={`text-lg font-black uppercase tracking-wider mb-4 transition-colors ${activeModule.textColor}`}>
@@ -218,7 +218,7 @@ export default function Home() {
 
               <button 
                 onClick={() => navigate(activeModule.path)}
-                className={`w-full py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] font-mono ${activeModule.btnClass}`}
+                className={`cursor-pointer w-full py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 transform active:scale-[0.98] font-mono ${activeModule.btnClass}`}
               >
                 Iniciar Módulo
               </button>
@@ -227,7 +227,7 @@ export default function Home() {
 
           <button 
             onClick={nextSlide}
-            className="hidden sm:flex p-4 bg-[#0c0c0c] border border-neutral-800 rounded-2xl text-neutral-500 hover:text-white hover:border-neutral-600 active:scale-95 transition-all shadow-xl shrink-0"
+            className="cursor-pointer hidden sm:flex p-4 bg-[#0c0c0c] border border-neutral-800 rounded-2xl text-neutral-500 hover:text-white hover:border-neutral-600 active:scale-95 transition-all shadow-xl shrink-0"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
@@ -239,8 +239,8 @@ export default function Home() {
         {/* CONTROLES */}
         <div className="flex flex-col sm:flex-row items-center justify-between w-full mt-8 max-w-xl gap-6">
           <div className="flex sm:hidden gap-4">
-            <button onClick={prevSlide} className="px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-            <button onClick={nextSlide} className="px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            <button onClick={prevSlide} className="cursor-pointer px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <button onClick={nextSlide} className="cursor-pointer px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
           </div>
           
           <div className="flex justify-center gap-2 w-full sm:w-auto">
@@ -248,7 +248,7 @@ export default function Home() {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]' : 'w-2 sm:w-3 bg-neutral-800 hover:bg-neutral-700'}`}
+                className={`cursor-pointer h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]' : 'w-2 sm:w-3 bg-neutral-800 hover:bg-neutral-700'}`}
               />
             ))}
           </div>
@@ -272,7 +272,7 @@ export default function Home() {
               </div>
               <button 
                 onClick={() => setShowAbout(false)}
-                className="text-neutral-500 hover:text-white transition-colors p-2"
+                className="cursor-pointer text-neutral-500 hover:text-white transition-colors p-2"
               >
                 ✕
               </button>
@@ -297,7 +297,7 @@ export default function Home() {
                     href="https://discord.com/users/432954675734511626" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-purple-400 hover:text-purple-300 hover:underline transition-all duration-200"
+                    className="cursor-pointer text-purple-400 hover:text-purple-300 hover:underline transition-all duration-200"
                   >
                     EliPe0
                   </a>
@@ -309,7 +309,7 @@ export default function Home() {
                     href="https://github.com/EliPe0/Minigames-CDA" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-blue-400 hover:text-blue-300 hover:underline transition-all duration-200"
+                    className="cursor-pointer text-blue-400 hover:text-blue-300 hover:underline transition-all duration-200"
                   >
                     Acessar GitHub
                   </a>
@@ -321,7 +321,7 @@ export default function Home() {
                     href="https://cidadealta.gg/" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-amber-500 hover:text-amber-300 hover:underline transition-all duration-200"
+                    className="cursor-pointer text-amber-500 hover:text-amber-300 hover:underline transition-all duration-200"
                   >
                     cidadealta.gg
                   </a>
@@ -333,7 +333,7 @@ export default function Home() {
             <div className="p-4 sm:p-5 border-t border-neutral-900/60 bg-[#101010] flex justify-end shrink-0">
               <button 
                 onClick={() => setShowAbout(false)}
-                className="px-8 py-3 bg-neutral-200 hover:bg-white active:scale-[0.97] text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest rounded-xl transition-all shadow-md"
+                className="cursor-pointer px-8 py-3 bg-neutral-200 hover:bg-white active:scale-[0.97] text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest rounded-xl transition-all shadow-md"
               >
                 Retornar ao Dashboard
               </button>

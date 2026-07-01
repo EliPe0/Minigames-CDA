@@ -90,7 +90,7 @@ export default function Ranking() {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-emerald-500">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
-                  Conta Discord Vinculada
+                  CONTA VINCULADA
                 </div>
               </div>
             </div>
@@ -103,7 +103,7 @@ export default function Ranking() {
                 </svg>
               </div>
               <div className="flex flex-col">
-                <div className="text-white font-bold text-base font-sans tracking-wide leading-tight mb-1">Visitante</div>
+                <div className="text-white font-bold text-base font-sans tracking-wide leading-tight mb-1">VISITANTE</div>
                 <div className="text-neutral-500 text-xs font-medium font-sans max-w-[220px]">
                   Conecte-se para registrar seus recordes no placar de líderes.
                 </div>
@@ -161,7 +161,7 @@ export default function Ranking() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="text-neutral-500 font-black uppercase tracking-widest text-[9px] border-b border-neutral-900/60 bg-black/10">
-                  <th className="py-3 px-3 text-center w-14">RANK</th>
+                  <th className="py-3 px-3 text-center w-14">Ranking</th>
                   <th className="py-3 px-3">Jogador</th>
                   <th className="py-3 px-3 text-center w-24">Streak Máx</th>
                   <th className="py-3 px-3 text-right w-32">Melhor Tempo</th>
