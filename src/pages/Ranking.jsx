@@ -82,7 +82,8 @@ export default function Ranking() {
     await supabase.auth.signOut();
   };
 
-  const discordName = user?.user_metadata?.username || user?.user_metadata?.name;
+  const identityData = user?.identities?.[0]?.identity_data || {};
+  const discordName = user?.user_metadata?.custom_claims?.global_name || identityData?.custom_claims?.global_name || user?.user_metadata?.full_name || user?.user_metadata?.name;
   const discordAvatar = user?.user_metadata?.avatar_url;
   
   const providerId = user?.user_metadata?.provider_id || user?.user_metadata?.sub || user?.id;
