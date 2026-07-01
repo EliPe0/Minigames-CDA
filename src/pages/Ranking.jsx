@@ -159,7 +159,7 @@ export default function Ranking() {
               <div className="flex flex-col justify-center">
                 <div className="text-white font-black text-xl font-sans tracking-tight">Visitante</div>
                 <div className="text-neutral-500 text-[11px] font-medium font-sans mt-0.5 leading-snug max-w-[200px]">
-                  Autentique-se para sincronizar seus tempos com a rede.
+                  Vincule sua conta para registrar seus tempos no ranking.
                 </div>
               </div>
             </div>
