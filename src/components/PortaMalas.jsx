@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { registerAttempt } from '../services/rankingService';
+import { supabase } from '../services/supabase';
 
 const TOTAL_PINS = 8;
 const MAX_LEVEL = 3; 
@@ -47,6 +48,26 @@ export default function PortaMalas() {
       clearTimeout(shakeTimeoutRef.current);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
+  }, []);
+
+  useEffect(() => {
+    async function fetchInitialStreak() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const playerName = user.user_metadata?.username || user.user_metadata?.name;
+        const { data } = await supabase
+          .from('rankings')
+          .select('max_streak')
+          .eq('name', playerName)
+          .eq('minigame', 'portamalas')
+          .maybeSingle();
+          
+        if (data && data.max_streak) {
+          setStreak(data.max_streak);
+        }
+      }
+    }
+    fetchInitialStreak();
   }, []);
 
   const iniciarSistema = () => {

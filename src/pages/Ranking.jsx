@@ -98,6 +98,24 @@ export default function Ranking() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-[#050505] p-6 font-mono select-none w-full relative text-white h-full animate-page-reveal overflow-y-auto">
       
+      <style>{`
+        .ranking-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .ranking-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+        }
+        .ranking-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .ranking-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+      `}</style>
+      
       <div className="responsive-wrapper w-full max-w-2xl">
         
         {/* CARD DE PERFIL */}
@@ -126,12 +144,8 @@ export default function Ranking() {
                 )}
               </div>
               
-              <div className="flex flex-col items-start">
-                <div className="text-white font-black text-2xl font-sans tracking-tight leading-tight drop-shadow-md">{discordName}</div>
-                <div className="flex items-center gap-1.5 mt-2 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md shadow-inner">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[9px] text-emerald-400 font-bold tracking-wider uppercase font-mono">CONECTADO</span>
-                </div>
+              <div className="flex flex-col justify-center">
+                <div className="text-white font-black text-2xl font-sans tracking-tight drop-shadow-md">{discordName}</div>
               </div>
             </div>
           ) : (
@@ -142,16 +156,16 @@ export default function Ranking() {
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center">
                 <div className="text-white font-black text-xl font-sans tracking-tight">Visitante</div>
-                <div className="text-neutral-500 text-[11px] font-medium font-sans leading-tight mt-1 max-w-[200px]">
+                <div className="text-neutral-500 text-[11px] font-medium font-sans mt-0.5 leading-snug max-w-[200px]">
                   Autentique-se para sincronizar seus tempos com a rede.
                 </div>
               </div>
             </div>
           )}
 
-          {/* BOTÃO DE SAIR */}
+          {/* BOTÃO DE DESCONECTAR */}
           <div className="w-full sm:w-auto z-10">
             {user ? (
               <button 
@@ -180,11 +194,11 @@ export default function Ranking() {
         </div>
 
         {/* CONTAINER DO PLACAR */}
-        <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-3xl flex flex-col shadow-2xl min-h-[482px] relative overflow-hidden">
+        <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-3xl flex flex-col shadow-2xl min-h-[482px] max-h-[580px] relative overflow-hidden">
           <div className={`h-[2px] w-full transition-colors duration-500 ${currentConfig.bgAccent.replace('10', '50')}`} />
 
           {/* MENU SELETOR */}
-          <div className="flex justify-center gap-1.5 bg-[#141414]/60 border-b border-neutral-800/40 text-[10px] font-black uppercase tracking-widest text-center p-3">
+          <div className="flex justify-center gap-1.5 bg-[#141414]/60 border-b border-neutral-800/40 text-[10px] font-black uppercase tracking-widest text-center p-3 z-10">
             {Object.keys(minigamesConfig).map((key) => {
               const cfg = minigamesConfig[key];
               return (
@@ -199,8 +213,8 @@ export default function Ranking() {
             })}
           </div>
 
-          {/* LISTA DE CARDS DO RANKING */}
-          <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3 justify-start overflow-y-auto">
+          {/* LISTA DE CARDS */}
+          <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3 justify-start overflow-y-auto ranking-scrollbar">
             {list.length > 0 && !loading ? (
               list.map((row, idx) => {
                 const position = idx + 1;
@@ -213,7 +227,7 @@ export default function Ranking() {
                 const isAvatarFallback = !row.banner_url;
 
                 return (
-                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01]">
                     
                     {/* BANNER INDIVIDUAL DA LISTA */}
                     {bgImage && (
@@ -233,6 +247,7 @@ export default function Ranking() {
                         #{position}
                       </div>
                       
+                      {/* FOTO DA LISTA */}
                       <div className="relative shrink-0 border border-white/5 rounded-xl overflow-hidden bg-neutral-900 shadow-md">
                         {row.avatar_url ? (
                           <img src={row.avatar_url} alt={row.name} className="w-10 h-10 object-cover" />

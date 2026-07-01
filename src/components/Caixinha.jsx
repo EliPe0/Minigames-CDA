@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { registerAttempt } from '../services/rankingService';
+import { supabase } from '../services/supabase';
 
 const LETTERS = ['A', 'S', 'D', 'Q', 'W', 'E'];
 
@@ -26,6 +27,26 @@ export default function CaixinhaTreino() {
 
   useEffect(() => {
     setSequence(Array(8).fill().map(() => LETTERS[Math.floor(Math.random() * LETTERS.length)]));
+  }, []);
+
+  useEffect(() => {
+    async function fetchInitialStreak() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const playerName = user.user_metadata?.username || user.user_metadata?.name;
+        const { data } = await supabase
+          .from('rankings')
+          .select('max_streak')
+          .eq('name', playerName)
+          .eq('minigame', 'caixinha')
+          .maybeSingle();
+          
+        if (data && data.max_streak) {
+          setStreak(data.max_streak);
+        }
+      }
+    }
+    fetchInitialStreak();
   }, []);
 
   useEffect(() => {

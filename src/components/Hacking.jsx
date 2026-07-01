@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerAttempt } from '../services/rankingService';
+import { supabase } from '../services/supabase';
 
 const CHAR_SETS = {
   numeric: "0123456789",
@@ -37,6 +38,26 @@ export default function Hacking() {
   const timerGameInterval = useRef(null);
   const timerHideInterval = useRef(null);
   const timerProgressInterval = useRef(null);
+
+  useEffect(() => {
+    async function fetchInitialStreak() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const playerName = user.user_metadata?.username || user.user_metadata?.name;
+        const { data } = await supabase
+          .from('rankings')
+          .select('max_streak')
+          .eq('name', playerName)
+          .eq('minigame', 'hacking')
+          .maybeSingle();
+          
+        if (data && data.max_streak) {
+          setStreak(data.max_streak);
+        }
+      }
+    }
+    fetchInitialStreak();
+  }, []);
 
   const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
