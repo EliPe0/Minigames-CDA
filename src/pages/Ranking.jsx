@@ -101,7 +101,7 @@ export default function Ranking() {
       <div className="responsive-wrapper w-full max-w-2xl">
         
         {/* CARD DE PERFIL */}
-        <div className="w-full bg-[#0c0c0c] border border-neutral-800/80 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden p-8 gap-6 sm:gap-0">
+        <div className="w-full bg-[#0c0c0c] border border-neutral-800/80 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden p-6 sm:p-8 gap-6 sm:gap-0">
           
           {/* BANNER DE FUNDO */}
           {user && (discordBanner || discordAvatar) && (
@@ -111,33 +111,33 @@ export default function Ranking() {
                 alt="Banner Background" 
                 className={`w-full h-full object-cover ${!discordBanner ? 'opacity-30 blur-lg scale-110' : 'opacity-70'}`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/50 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/60 to-transparent"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/40 to-transparent"></div>
             </div>
           )}
 
           {user ? (
-            <div className="flex items-center gap-6 z-10 w-full sm:w-auto animate-page-reveal">
-              <div className="relative shrink-0 p-1 rounded-full bg-gradient-to-tr from-white/10 to-transparent border border-white/5 shadow-2xl">
+            <div className="flex items-center gap-5 z-10 w-full sm:w-auto animate-page-reveal">
+              <div className="relative shrink-0 border border-white/10 rounded-2xl p-0.5 bg-neutral-950/40 backdrop-blur-md shadow-xl">
                 {discordAvatar ? (
-                  <img src={discordAvatar} alt="Perfil" className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] object-cover" />
+                  <img src={discordAvatar} alt="Perfil" className="w-16 h-16 rounded-xl object-cover" />
                 ) : (
-                  <div className="w-16 h-16 rounded-full border-2 border-[#0c0c0c] bg-neutral-800 flex items-center justify-center text-neutral-500 font-bold text-2xl">?</div>
+                  <div className="w-16 h-16 rounded-xl bg-neutral-800 flex items-center justify-center text-neutral-500 font-bold text-2xl">?</div>
                 )}
-                <div className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-[3px] border-[#0c0c0c] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
               </div>
               
-              <div className="flex flex-col">
+              <div className="flex flex-col items-start">
                 <div className="text-white font-black text-2xl font-sans tracking-tight leading-tight drop-shadow-md">{discordName}</div>
-                <div className="text-[10px] text-neutral-200 font-bold tracking-[0.2em] uppercase mt-1 opacity-90 drop-shadow-md">
-                  Conta Discord Vinculada
+                <div className="flex items-center gap-1.5 mt-2 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md shadow-inner">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[9px] text-emerald-400 font-bold tracking-wider uppercase font-mono">CONECTADO</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-6 z-10 w-full sm:w-auto">
-              <div className="w-16 h-16 rounded-full bg-neutral-900/50 border border-white/5 flex items-center justify-center text-neutral-600 shrink-0 shadow-inner">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex items-center gap-5 z-10 w-full sm:w-auto">
+              <div className="w-16 h-16 rounded-2xl bg-neutral-900/50 border border-white/5 flex items-center justify-center text-neutral-600 shrink-0 shadow-inner">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
@@ -151,13 +151,19 @@ export default function Ranking() {
             </div>
           )}
 
+          {/* BOTÃO DE SAIR */}
           <div className="w-full sm:w-auto z-10">
             {user ? (
               <button 
                 onClick={handleLogout} 
-                className="cursor-pointer w-full sm:w-auto px-6 py-2.5 bg-black/40 backdrop-blur-md hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-white hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95"
+                className="cursor-pointer w-full sm:w-auto px-4 py-2 bg-neutral-950/60 hover:bg-red-500/10 border border-neutral-800 hover:border-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                Sair da Conta
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Desconectar
               </button>
             ) : (
               <button 
@@ -203,14 +209,13 @@ export default function Ranking() {
                                  position === 3 ? 'text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.6)]' : 'text-neutral-500';
                 
                 const formatTime = row.best_time === 999.99 ? '--' : `${row.best_time.toFixed(2)}s`;
-                
                 const bgImage = row.banner_url || row.avatar_url;
                 const isAvatarFallback = !row.banner_url;
 
                 return (
-                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01]">
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
                     
-                    {/* BANNER INDIVIDUAL */}
+                    {/* BANNER INDIVIDUAL DA LISTA */}
                     {bgImage && (
                       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                         <img 
@@ -228,11 +233,11 @@ export default function Ranking() {
                         #{position}
                       </div>
                       
-                      <div className="relative shrink-0">
+                      <div className="relative shrink-0 border border-white/5 rounded-xl overflow-hidden bg-neutral-900 shadow-md">
                         {row.avatar_url ? (
-                          <img src={row.avatar_url} alt={row.name} className="w-10 h-10 rounded-full border-2 border-[#141414] object-cover shadow-md" />
+                          <img src={row.avatar_url} alt={row.name} className="w-10 h-10 object-cover" />
                         ) : (
-                          <div className="w-10 h-10 rounded-full border-2 border-[#141414] bg-neutral-900 flex items-center justify-center text-neutral-600 text-xs font-bold shadow-md">?</div>
+                          <div className="w-10 h-10 bg-neutral-900 flex items-center justify-center text-neutral-600 text-xs font-bold">?</div>
                         )}
                       </div>
 
@@ -242,7 +247,7 @@ export default function Ranking() {
                     </div>
 
                     {/* CONTEÚDO DIREITA */}
-                    <div className="relative z-10 flex items-center justify-between sm:justify-end w-full sm:w-auto sm:ml-auto gap-6 sm:gap-10 mt-2 sm:mt-0 pl-12 sm:pl-0">
+                    <div className="relative z-10 flex items-center justify-between sm:justify-end w-full sm:w-auto sm:ml-auto gap-6 sm:gap-10 mt-2 sm:mt-0 pl-14 sm:pl-0">
                       
                       <div className="flex flex-col items-start sm:items-end">
                         <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Streak</span>
@@ -271,7 +276,7 @@ export default function Ranking() {
                   Nenhum dado capturado
                 </div>
                 <div className="text-neutral-700 font-medium text-xs">
-                  Aguardando novos resultados...
+                  Aguardando quebra de segurança...
                 </div>
               </div>
             ) : null}
