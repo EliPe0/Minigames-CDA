@@ -8,10 +8,10 @@ export default function Ranking() {
   const [user, setUser] = useState(null);
 
   const minigamesConfig = {
-    lockpick: { title: "Lockpick", color: "text-cyan-400", bgAccent: "bg-cyan-500/10", borderAccent: "border-cyan-500/30", orderColumn: "best_time", ascending: true },
-    caixinha: { title: "Caixinha", color: "text-emerald-400", bgAccent: "bg-emerald-500/10", borderAccent: "border-emerald-500/30", orderColumn: "max_streak", ascending: false },
-    portamalas: { title: "Porta Malas", color: "text-blue-400", bgAccent: "bg-blue-500/10", borderAccent: "border-blue-500/30", orderColumn: "best_time", ascending: true },
-    hacking: { title: "Hacking", color: "text-purple-400", bgAccent: "bg-purple-500/10", borderAccent: "border-purple-500/30", orderColumn: "max_streak", ascending: false }
+    lockpick: { title: "Lockpick", color: "text-cyan-400", bgAccent: "bg-cyan-500/10", borderAccent: "border-cyan-500/30" },
+    caixinha: { title: "Caixinha", color: "text-emerald-400", bgAccent: "bg-emerald-500/10", borderAccent: "border-emerald-500/30" },
+    portamalas: { title: "Porta Malas", color: "text-blue-400", bgAccent: "bg-blue-500/10", borderAccent: "border-blue-500/30" },
+    hacking: { title: "Hacking", color: "text-purple-400", bgAccent: "bg-purple-500/10", borderAccent: "border-purple-500/30" }
   };
 
   useEffect(() => {
@@ -52,7 +52,6 @@ export default function Ranking() {
   useEffect(() => {
     async function fetchRankings() {
       setLoading(true);
-      const config = minigamesConfig[activeTab];
       
       const { data, error } = await supabase
         .from('rankings')
@@ -60,7 +59,8 @@ export default function Ranking() {
         .eq('minigame', activeTab)
         .gt('total_hits', 0)
         .lt('best_time', 999)
-        .order(config.orderColumn, { ascending: config.ascending })
+        .order('best_time', { ascending: true })
+        .order('max_streak', { ascending: false })
         .limit(10);
 
       if (!error && data) setList(data);
@@ -121,7 +121,6 @@ export default function Ranking() {
         {/* CARD DE PERFIL */}
         <div className="w-full bg-[#0c0c0c] border border-neutral-800/80 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden p-6 sm:p-8 gap-6 sm:gap-0">
           
-          {/* BANNER DE FUNDO */}
           {user && (discordBanner || discordAvatar) && (
             <div className="absolute inset-0 z-0 pointer-events-none">
               <img 
@@ -159,13 +158,12 @@ export default function Ranking() {
               <div className="flex flex-col justify-center">
                 <div className="text-white font-black text-xl font-sans tracking-tight">Visitante</div>
                 <div className="text-neutral-500 text-[11px] font-medium font-sans mt-0.5 leading-snug max-w-[200px]">
-                  Vincule sua conta para registrar seus tempos no ranking.
+                  Vincule sua conta para registrar seus rankings.
                 </div>
               </div>
             </div>
           )}
 
-          {/* BOTÃO DE DESCONECTAR */}
           <div className="w-full sm:w-auto z-10">
             {user ? (
               <button 
@@ -213,7 +211,6 @@ export default function Ranking() {
             })}
           </div>
 
-          {/* LISTA DE CARDS */}
           <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3 justify-start overflow-y-auto ranking-scrollbar">
             {list.length > 0 && !loading ? (
               list.map((row, idx) => {
@@ -227,9 +224,8 @@ export default function Ranking() {
                 const isAvatarFallback = !row.banner_url;
 
                 return (
-                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01]">
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
                     
-                    {/* BANNER INDIVIDUAL DA LISTA */}
                     {bgImage && (
                       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                         <img 
@@ -241,13 +237,11 @@ export default function Ranking() {
                       </div>
                     )}
 
-                    {/* CONTEÚDO ESQUERDA */}
                     <div className="relative z-10 flex items-center gap-4 w-full sm:w-auto">
                       <div className={`font-black text-lg sm:text-xl w-8 text-center ${posColor}`}>
                         #{position}
                       </div>
                       
-                      {/* FOTO DA LISTA */}
                       <div className="relative shrink-0 border border-white/5 rounded-xl overflow-hidden bg-neutral-900 shadow-md">
                         {row.avatar_url ? (
                           <img src={row.avatar_url} alt={row.name} className="w-10 h-10 object-cover" />
@@ -261,17 +255,16 @@ export default function Ranking() {
                       </div>
                     </div>
 
-                    {/* CONTEÚDO DIREITA */}
                     <div className="relative z-10 flex items-center justify-between sm:justify-end w-full sm:w-auto sm:ml-auto gap-6 sm:gap-10 mt-2 sm:mt-0 pl-14 sm:pl-0">
                       
                       <div className="flex flex-col items-start sm:items-end">
-                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Streak</span>
-                        <span className="text-white font-black text-sm drop-shadow">{row.max_streak || 0}</span>
+                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Tempo</span>
+                        <span className={`font-black text-sm drop-shadow-md ${currentConfig.color}`}>{formatTime}</span>
                       </div>
 
                       <div className="flex flex-col items-start sm:items-end">
-                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Tempo</span>
-                        <span className={`font-black text-sm drop-shadow-md ${minigamesConfig[activeTab].color}`}>{formatTime}</span>
+                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Streak</span>
+                        <span className="text-white font-black text-sm drop-shadow">{row.max_streak || 0}</span>
                       </div>
 
                       <div className="flex flex-col items-start sm:items-end">
