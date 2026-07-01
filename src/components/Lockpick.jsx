@@ -135,26 +135,6 @@ export default function Digipick() {
     return () => clearTimeout(feedbackTimeoutRef.current);
   }, []);
 
-  useEffect(() => {
-    async function fetchInitialStreak() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const playerName = user.user_metadata?.username || user.user_metadata?.name;
-        const { data } = await supabase
-          .from('rankings')
-          .select('max_streak')
-          .eq('name', playerName)
-          .eq('minigame', 'lockpick')
-          .maybeSingle();
-          
-        if (data && data.max_streak) {
-          setStreak(data.max_streak);
-        }
-      }
-    }
-    fetchInitialStreak();
-  }, []);
-
   const iniciarSistema = () => {
     const p = generatePuzzle();
     setRings(p.rings); setTools(p.tools);

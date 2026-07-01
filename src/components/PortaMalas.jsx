@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { registerAttempt } from '../services/rankingService';
-import { supabase } from '../services/supabase';
 
 const TOTAL_PINS = 8;
 const MAX_LEVEL = 3; 
@@ -48,26 +47,6 @@ export default function PortaMalas() {
       clearTimeout(shakeTimeoutRef.current);
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, []);
-
-  useEffect(() => {
-    async function fetchInitialStreak() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const playerName = user.user_metadata?.username || user.user_metadata?.name;
-        const { data } = await supabase
-          .from('rankings')
-          .select('max_streak')
-          .eq('name', playerName)
-          .eq('minigame', 'portamalas')
-          .maybeSingle();
-          
-        if (data && data.max_streak) {
-          setStreak(data.max_streak);
-        }
-      }
-    }
-    fetchInitialStreak();
   }, []);
 
   const iniciarSistema = () => {
@@ -189,7 +168,7 @@ export default function PortaMalas() {
   const handleKeyDown = useCallback((e) => {
     const { gameState: gState, pinsProgress: currentPins, streak: currentStr } = stateRef.current;
     
-    if (gState === 'idle' && (e.key === ' ' || e.key === 'Enter')) {
+    if ((gState === 'idle' || gState === 'won' || gState === 'lost') && e.key === ' ') {
       e.preventDefault();
       iniciarSistema();
       return;
@@ -231,8 +210,8 @@ export default function PortaMalas() {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
             
             const tempoGastoSeg = (performance.now() - startTimeRef.current) / 1000;
-            const nextStreak = currentStr + 1;
             
+            const nextStreak = currentStr + 1;
             setStreak(nextStreak);
             registerAttempt('portamalas', true, nextStreak, tempoGastoSeg);
             setGameState('won');
@@ -288,7 +267,6 @@ export default function PortaMalas() {
           screenShake ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : ''
         }`}>
           
-          {/* CABEÇALHO */}
           <div className="h-11 bg-[#141414] flex items-center justify-center px-6 border-b border-neutral-800/40 text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
             <div className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f58002" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -300,7 +278,6 @@ export default function PortaMalas() {
 
           <div className="flex flex-col w-full pb-6 pt-4 relative">
             
-            {/* CRONÔMETRO */}
             <div className="flex flex-col items-center gap-2 px-8 mb-6">
               <div className="flex justify-between w-full text-[10px] font-mono font-black text-neutral-400 uppercase tracking-widest px-0.5">
                 <span className="flex items-center gap-1.5">
@@ -316,7 +293,6 @@ export default function PortaMalas() {
               </div>
             </div>
 
-            {/* ÁREA DOS PINOS */}
             <div className="relative h-[160px] w-full px-8 flex mb-4">
               {pinsProgress.map((level, idx) => {
                 const isMax = level === MAX_LEVEL;
@@ -333,7 +309,6 @@ export default function PortaMalas() {
               })}
             </div>
 
-            {/* WRENCH E TIMELINE */}
             <div className="px-8 relative w-full mb-2 mt-2">
               <div className="relative w-full h-[64px]">
                 <div className="absolute top-0 w-full h-[36px] bg-[#050505] rounded-lg border border-neutral-900 transition-colors" />
@@ -364,10 +339,9 @@ export default function PortaMalas() {
             </div>
             
             <div className="text-center text-neutral-500 text-[8px] font-black tracking-widest mt-4 uppercase transition-colors h-4">
-              {gameState === 'playing' ? 'Aperte espaço no momento certo' : gameState === 'idle' ? 'Pressione INICIAR ou ESPAÇO para destravar o porta malas' : ''}
+              {gameState === 'playing' ? 'Aperte ESPAÇO no momento certo' : gameState === 'idle' ? 'Aperte ESPAÇO para destravar o porta malas' : 'Aperte ESPAÇO para jogar novamente'}
             </div>
             
-            {/* OVERLAY */}
             {(gameState !== 'playing' && gameState !== 'idle') && (
               <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade bg-black/20 backdrop-blur-sm pointer-events-none">
                 {gameState === 'lost' && (
@@ -390,7 +364,6 @@ export default function PortaMalas() {
             )}
           </div>
 
-          {/* RODAPÉ */}
           <div className="flex items-center justify-between border-t border-neutral-900 p-5 w-full relative transition-colors gap-6 bg-neutral-900/10 z-20">
             <div className="flex flex-wrap gap-x-4 gap-y-2 items-center flex-1 text-[10px] font-bold tracking-wider uppercase text-neutral-500 font-mono">
               {gameState === 'playing' ? (
@@ -400,7 +373,6 @@ export default function PortaMalas() {
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ENTER</kbd>
                   <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ESPAÇO</kbd>
                   <span className="text-neutral-500">Iniciar Sistema</span>
                 </div>

@@ -39,26 +39,6 @@ export default function Hacking() {
   const timerHideInterval = useRef(null);
   const timerProgressInterval = useRef(null);
 
-  useEffect(() => {
-    async function fetchInitialStreak() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const playerName = user.user_metadata?.username || user.user_metadata?.name;
-        const { data } = await supabase
-          .from('rankings')
-          .select('max_streak')
-          .eq('name', playerName)
-          .eq('minigame', 'hacking')
-          .maybeSingle();
-          
-        if (data && data.max_streak) {
-          setStreak(data.max_streak);
-        }
-      }
-    }
-    fetchInitialStreak();
-  }, []);
-
   const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
   const randomSetChar = (setKey) => {
