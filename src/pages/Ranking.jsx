@@ -208,7 +208,7 @@ export default function Ranking() {
                 const isAvatarFallback = !row.banner_url;
 
                 return (
-                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01]">
                     
                     {/* BANNER INDIVIDUAL */}
                     {bgImage && (
