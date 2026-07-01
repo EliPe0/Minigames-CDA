@@ -109,10 +109,10 @@ export default function Ranking() {
               <img 
                 src={discordBanner || discordAvatar} 
                 alt="Banner Background" 
-                className={`w-full h-full object-cover ${!discordBanner ? 'opacity-[0.15] blur-3xl scale-150' : 'opacity-40'}`}
+                className={`w-full h-full object-cover ${!discordBanner ? 'opacity-20 blur-xl scale-110' : 'opacity-40'}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/40 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/60 to-transparent"></div>
             </div>
           )}
 
@@ -216,7 +216,7 @@ export default function Ranking() {
                         <img 
                           src={bgImage} 
                           alt="Banner do Jogador" 
-                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-[0.08] blur-xl scale-125' : 'opacity-[0.25]'}`} 
+                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-15 blur-md scale-105' : 'opacity-30'}`} 
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#101010] via-[#101010]/80 to-transparent"></div>
                       </div>
@@ -271,7 +271,7 @@ export default function Ranking() {
                   Nenhum dado capturado
                 </div>
                 <div className="text-neutral-700 font-medium text-xs">
-                  Aguardando quebra de segurança...
+                  Aguardando novos resultados...
                 </div>
               </div>
             ) : null}
