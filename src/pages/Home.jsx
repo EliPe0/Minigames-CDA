@@ -9,19 +9,25 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   
   const [stats, setStats] = useState({ operators: 0, attempts: 0 });
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
+      setLoadingStats(true);
       try {
         const { data, error } = await supabase.from('rankings').select('name, total_attempts');
-        if (!error && data) {
+        if (error) {
+          console.error("Erro ao buscar estatísticas do Supabase:", error);
+        } else if (data) {
           const uniqueOperators = new Set(data.map(item => item.name)).size;
           const totalAttempts = data.reduce((sum, current) => sum + (current.total_attempts || 0), 0);
           
           setStats({ operators: uniqueOperators, attempts: totalAttempts });
         }
       } catch (err) {
-        console.error("Erro ao carregar estatísticas:", err);
+        console.error("Erro interno ao carregar estatísticas:", err);
+      } finally {
+        setLoadingStats(false);
       }
     }
     fetchStats();
@@ -115,7 +121,7 @@ export default function Home() {
       {/* DASHBOARD */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 w-full max-w-4xl mx-auto z-10 animate-page-reveal">
         
-        {/* WIDGETS */}
+        {/* WIDGETS DE TELEMETRIA */}
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           
           <div className="bg-[#0c0c0c] border border-neutral-800/60 p-5 rounded-2xl flex items-center gap-4 shadow-sm hover:border-neutral-700 transition-colors">
@@ -129,7 +135,9 @@ export default function Home() {
             </div>
             <div>
               <div className="text-[10px] text-neutral-500 uppercase tracking-widest font-black">Contas Registradas</div>
-              <div className="text-xl font-bold text-neutral-200 mt-0.5">{stats.operators}</div>
+              <div className="text-xl font-bold text-neutral-200 mt-0.5">
+                {loadingStats ? <span className="animate-pulse opacity-50">...</span> : stats.operators}
+              </div>
             </div>
           </div>
 
@@ -141,7 +149,9 @@ export default function Home() {
             </div>
             <div>
               <div className="text-[10px] text-neutral-500 uppercase tracking-widest font-black">Testes Realizados</div>
-              <div className="text-xl font-bold text-neutral-200 mt-0.5">{stats.attempts}</div>
+              <div className="text-xl font-bold text-neutral-200 mt-0.5">
+                {loadingStats ? <span className="animate-pulse opacity-50">...</span> : stats.attempts}
+              </div>
             </div>
           </div>
 
@@ -236,7 +246,7 @@ export default function Home() {
 
         </div>
 
-        {/* CONTROLES */}
+        {/* CONTROLES MOBILE */}
         <div className="flex flex-col sm:flex-row items-center justify-between w-full mt-8 max-w-xl gap-6">
           <div className="flex sm:hidden gap-4">
             <button onClick={prevSlide} className="cursor-pointer px-6 py-3 bg-[#0c0c0c] border border-neutral-800 rounded-xl text-neutral-400 active:scale-95"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
