@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerAttempt } from '../services/rankingService';
-import { supabase } from '../services/supabase';
 
 // --- MATEMÁTICA DO CÍRCULO ---
 const getCoords = (angle, radius, center = 200) => {
@@ -240,7 +239,7 @@ export default function Digipick() {
       const k = e.key.toLowerCase();
       
       if (gameState === 'idle' || gameState === 'won' || gameState === 'lost') {
-        if (k === ' ' || k === 'enter') {
+        if (k === 'enter') {
           e.preventDefault();
           iniciarSistema();
         }
@@ -251,7 +250,7 @@ export default function Digipick() {
       if (k === 'd') handleInput('rotate_right');
       if (k === 'e') handleInput('next');
       if (k === 'q') handleInput('prev');
-      if (k === 'enter' || k === ' ') {
+      if (k === 'enter') {
         e.preventDefault();
         handleInput('confirm');
       }
@@ -449,7 +448,6 @@ export default function Digipick() {
               ) : (
                 <div className="flex items-center gap-1.5">
                   <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ENTER</kbd>
-                  <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ESPAÇO</kbd>
                   <span className="text-neutral-500">Iniciar Sistema</span>
                 </div>
               )}
