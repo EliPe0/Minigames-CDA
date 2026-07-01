@@ -109,10 +109,10 @@ export default function Ranking() {
               <img 
                 src={discordBanner || discordAvatar} 
                 alt="Banner Background" 
-                className={`w-full h-full object-cover ${!discordBanner ? 'opacity-20 blur-xl scale-110' : 'opacity-40'}`}
+                className={`w-full h-full object-cover ${!discordBanner ? 'opacity-30 blur-lg scale-110' : 'opacity-70'}`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/80 to-transparent"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/60 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/50 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] via-[#0c0c0c]/40 to-transparent"></div>
             </div>
           )}
 
@@ -128,8 +128,8 @@ export default function Ranking() {
               </div>
               
               <div className="flex flex-col">
-                <div className="text-white font-black text-2xl font-sans tracking-tight leading-tight">{discordName}</div>
-                <div className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1 opacity-80 drop-shadow-md">
+                <div className="text-white font-black text-2xl font-sans tracking-tight leading-tight drop-shadow-md">{discordName}</div>
+                <div className="text-[10px] text-neutral-200 font-bold tracking-[0.2em] uppercase mt-1 opacity-90 drop-shadow-md">
                   Conta Discord Vinculada
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function Ranking() {
             {user ? (
               <button 
                 onClick={handleLogout} 
-                className="cursor-pointer w-full sm:w-auto px-6 py-2.5 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/20 text-neutral-300 hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95"
+                className="cursor-pointer w-full sm:w-auto px-6 py-2.5 bg-black/40 backdrop-blur-md hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 text-white hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95"
               >
                 Sair da Conta
               </button>
@@ -210,15 +210,15 @@ export default function Ranking() {
                 return (
                   <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
                     
-                    {/* BANNER */}
+                    {/* BANNER INDIVIDUAL */}
                     {bgImage && (
                       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                         <img 
                           src={bgImage} 
                           alt="Banner do Jogador" 
-                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-15 blur-md scale-105' : 'opacity-30'}`} 
+                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-25 blur-sm scale-105' : 'opacity-60'}`} 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#101010] via-[#101010]/80 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#101010] via-[#101010]/60 to-transparent"></div>
                       </div>
                     )}
 
@@ -237,7 +237,7 @@ export default function Ranking() {
                       </div>
 
                       <div className="flex-1 min-w-[120px]">
-                        <div className="text-neutral-200 font-bold tracking-wide truncate group-hover:text-white transition-colors">{row.name}</div>
+                        <div className="text-white font-bold tracking-wide truncate transition-colors drop-shadow-md">{row.name}</div>
                       </div>
                     </div>
 
@@ -245,19 +245,19 @@ export default function Ranking() {
                     <div className="relative z-10 flex items-center justify-between sm:justify-end w-full sm:w-auto sm:ml-auto gap-6 sm:gap-10 mt-2 sm:mt-0 pl-12 sm:pl-0">
                       
                       <div className="flex flex-col items-start sm:items-end">
-                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Streak</span>
-                        <span className="text-neutral-300 font-black text-sm">{row.max_streak || 0}</span>
+                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Streak</span>
+                        <span className="text-white font-black text-sm drop-shadow">{row.max_streak || 0}</span>
                       </div>
 
                       <div className="flex flex-col items-start sm:items-end">
-                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Tempo</span>
+                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Tempo</span>
                         <span className={`font-black text-sm drop-shadow-md ${minigamesConfig[activeTab].color}`}>{formatTime}</span>
                       </div>
 
                       <div className="flex flex-col items-start sm:items-end">
-                        <span className="text-[9px] text-neutral-500 font-black tracking-widest uppercase mb-0.5 opacity-80">Precisão</span>
-                        <div className="font-mono text-xs text-neutral-300 font-bold mt-0.5">
-                          {row.total_hits} <span className="text-neutral-600 font-normal">/ {row.total_attempts}</span>
+                        <span className="text-[9px] text-neutral-300 font-black tracking-widest uppercase mb-0.5 opacity-90 drop-shadow">Precisão</span>
+                        <div className="font-mono text-xs text-white font-bold mt-0.5 drop-shadow">
+                          {row.total_hits} <span className="text-neutral-400 font-normal">/ {row.total_attempts}</span>
                         </div>
                       </div>
 
