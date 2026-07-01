@@ -12,9 +12,13 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
   const playerName = user.user_metadata?.username || user.user_metadata?.name;
   const playerAvatar = user.user_metadata?.avatar_url || null; 
 
-  const providerId = user.user_metadata?.provider_id || user.user_metadata?.sub;
-  const bannerHash = user.user_metadata?.banner || user.user_metadata?.custom_claims?.banner;
+  const identityData = user.identities?.[0]?.identity_data || {};
+  const providerId = user.user_metadata?.provider_id || identityData.sub || user.id;
   
+  const bannerHash = user.user_metadata?.banner || identityData.banner || user.user_metadata?.custom_claims?.banner || identityData.custom_claims?.banner;
+  
+  console.log('[TELEMETRIA] Dados brutos do Discord:', { identityData, bannerHash, providerId });
+
   let playerBanner = null;
   if (providerId && bannerHash) {
     const isGif = bannerHash.startsWith('a_');
@@ -43,7 +47,7 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
       name: playerName,
       minigame: minigame,
       avatar_url: playerAvatar,
-      banner_url: playerBanner,
+      banner_url: playerBanner, 
       max_streak,
       best_time,
       total_attempts,
