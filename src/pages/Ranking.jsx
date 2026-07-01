@@ -15,8 +15,31 @@ export default function Ranking() {
   };
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      setUser(session?.user || null);
+
+      if (session?.provider_token && session?.user) {
+        try {
+          const res = await fetch('https://discord.com/api/users/@me', {
+            headers: { Authorization: `Bearer ${session.provider_token}` }
+          });
+          
+          const discordData = await res.json();
+          
+          if (discordData.banner) {
+            await supabase.auth.updateUser({
+              data: { banner: discordData.banner }
+            });
+            
+            setUser(prev => ({
+              ...prev,
+              user_metadata: { ...prev.user_metadata, banner: discordData.banner }
+            }));
+          }
+        } catch (err) {
+          console.error("Falha ao interceptar banner da API do Discord:", err);
+        }
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -62,7 +85,7 @@ export default function Ranking() {
   const discordName = user?.user_metadata?.username || user?.user_metadata?.name;
   const discordAvatar = user?.user_metadata?.avatar_url;
   
-  const providerId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+  const providerId = user?.user_metadata?.provider_id || user?.user_metadata?.sub || user?.id;
   const bannerHash = user?.user_metadata?.banner || user?.user_metadata?.custom_claims?.banner;
   let discordBanner = null;
   if (providerId && bannerHash) {
@@ -187,6 +210,7 @@ export default function Ranking() {
                 return (
                   <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
                     
+                    {/* BANNER */}
                     {bgImage && (
                       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                         <img 
