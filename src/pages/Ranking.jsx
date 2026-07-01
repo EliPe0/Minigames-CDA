@@ -9,7 +9,7 @@ export default function Ranking() {
 
   const minigamesConfig = {
     lockpick: { title: "Lockpick", color: "text-cyan-400", bgAccent: "bg-cyan-500/10", borderAccent: "border-cyan-500/30", orderColumn: "best_time", ascending: true },
-    caixinha: { title: "Caixinha", color: "text-amber-500", bgAccent: "bg-amber-500/10", borderAccent: "border-amber-500/30", orderColumn: "max_streak", ascending: false },
+    caixinha: { title: "Caixinha", color: "text-emerald-400", bgAccent: "bg-emerald-500/10", borderAccent: "border-emerald-500/30", orderColumn: "max_streak", ascending: false },
     portamalas: { title: "Porta Malas", color: "text-blue-400", bgAccent: "bg-blue-500/10", borderAccent: "border-blue-500/30", orderColumn: "best_time", ascending: true },
     hacking: { title: "Hacking", color: "text-purple-400", bgAccent: "bg-purple-500/10", borderAccent: "border-purple-500/30", orderColumn: "max_streak", ascending: false }
   };
@@ -35,6 +35,8 @@ export default function Ranking() {
         .from('rankings')
         .select('*')
         .eq('minigame', activeTab)
+        .gt('total_hits', 0)
+        .lt('best_time', 999)
         .order(config.orderColumn, { ascending: config.ascending })
         .limit(10);
 
@@ -67,37 +69,74 @@ export default function Ranking() {
       <div className="responsive-wrapper w-full max-w-2xl">
         
         {/* CARD DE PERFIL */}
-        <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-2xl p-4 mb-5 flex items-center justify-between shadow-xl">
+        <div className="w-full bg-[#0c0c0c] border border-neutral-800/80 rounded-2xl p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-2xl relative overflow-hidden gap-5 sm:gap-0">
+          
+          {user && <div className="absolute top-0 right-0 w-64 h-64 bg-[#5865F2] opacity-[0.04] blur-3xl rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4"></div>}
+
           {user ? (
-            <div className="flex items-center gap-3 animate-page-reveal">
-              {discordAvatar ? (
-                <img src={discordAvatar} alt="Perfil" className="w-9 h-9 rounded-xl border border-neutral-800 object-cover shadow-md" />
-              ) : (
-                <div className="w-9 h-9 rounded-xl border border-neutral-800 bg-neutral-900 flex items-center justify-center text-neutral-600 font-bold">?</div>
-              )}
-              <div>
-                <div className="text-[9px] text-neutral-500 uppercase font-black tracking-wider">Sessão Ativa</div>
-                <div className="text-sm font-black text-white">{discordName}</div>
+            <div className="flex items-center gap-5 z-10 w-full sm:w-auto animate-page-reveal">
+              <div className="relative shrink-0 p-1 rounded-full bg-gradient-to-b from-neutral-700 to-neutral-900 shadow-md">
+                {discordAvatar ? (
+                  <img src={discordAvatar} alt="Perfil" className="w-14 h-14 rounded-full border-2 border-[#050505] object-cover" />
+                ) : (
+                  <div className="w-14 h-14 rounded-full border-2 border-[#050505] bg-neutral-800 flex items-center justify-center text-neutral-500 font-bold text-xl">?</div>
+                )}
+                <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#050505] rounded-full"></div>
+              </div>
+              
+              <div className="flex flex-col">
+                <div className="text-white font-bold text-lg font-sans tracking-wide leading-tight mb-1">{discordName}</div>
+                <div className="flex items-center gap-1.5 text-neutral-400 text-xs font-medium font-sans">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-emerald-500">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Conta Discord Vinculada
+                </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-0.5">
-              <div className="text-[10px] text-neutral-400 font-black uppercase tracking-wider">Leaderboard</div>
-              <div className="text-xs text-neutral-500">Vincule sua conta para registrar seu desempenho.</div>
+            <div className="flex items-center gap-5 z-10 w-full sm:w-auto">
+              <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-600 shrink-0 shadow-inner">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <div className="text-white font-bold text-base font-sans tracking-wide leading-tight mb-1">Visitante</div>
+                <div className="text-neutral-500 text-xs font-medium font-sans max-w-[220px]">
+                  Conecte-se para registrar seus recordes no placar de líderes.
+                </div>
+              </div>
             </div>
           )}
 
-          {user ? (
-            <button onClick={handleLogout} className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-500 hover:text-red-400 text-[10px] font-bold uppercase tracking-wider rounded-xl transition-all">Sair</button>
-          ) : (
-            <button onClick={handleDiscordLogin} className="px-4 py-2 bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-black uppercase tracking-wider rounded-xl transition-all active:scale-95 flex items-center gap-2">
-              <svg width="13" height="13" fill="currentColor" viewBox="0 0 16 16"><path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.569-.406.818a12.212 12.212 0 0 0-3.66 0 8.25 8.25 0 0 0-.412-.818.05.05 0 0 0-.052-.025 13.229 13.227 0 0 0-3.257 1.011.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032a.04.04 0 0 0 .016.028a13.401 13.401 0 0 0 4.057 2.059a.05.05 0 0 0 .053-.017c.308-.41.585-.85.817-1.314a.05.05 0 0 0-.028-.069a8.98 8.98 0 0 1-1.273-.61a.05.05 0 0 1-.005-.085a6.57 6.57 0 0 0 .27-.208a.046.046 0 0 1 .047-.006c2.536 1.157 5.271 1.157 7.775 0a.047.046 0 0 1 .048.006c.084.066.175.136.27.208a.05.05 0 0 1-.006.085a9.304 9.304 0 0 1-1.273.61a.05.05 0 0 0-.022.069c.237.465.513.905.817 1.314a.05.05 0 0 0 .052.017a13.369 13.401 0 0 0 4.057-2.059a.072.072 0 0 0 .016-.028c.456-3.675-.751-6.677-3.119-9.107a.042.042 0 0 0-.022-.019z"/></svg>
-              Conectar Discord
-            </button>
-          )}
+          <div className="w-full sm:w-auto z-10">
+            {user ? (
+              <button 
+                onClick={handleLogout} 
+                className="w-full sm:w-auto px-5 py-2.5 bg-transparent hover:bg-neutral-900 border border-neutral-700 hover:border-neutral-600 text-neutral-400 hover:text-white text-xs font-bold uppercase tracking-wider font-mono rounded-xl transition-all flex items-center justify-center gap-2 group active:scale-95"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:-translate-x-0.5">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Desconectar
+              </button>
+            ) : (
+              <button 
+                onClick={handleDiscordLogin} 
+                className="w-full sm:w-auto px-6 py-3 bg-[#5865F2] hover:bg-[#4752C4] text-white text-[11px] sm:text-xs font-black uppercase tracking-widest font-mono rounded-xl transition-all shadow-[0_0_20px_rgba(88,101,242,0.2)] hover:shadow-[0_0_25px_rgba(88,101,242,0.4)] active:scale-95 flex items-center justify-center gap-2.5"
+              >
+                <svg width="18" height="18" viewBox="0 0 127.14 96.36" fill="currentColor">
+                  <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.55,67.55,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.3,46,96.19,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
+                Conectar Discord
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* CONTÊINER PRINCIPAL */}
+        {/* CONTÊINER DA TABELA */}
         <div className="w-full bg-[#0c0c0c] border border-neutral-800 rounded-2xl flex flex-col shadow-2xl min-h-[482px] relative overflow-hidden">
           <div className={`h-[2px] w-full transition-colors duration-500 ${currentConfig.bgAccent.replace('10', '50')}`} />
 
@@ -125,7 +164,7 @@ export default function Ranking() {
                   <th className="py-3 px-3 text-center w-14">RANK</th>
                   <th className="py-3 px-3">Jogador</th>
                   <th className="py-3 px-3 text-center w-24">Streak Máx</th>
-                  <th className="py-3 px-3 text-right w-32">Tempo Mais Rápido</th>
+                  <th className="py-3 px-3 text-right w-32">Melhor Tempo</th>
                   <th className="py-3 px-3 text-right w-28">Precisão</th>
                 </tr>
               </thead>
@@ -134,16 +173,31 @@ export default function Ranking() {
                   list.map((row, idx) => {
                     const position = idx + 1;
                     const posColor = position === 1 ? 'text-amber-400 font-black' : position === 2 ? 'text-neutral-300' : position === 3 ? 'text-amber-600' : 'text-neutral-600';
-                    
                     const formatTime = row.best_time === 999.99 ? '--' : `${row.best_time.toFixed(2)}s`;
                     
                     return (
                       <tr key={row.id || idx} className="border-b border-neutral-900/30 hover:bg-white/[0.01] transition-colors">
-                        <td className={`py-3.5 px-3 text-center font-black text-xs ${posColor}`}>{position.toString().padStart(2, '0')}</td>
-                        <td className="py-3.5 px-3 text-neutral-200 font-bold tracking-wide">{row.name}</td>
-                        <td className="py-3.5 px-3 text-center text-neutral-300 font-black">{row.max_streak || 0}</td>
-                        <td className={`py-3.5 px-3 text-right font-black ${minigamesConfig[activeTab].color}`}>{formatTime}</td>
-                        <td className="py-3.5 px-3 text-right text-neutral-500 font-medium font-mono text-[11px]">
+                        
+                        <td className={`py-3 px-3 text-center font-black text-xs ${posColor}`}>
+                          {position.toString().padStart(2, '0')}
+                        </td>
+                        
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2.5">
+                            {row.avatar_url ? (
+                              <img src={row.avatar_url} alt={row.name} className="w-6 h-6 rounded-full border border-neutral-800 object-cover shadow-sm" />
+                            ) : (
+                              <div className="w-6 h-6 rounded-full border border-neutral-800 bg-neutral-900 flex items-center justify-center text-neutral-600 text-[9px] font-bold">
+                                ?
+                              </div>
+                            )}
+                            <span className="text-neutral-200 font-bold tracking-wide truncate max-w-[120px]">{row.name}</span>
+                          </div>
+                        </td>
+                        
+                        <td className="py-3 px-3 text-center text-neutral-300 font-black">{row.max_streak || 0}</td>
+                        <td className={`py-3 px-3 text-right font-black ${minigamesConfig[activeTab].color}`}>{formatTime}</td>
+                        <td className="py-3 px-3 text-right text-neutral-500 font-medium font-mono text-[11px]">
                           <span className="text-neutral-300 font-bold">{row.total_hits}</span>
                           <span className="text-neutral-600"> / {row.total_attempts}</span>
                         </td>
@@ -153,8 +207,8 @@ export default function Ranking() {
                 ) : !loading ? (
                   <tr>
                     <td colSpan="5" className="py-36 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest px-6 leading-relaxed">
-                      Nenhum registro encontrado ainda.<br />
-                      <span className="text-neutral-700 font-normal lowercase">Aguardando novos participantes...</span>
+                      Nenhum ranking registrado ainda<br />
+                      <span className="text-neutral-700 font-normal lowercase">Aguardando novas tentativas...</span>
                     </td>
                   </tr>
                 ) : null}
@@ -163,7 +217,7 @@ export default function Ranking() {
 
             {loading && (
               <div className="flex-1 flex items-center justify-center py-32 text-neutral-600 text-[10px] font-black uppercase tracking-widest animate-pulse">
-                Sincronizando partições da tabela...
+                Sincronizando tabela...
               </div>
             )}
           </div>

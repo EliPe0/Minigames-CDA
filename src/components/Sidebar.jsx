@@ -18,12 +18,9 @@ export default function Sidebar() {
       </svg>
     ),
     Trophy: () => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-3 transition-transform duration-300 group-hover:scale-110">
-        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-        <path d="M4 22h16"></path>
-        <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h12v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
-        <path d="M12 2a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4 4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z"></path>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 transition-transform duration-300 group-hover:scale-110">
+        <circle cx="12" cy="8" r="7"></circle>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
       </svg>
     ),
     Key: () => (
@@ -55,7 +52,7 @@ export default function Sidebar() {
   return (
     <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-[#1f1f1f] p-6 flex flex-col justify-between select-none shrink-0 font-mono">
       
-      {/* SEÇÃO SUPERIOR: LOGO E MÓDULOS DE TREINO */}
+      {/* SEÇÃO SUPERIOR */}
       <div className="flex flex-col gap-10">
         {/* LOGO */}
         <div onClick={() => handleNavigate('/home')} className="flex flex-col items-center gap-3 cursor-pointer group">
@@ -97,6 +94,7 @@ export default function Sidebar() {
         </div>
       </div>
 
+      {/* RANKING GLOBAL */}
       <div className="mt-auto text-xs font-bold uppercase tracking-widest border-t border-neutral-900 pt-4">
         <button 
           onClick={() => handleNavigate('/ranking')} 

@@ -267,11 +267,13 @@ export default function PortaMalas() {
         }`}>
           
           {/* CABEÇALHO */}
-          <div className="h-11 bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-800/40 text-neutral-400 text-sm font-bold tracking-wide font-mono uppercase transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f58002" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-            Destrave o Porta Malas
+          <div className="h-11 bg-[#141414] flex items-center justify-center px-6 border-b border-neutral-800/40 text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
+            <div className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f58002" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Destrave o Porta Malas
+            </div>
           </div>
 
           <div className="flex flex-col w-full pb-6 pt-4 relative">
@@ -386,14 +388,14 @@ export default function PortaMalas() {
             <div className="flex-shrink-0">
               {gameState === 'playing' ? (
                 <button onClick={pararSistema} className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
-                  Abortar
+                  Abortar Sistema
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
                 <button onClick={pararSistema} className="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
                   Voltar ao Menu
                 </button>
               ) : (
-                <button onClick={iniciarSistema} className="px-8 py-2.5 bg-orange-500 hover:bg-orange-400 text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
+                <button onClick={iniciarSistema} className="px-8 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
                   Iniciar Sistema
                 </button>
               )}

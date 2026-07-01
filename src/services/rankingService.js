@@ -1,12 +1,8 @@
 import { supabase } from './supabase';
 
-/**
- * Registra a tentativa diretamente no Supabase (Apenas se logado)
- */
 export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSpent = null) {
   if (supabase.supabaseUrl.includes('placeholder-url')) return;
 
-  // 🔐 CONTROLE ESTRITO DE AUTENTICAÇÃO: Se não houver sessão, cancela o processo na hora
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     console.log('[OAUTH] Gravação abortada: Operador não autenticado via Discord.');
@@ -14,8 +10,8 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
   }
 
   const playerName = user.user_metadata?.username || user.user_metadata?.name;
+  const playerAvatar = user.user_metadata?.avatar_url || null; 
 
-  // Busca o registro atual do competidor
   const { data: existing } = await supabase
     .from('rankings')
     .select('*')
@@ -32,12 +28,12 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
     best_time = Math.min(best_time, parseFloat(timeSpent));
   }
 
-  // Atualiza ou insere o perfil unificado
   await supabase
     .from('rankings')
     .upsert({
       name: playerName,
       minigame: minigame,
+      avatar_url: playerAvatar,
       max_streak,
       best_time,
       total_attempts,

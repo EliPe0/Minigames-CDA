@@ -3,34 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import { registerAttempt } from '../services/rankingService';
 
 const CHAR_SETS = {
-  cyrillic: "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя",
-  greek: "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω",
-  braille: "⡀⡁⡂⡃⡄⡅⡆⡇⡈⡉⡊⡋⡌⡍⡎⡏⡐⡑⡒⡓⡔⡕⡖⡗⡘⡙⡚⡛⡜⡝⡞⡟⡠⡡⡢⡣⡤⡥⡦⡧⡨⡩⡪⡫⡬⡭⡮⡯⡰⡱⡲⡳⡴⡵⡶⡷⡸⡹⡺⡻⡼⡽⡾⡿",
+  numeric: "0123456789",
+  alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  alphanumeric: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  greek: "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ",
+  braille: "⡀⡁⡂⡃⡄⡅⡆⡇⡈⡉⡊⡋⡌⡍⡎⡏⡐⡑⡒⡓⡔⡕⡖⡗⡘⡙⡚⡛⡜⡝⡟⡠⡡⡢⡣⡤⡥⡦⡧⡨⡩⡪⡫⡬⡭⡮⡯⡰⡱⡲⡳⡴⡵⡶⡷⡸⡹⡺⡻⡼⡽⡾⡿⢀⢁⢂⢃⢄⢅⢆⢇⢈⢉⢊⢋⢌⢍⢎⢏⢐⢑⢒⢓⢔⢕⢖⢗⢘⢙⢚⢛⢜⢝⢞⢟⢠⢡⢢⢣⢤⢥⢦⢧⢨⢩⢪⢫⢬⢭⢮⢯⢰⢱⢲⢳⢴⢵⢶⢷⢸⢹⢺⢻⢼⢽⢾⢿⣀⣁⣂⣃⣄⣅⣆⣇⣈⣉⣊⣋⣌⣍⣎⣏⣐⣑⣒⣓⣔⣕⣖⣗⣘⣙⣚⣛⣜⣝⣞⣟⣠⣡⣢⣣⣤⣥⣦⣧⣨⣩⣪⣫⣬⣭⣮⣯⣰⣱⣲⣳⣴⣵⣶⣷⣸⣹⣺⣻⣼ \u2022 \u25a0 \u25b2",
   runes: "ᚠᚥᚧᚨᚩᚬᚭᚻᛐᛑᛒᛓᛔᛕᛖᛗᛘᛙᛚᛛᛜᛝᛞᛟᛤ",
+  symbols: "☎☚☛☜☞☟☠☢☣☮☯♨♩♪♫♬Ψ♆✂✄෧✆✉✦✧✿❀"
 };
 
-const TEMPO_TOTAL_MS = 15000;
+const TEMPO_TOTAL_MS = 15000; 
 
 export default function Hacking() {
   const navigate = useNavigate();
 
-  // --- ESTADOS DE PONTUAÇÃO ---
-  const [gameState, setGameState] = useState('idle');
+  const [gameState, setGameState] = useState('idle'); 
   const [streak, setStreak] = useState(0);
-  const [showHint, setShowHint] = useState(false);
+  const [showHint, setShowHint] = useState(false); 
 
-  // --- ENGINE DO JOGO ---
+  const [isMirroredActive, setIsMirroredActive] = useState(false);
   const [codes, setCodes] = useState([]);
   const [codesPos, setCodesPos] = useState(0);
   const [currentPos, setCurrentPos] = useState(43);
-  const [targetBlock, setTargetBlock] = useState([]);
+  const [targetBlock, setTargetBlock] = useState([]); 
   const [isTargetHidden, setIsTargetHidden] = useState(false);
 
-  // --- PROGRESSO DO CRONÔMETRO ---
   const [progress, setProgress] = useState(100);
   const [timerDisplay, setTimerDisplay] = useState('15.00');
 
-  // --- REFS ---
   const correctPosRef = useRef(0);
   const startTimeRef = useRef(null);
 
@@ -64,21 +64,22 @@ export default function Hacking() {
   }, []);
 
   const reset = useCallback((restart = true) => {
-    if (gameState === 'playing') {
-      registerAttempt('hacking', false, 0, null);
-      setStreak(0);
-    }
-    setGameState('idle');
+    setGameState(prev => {
+      if (prev === 'playing') {
+        registerAttempt('hacking', false, 0, null);
+        setStreak(0);
+      }
+      return 'idle';
+    });
     setIsTargetHidden(false);
     setProgress(100);
     setTimerDisplay('15.00');
     clearAllTimers();
-    if (restart) start();
-  }, [clearAllTimers, gameState]);
+    if (restart) setTimeout(start, 10); 
+  }, [clearAllTimers]);
 
   const check = useCallback(() => {
     clearAllTimers();
-    
     let current_attempt = (currentPos + codesPos) % 80;
 
     if (gameState === 'playing' && current_attempt === correctPosRef.current) {
@@ -86,13 +87,10 @@ export default function Hacking() {
       const nextStreak = streak + 1;
       
       setStreak(nextStreak);
-
       registerAttempt('hacking', true, nextStreak, tempoDecorrido);
-
       setGameState('won');
     } else {
       registerAttempt('hacking', false, 0, null);
-      
       setStreak(0);
       setGameState('lost');
     }
@@ -111,6 +109,7 @@ export default function Hacking() {
 
     const disponiveis = Object.keys(CHAR_SETS);
     const activeSet = disponiveis[random(0, disponiveis.length)];
+    setIsMirroredActive(Math.random() > 0.6);
 
     let generatedCodes = [];
     for (let i = 0; i < 80; i++) {
@@ -120,12 +119,7 @@ export default function Hacking() {
 
     correctPosRef.current = random(0, 80);
     let findIdxs = getGroupFromPos(correctPosRef.current);
-    setTargetBlock([
-      generatedCodes[findIdxs[0]],
-      generatedCodes[findIdxs[1]],
-      generatedCodes[findIdxs[2]],
-      generatedCodes[findIdxs[3]]
-    ]);
+    setTargetBlock([generatedCodes[findIdxs[0]], generatedCodes[findIdxs[1]], generatedCodes[findIdxs[2]], generatedCodes[findIdxs[3]]]);
 
     setGameState('playing');
     startTimeRef.current = performance.now();
@@ -168,17 +162,14 @@ export default function Hacking() {
         checkRef.current();
         return;
       }
-      
       setCurrentPos(prev => {
         let next = prev;
         switch (key_pressed) {
-          case 'w': case 'ArrowUp': next -= 10; break;
+          case 'w': case 'ArrowUp': next -= 10; if (next < 0) next += 80; break;
           case 's': case 'ArrowDown': next += 10; break;
-          case 'a': case 'ArrowLeft': next--; break;
+          case 'a': case 'ArrowLeft': next--; if (next < 0) next = 79; break;
           case 'd': case 'ArrowRight': next++; break;
-          default: break;
         }
-        if (next < 0) next += 80;
         return next % 80;
       });
     }
@@ -219,33 +210,34 @@ export default function Hacking() {
 
       <div className={`transition-all duration-300 responsive-wrapper ${showHint ? 'pr-[340px]' : ''}`}>
 
-        {/* TERMINAL DE INVASÃO */}
         <div className="w-full max-w-[640px] bg-[#0c0c0c] border border-neutral-800 rounded-2xl shadow-2xl flex flex-col relative overflow-hidden">
           
-          {/* CABEÇALHO */}
-          <div className="h-11 bg-[#141414] flex items-center justify-between px-6 border-b border-neutral-800/40 text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
+          <div className="h-11 bg-[#141414] flex items-center justify-center px-6 border-b border-neutral-800/40 text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
             <div className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2.5">
                 <rect x="2" y="4" width="20" height="14" rx="2" ry="2"></rect><line x1="1" y1="20" x2="23" y2="20"></line>
               </svg>
-              Bypass de Segurança de Rede
+              Encontre a Sequência Correta
             </div>
           </div>
 
           <div className="flex flex-col w-full pb-6 pt-5 relative">
             
-            {/* CRONÔMETRO */}
             <div className="flex flex-col items-center gap-2 px-8 mb-6">
               <div className="flex justify-between w-full text-[10px] font-mono font-black text-neutral-400 uppercase tracking-widest px-0.5">
-                <span>Tempo de Conexão</span>
-                <span style={{ color: timerBarColor }} className="font-bold text-xs">{timerDisplay}s</span>
+                <span className="flex items-center gap-1.5">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={timerBarColor} strokeWidth="2.5" className="transition-colors duration-200">
+                    <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Tempo Restante
+                </span>
+                <span style={{ color: timerBarColor }} className="font-bold text-xs transition-colors duration-200">{timerDisplay}s</span>
               </div>
-              <div className="w-full h-2 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800/60 transition-all duration-300">
+              <div className="w-full h-2.5 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800/60">
                 <div className="h-full transition-all duration-75 ease-out" style={{ width: `${progress}%`, backgroundColor: timerBarColor }} />
               </div>
             </div>
 
-            {/* CÓDIGO ALVO */}
             <div className="flex gap-3 items-center justify-center h-20 mb-4 w-full px-8">
               {gameState === 'playing' ? (
                 !isTargetHidden ? (
@@ -262,10 +254,14 @@ export default function Hacking() {
               )}
             </div>
 
-            {/* MATRIX GRID (10x8) */}
-            <div className="relative px-8 min-h-[220px] flex items-center justify-center font-mono">
+            <div className="relative px-8 min-h-[220px] flex items-center justify-center crt-matrix">
+              <div className="absolute top-1 left-7 w-3 h-3 border-t-2 border-l-2 border-neutral-800 pointer-events-none" />
+              <div className="absolute top-1 right-7 w-3 h-3 border-t-2 border-r-2 border-neutral-800 pointer-events-none" />
+              <div className="absolute bottom-1 left-7 w-3 h-3 border-b-2 border-l-2 border-neutral-800 pointer-events-none" />
+              <div className="absolute bottom-1 right-7 w-3 h-3 border-b-2 border-r-2 border-neutral-800 pointer-events-none" />
+
               {gameState === 'playing' || gameState === 'won' || gameState === 'lost' ? (
-                <div className="grid grid-cols-10 gap-x-2 gap-y-3 w-[500px] mx-auto font-mono font-bold text-base transition-all duration-300">
+                <div className={`grid grid-cols-10 gap-x-2 gap-y-3 w-[500px] mx-auto font-mono font-bold text-base ${isMirroredActive ? 'mirrored-soup' : ''}`}>
                   {displayCodes.map((code, idx) => {
                     const isSelected = activeSelectionBlock.includes(idx);
                     let cellColorClass = "text-neutral-400 opacity-80 transition-all";
@@ -275,7 +271,7 @@ export default function Hacking() {
                     } else if (gameState === 'won' && isSelected) {
                       cellColorClass = "text-emerald-400 font-black opacity-100";
                     } else if (gameState === 'lost' && idx === ((correctPosRef.current - codesPos + 80) % 80)) {
-                      cellColorClass = "text-emerald-400 font-black opacity-100";
+                      cellColorClass = "text-emerald-400 font-black opacity-100"; 
                     }
 
                     return <div key={idx} className={`text-center h-6 transition-all ${cellColorClass}`}>{code}</div>;
@@ -291,11 +287,10 @@ export default function Hacking() {
                 </div>
               )}
 
-              {/* OVERLAY DE STATUS */}
               {(gameState === 'won' || gameState === 'lost') && (
-                <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 animate-blur-fade">
+                <div className="absolute inset-0 z-50 bg-black/20 backdrop-blur-sm flex items-center justify-center p-6 animate-blur-fade pointer-events-none">
                   {gameState === 'lost' && (
-                    <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/80 p-5 rounded-xl w-[85%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                    <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/40 p-5 rounded-xl w-[85%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
                         <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                       </svg>
@@ -303,7 +298,7 @@ export default function Hacking() {
                     </div>
                   )}
                   {gameState === 'won' && (
-                    <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/80 p-5 rounded-xl w-[85%] flex items-center justify-center gap-3 shadow-2xl backdrop-blur-md animate-elastic-pop">
+                    <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/40 p-5 rounded-xl w-[85%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
@@ -316,7 +311,6 @@ export default function Hacking() {
 
           </div>
 
-          {/* RODAPÉ DE CONTROLES */}
           <div className="flex items-center justify-between border-t border-neutral-900 p-5 w-full relative transition-colors gap-6 bg-neutral-900/10 z-20">
             <div className="flex flex-wrap gap-x-4 gap-y-2 items-center flex-1 text-[10px] font-bold tracking-wider uppercase text-neutral-500 font-mono">
               {gameState === 'playing' ? (
@@ -336,7 +330,7 @@ export default function Hacking() {
               ) : (
                 <div className="flex items-center gap-1.5">
                   <kbd className="bg-[#141414] border border-neutral-800 text-neutral-200 px-2 py-0.5 rounded text-[9px] font-black font-mono">ENTER</kbd>
-                  <span className="text-neutral-500">Iniciar Bypass</span>
+                  <span className="text-neutral-500">Iniciar Sistema</span>
                 </div>
               )}
             </div>
@@ -347,7 +341,7 @@ export default function Hacking() {
                   onClick={() => reset(false)} 
                   className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95"
                 >
-                  Abortar
+                  Abortar Sistema
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
                 <button 
@@ -361,7 +355,7 @@ export default function Hacking() {
                   onClick={() => reset(true)} 
                   className="px-8 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-md shadow-purple-500/10"
                 >
-                  Iniciar Conexão
+                  Iniciar Sistema
                 </button>
               )}
             </div>
@@ -371,7 +365,6 @@ export default function Hacking() {
 
       </div>
 
-      {/* GAVETA DE GUIA */}
       <div className={`fixed top-0 right-0 h-full w-[340px] bg-[#0c0c0c] border-l border-neutral-800 z-50 flex flex-col font-mono shadow-2xl transition-transform duration-300 ease-in-out ${showHint ? 'translate-x-0' : 'translate-x-full'}`}>
         
         <div className="h-14 bg-[#141414] border-b border-neutral-800/60 flex items-center justify-between px-5 text-purple-400 text-[11px] font-black uppercase tracking-wider shrink-0 transition-colors">

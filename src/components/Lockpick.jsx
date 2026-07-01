@@ -456,14 +456,14 @@ export default function Digipick() {
             <div className="flex-shrink-0">
               {gameState === 'playing' ? (
                 <button onClick={pararSistema} className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
-                  Finalizar System
+                  Finalizar Sistema
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
                 <button onClick={pararSistema} className="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Voltar ao Menu
                 </button>
               ) : (
-                <button onClick={iniciarSistema} className="px-5 py-2.5 bg-[#3be8ff] hover:bg-[#2ad8ef] text-black font-mono font-black text-xs uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap">
+                <button onClick={iniciarSistema} className="px-5 py-2.5 bg-[#3be8ff] hover:bg-[#2ad8ef] text-black font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 whitespace-nowrap">
                   Iniciar Sistema
                 </button>
               )}

@@ -10,10 +10,9 @@ export default function CaixinhaTreino() {
   const [progress, setProgress] = useState(100);
   const [stage, setStage] = useState(1); 
   const [showHint, setShowHint] = useState(false); 
-  
   const [screenShake, setScreenShake] = useState(false);
   
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(0); 
 
   const timerRef = useRef(null);
   const stateRef = useRef({});
@@ -40,9 +39,7 @@ export default function CaixinhaTreino() {
     };
   }, []);
 
-  const gerarSequencia = () => {
-    return Array(8).fill().map(() => LETTERS[Math.floor(Math.random() * LETTERS.length)]);
-  };
+  const gerarSequencia = () => Array(8).fill().map(() => LETTERS[Math.floor(Math.random() * LETTERS.length)]);
 
   const iniciarTimerEtapa = () => {
     clearInterval(timerRef.current);
@@ -107,27 +104,23 @@ export default function CaixinhaTreino() {
         shakeTimeoutRef.current = setTimeout(() => setScreenShake(false), 160);
 
         if (stg < 3) {
-          const proximaEtapa = stg + 1;
-          setStage(proximaEtapa);
+          setStage(stg + 1);
           setSequence(gerarSequencia());
           setCurrentIndex(0);
           iniciarTimerEtapa(); 
         } else {
           clearInterval(timerRef.current);
-          
           const tempoGastoTotal = (performance.now() - startTimeRef.current) / 1000;
           const nextStreak = currentStr + 1;
           
           setStreak(nextStreak);
           registerAttempt('caixinha', true, nextStreak, tempoGastoTotal);
-
           setGameState('won');
         }
       }
     } else {
       setSequence(gerarSequencia());
       setCurrentIndex(0);
-      
       setScreenShake('red');
       clearTimeout(shakeTimeoutRef.current);
       shakeTimeoutRef.current = setTimeout(() => setScreenShake(false), 160);
@@ -140,11 +133,13 @@ export default function CaixinhaTreino() {
   }, [handleKeyDown]);
 
   const timerColor = gameState === 'idle' ? '#a3ef52' : progress > 60 ? '#a3ef52' : progress > 30 ? '#f58002' : '#ef4444';
+  
+  // 🎯 Lógica para exibir os "4.00s" corretamente descendo de acordo com o progresso
+  const timerDisplay = gameState === 'idle' ? '4.00' : ((Math.max(0, progress) / 100) * 4).toFixed(2);
 
   return (
     <div className="flex flex-col items-center justify-center flex-1 bg-[#050505] p-6 font-sans select-none w-full relative overflow-hidden text-white animate-page-reveal">
       
-      {/* DICA*/}
       {!showHint && (
         <button
           onClick={() => setShowHint(true)}
@@ -160,21 +155,21 @@ export default function CaixinhaTreino() {
 
       <div className={`transition-all duration-300 responsive-wrapper ${showHint ? 'pr-[340px]' : ''}`}>
         
-        {/* CONTAINER PRINCIPAL */}
         <div className={`w-full max-w-2xl bg-[#0c0c0c] border rounded-2xl shadow-2xl flex flex-col relative overflow-hidden transition-all duration-150 ${
           screenShake === 'red' ? 'animate-cyber-shake border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.2)]' :
           screenShake === 'green' ? 'animate-cyber-shake border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]' :
           'border-neutral-800'
         }`}>
           
-          {/* CABEÇALHO */}
-          <div className="h-11 bg-[#141414] flex items-center justify-center gap-2 border-b border-neutral-800/40 text-neutral-400 text-sm font-bold tracking-wide font-mono uppercase relative transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" className="drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
-              <circle cx="11" cy="13" r="9"></circle>
-              <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
-              <path d="m22 2-1.5 1.5"></path>
-            </svg>
-            Digite a Sequência Correta
+          <div className="h-11 bg-[#141414] flex items-center justify-center px-6 border-b border-neutral-800/40 text-neutral-400 text-xs font-mono font-black uppercase tracking-wider transition-colors">
+            <div className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" className="drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                <circle cx="11" cy="13" r="9"></circle>
+                <path d="m19.5 9.5 1.8-1.8a2.4 2.4 0 0 0 0-3.4l-1.6-1.6a2.41 2.41 0 0 0-3.4 0l-1.8 1.8"></path>
+                <path d="m22 2-1.5 1.5"></path>
+              </svg>
+              Digite a Sequência Correta
+            </div>
             
             {gameState === 'playing' && (
               <div className="absolute right-4 text-[9px] bg-amber-950/40 border border-amber-900/30 text-amber-400 px-2 py-0.5 rounded font-black tracking-widest transition-all">
@@ -183,20 +178,24 @@ export default function CaixinhaTreino() {
             )}
           </div>
 
-          {/* CORPO DO MINIGAME */}
           <div className="flex flex-col w-full pb-6 pt-6 relative">
             
-            {/* CRONÔMETRO */}
-            <div className="flex flex-col items-center gap-2 px-8 mb-4">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={timerColor} strokeWidth="2.5" className="transition-colors duration-200">
-                <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
+            {/* 🎯 NOVO CRONÔMETRO UNIFICADO DA CAIXINHA */}
+            <div className="flex flex-col items-center gap-2 px-8 mb-6">
+              <div className="flex justify-between w-full text-[10px] font-mono font-black text-neutral-400 uppercase tracking-widest px-0.5">
+                <span className="flex items-center gap-1.5">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={timerColor} strokeWidth="2.5" className="transition-colors duration-200">
+                    <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  Tempo Restante
+                </span>
+                <span style={{ color: timerColor }} className="font-bold text-xs transition-colors duration-200">{timerDisplay}s</span>
+              </div>
               <div className="w-full h-2.5 bg-[#1a1a1a] rounded-full overflow-hidden border border-neutral-800/60">
                 <div className="h-full transition-all duration-75 ease-linear" style={{ width: `${progress}%`, backgroundColor: timerColor }} />
               </div>
             </div>
 
-            {/* GRADE DE TECLAS */}
             <div className="px-8 mb-10 mt-8">
               <div className="grid grid-cols-8 gap-3.5">
                 {sequence.map((letter, idx) => {
@@ -222,11 +221,10 @@ export default function CaixinhaTreino() {
               </div>
             </div>
 
-            {/* OVERLAY DE STATUS */}
             {(gameState === 'lost' || gameState === 'won') && (
-              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade bg-black/20 backdrop-blur-sm">
+              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 animate-blur-fade bg-black/20 backdrop-blur-sm pointer-events-none">
                 {gameState === 'lost' && (
-                  <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/40 p-5 rounded-xl w-[80%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                  <div className="text-red-500 text-xs font-mono font-black uppercase tracking-widest border border-red-500/20 bg-red-950/40 p-5 rounded-xl w-[80%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
                       <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
@@ -234,7 +232,7 @@ export default function CaixinhaTreino() {
                   </div>
                 )}
                 {gameState === 'won' && (
-                  <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/40 p-5 rounded-xl w-[80%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop">
+                  <div className="text-[#a3ef52] text-xs font-mono font-black uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/40 p-5 rounded-xl w-[80%] flex items-center justify-center gap-3 shadow-2xl animate-elastic-pop pointer-events-auto">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="shrink-0">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
@@ -246,7 +244,6 @@ export default function CaixinhaTreino() {
 
           </div>
 
-          {/* RODAPÉ */}
           <div className="flex items-center justify-between border-t border-neutral-900 p-5 w-full relative transition-colors gap-6 bg-neutral-900/10 z-20">
             <div className="flex flex-wrap gap-x-3 gap-y-2 items-center flex-1 text-[10px] font-bold tracking-wider uppercase text-neutral-500 font-mono">
               {gameState === 'playing' ? (
@@ -264,11 +261,10 @@ export default function CaixinhaTreino() {
               )}
             </div>
             
-            {/* BOTÕES */}
             <div className="flex-shrink-0">
               {gameState === 'playing' ? (
                 <button onClick={pararJogo} className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
-                  Abortar
+                  Abortar Sequência
                 </button>
               ) : gameState === 'won' || gameState === 'lost' ? (
                 <button onClick={pararJogo} className="px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white font-mono font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95">
