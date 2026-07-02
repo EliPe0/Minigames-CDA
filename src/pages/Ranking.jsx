@@ -112,7 +112,7 @@ export default function Ranking() {
               </div>
               <div className="flex flex-col justify-center">
                 <div className="text-white font-black text-xl font-sans tracking-tight">Visitante</div>
-                <div className="text-neutral-500 text-[11px] font-medium font-sans mt-0.5 leading-snug max-w-[200px]">Autentique-se para sincronizar seus tempos com o ranking.</div>
+                <div className="text-neutral-500 text-[11px] font-medium font-sans mt-0.5 leading-snug max-w-[200px]">Autentique-se para sincronizar seus tempos com a rede.</div>
               </div>
             </div>
           )}
@@ -148,7 +148,7 @@ export default function Ranking() {
                 const isAvatarFallback = !row.banner_url;
 
                 return (
-                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01] cursor-pointer">
+                  <div key={row.id || idx} className="relative w-full bg-[#101010]/90 border border-neutral-800/60 rounded-2xl overflow-hidden flex flex-col sm:flex-row items-start sm:items-center p-4 gap-4 shadow-lg group hover:border-neutral-700/80 transition-all hover:scale-[1.01]">
                     {bgImage && (
                       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                         <img src={bgImage} alt="Banner" className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isAvatarFallback ? 'opacity-25 blur-sm scale-105' : 'opacity-60'}`} />
@@ -188,7 +188,7 @@ export default function Ranking() {
             ) : !loading ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="text-neutral-600 font-black uppercase tracking-[0.2em] text-[10px] mb-2">Nenhum dado capturado</div>
-                <div className="text-neutral-700 font-medium text-xs">Aguardando novos dados...</div>
+                <div className="text-neutral-700 font-medium text-xs">Aguardando quebra de segurança...</div>
               </div>
             ) : null}
           </div>
