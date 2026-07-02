@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSpent = null) {
-  if (supabase.supabaseUrl.includes('placeholder-url')) return;
+  if (import.meta.env.VITE_SUPABASE_URL?.includes('placeholder-url')) return;
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -12,43 +12,31 @@ export async function registerAttempt(minigame, isWin, currentStreak = 0, timeSp
   const identityData = user.identities?.[0]?.identity_data || {};
 
   const playerName = user.user_metadata?.custom_claims?.global_name || identityData.custom_claims?.global_name || user.user_metadata?.full_name || user.user_metadata?.name;
-  const playerAvatar = user.user_metadata?.avatar_url || null;
+  const playerAvatar = user.user_metadata?.avatar_url || null; 
+
   const providerId = user.user_metadata?.provider_id || identityData.sub || user.id;
   
   const bannerHash = user.user_metadata?.banner || identityData.banner || user.user_metadata?.custom_claims?.banner || identityData.custom_claims?.banner;
-
   let playerBanner = null;
   if (providerId && bannerHash) {
     const isGif = bannerHash.startsWith('a_');
     playerBanner = `https://cdn.discordapp.com/banners/${providerId}/${bannerHash}.${isGif ? 'gif' : 'png'}?size=512`;
   }
 
-  const { data: existing } = await supabase
-    .from('rankings')
-    .select('*')
-    .eq('name', playerName)
-    .eq('minigame', minigame)
-    .maybeSingle();
+  const { error } = await supabase.rpc('register_minigame_attempt', {
+    p_minigame: minigame,
+    p_provider_id: providerId,
+    p_name: playerName,
+    p_avatar_url: playerAvatar,
+    p_banner_url: playerBanner,
+    p_is_win: isWin,
+    p_streak: currentStreak,
+    p_time_spent: timeSpent !== null ? parseFloat(timeSpent) : null
+  });
 
-  const total_attempts = (existing?.total_attempts || 0) + 1;
-  const total_hits = (existing?.total_hits || 0) + (isWin ? 1 : 0);
-  const max_streak = Math.max(existing?.max_streak || 0, currentStreak);
-  
-  let best_time = existing?.best_time || 999.99;
-  if (isWin && timeSpent !== null) {
-    best_time = Math.min(best_time, parseFloat(timeSpent));
+  if (error) {
+    console.error('[DB] Falha crítica de Uplink ao salvar recorde:', error.message);
+  } else {
+    console.log(`[DB] Pacote de dados gravado e auditado com sucesso. (${minigame})`);
   }
-
-  await supabase
-    .from('rankings')
-    .upsert({
-      name: playerName,
-      minigame: minigame,
-      avatar_url: playerAvatar,
-      banner_url: playerBanner, 
-      max_streak,
-      best_time,
-      total_attempts,
-      total_hits
-    }, { onConflict: 'name,minigame' });
 }

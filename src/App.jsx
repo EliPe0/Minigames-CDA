@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 
+import ErrorBoundary from './components/ErrorBoundary';
 import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
 import Ranking from './pages/Ranking';
@@ -9,10 +10,29 @@ import Caixinha from './components/Caixinha';
 import PortaMalas from './components/PortaMalas';
 import Hacking from './components/Hacking';
 
+const NotFound = () => (
+  <div className="flex flex-col items-center justify-center flex-1 h-full w-full bg-[#050505] p-6 text-white font-mono select-none animate-page-reveal">
+    <div className="flex flex-col items-center gap-4 text-center max-w-md bg-[#0c0c0c] border border-red-900/40 p-10 rounded-3xl shadow-[0_0_50px_rgba(220,38,38,0.1)]">
+      <div className="text-red-500 font-black text-6xl drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">404</div>
+      <div className="text-white font-black text-xl tracking-widest uppercase">Diretório Inexistente</div>
+      <div className="h-[1px] w-12 bg-red-900/50 mx-auto" />
+      <p className="text-neutral-500 text-[11px] leading-relaxed mb-4 mt-2">
+        O setor que você está tentando acessar não existe nos registros do servidor ou a rota foi corrompida.
+      </p>
+      <Link 
+        to="/home" 
+        className="cursor-pointer px-6 py-3 bg-red-600/10 hover:bg-red-600/20 border border-red-500/30 hover:border-red-500/60 text-red-400 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all active:scale-95"
+      >
+        Retornar ao Início
+      </Link>
+    </div>
+  </div>
+);
+
 export default function App() {
   return (
     <Router>
-      {/* TELA DE BLOQUEIO */}
+      {/* TELA DE BLOQUEIO MOBILE */}
       <div className="flex md:hidden flex-col items-center justify-center min-h-screen bg-[#050505] text-white p-6 font-mono select-none text-center relative overflow-hidden z-[999]">
         
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
@@ -62,15 +82,19 @@ export default function App() {
 
         {/* Área Principal */}
         <main className="flex-1 flex flex-col relative h-full overflow-hidden">
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/lockpick" element={<Lockpick />} />
-            <Route path="/caixinha" element={<Caixinha />} />
-            <Route path="/portamalas" element={<PortaMalas />} />
-            <Route path="/hacking" element={<Hacking />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/ranking" element={<Ranking />} />
+              <Route path="/lockpick" element={<Lockpick />} />
+              <Route path="/caixinha" element={<Caixinha />} />
+              <Route path="/portamalas" element={<PortaMalas />} />
+              <Route path="/hacking" element={<Hacking />} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </main>
         
       </div>

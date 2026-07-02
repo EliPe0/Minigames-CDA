@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { MINIGAMES_LIST } from '../config/minigamesConfig';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -49,12 +50,17 @@ export default function Sidebar() {
     )
   };
 
+  const SidebarAssets = {
+    lockpick: { Icon: Icons.Key, hoverClass: 'hover:text-cyan-400', shadowClass: 'shadow-[0_0_15px_rgba(6,182,212,0.15)]' },
+    caixinha: { Icon: Icons.Bomb, hoverClass: 'hover:text-emerald-400', shadowClass: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]' },
+    portamalas: { Icon: Icons.Car, hoverClass: 'hover:text-blue-400', shadowClass: 'shadow-[0_0_15px_rgba(59,130,246,0.15)]' },
+    hacking: { Icon: Icons.Laptop, hoverClass: 'hover:text-purple-400', shadowClass: 'shadow-[0_0_15px_rgba(168,85,247,0.15)]' }
+  };
+
   return (
     <aside className="w-full md:w-64 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-[#1f1f1f] p-6 flex flex-col justify-between select-none shrink-0 font-mono">
       
-      {/* SEÇÃO SUPERIOR */}
       <div className="flex flex-col gap-10">
-        {/* LOGO */}
         <div onClick={() => handleNavigate('/home')} className="flex flex-col items-center gap-3 cursor-pointer group">
           <img 
             src="logocda.png" 
@@ -64,33 +70,35 @@ export default function Sidebar() {
         </div>
 
         <div className="flex flex-col gap-3 text-xs font-bold uppercase tracking-widest">
-          {/* INÍCIO */}
-          <button onClick={() => handleNavigate('/home')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/home' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.08)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'}`}>
+          {/* HOME ESTÁTICA */}
+          <button 
+            onClick={() => handleNavigate('/home')} 
+            className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/home' ? 'bg-white/10 border-white/30 text-white shadow-[0_0_15px_rgba(255,255,255,0.08)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-white hover:bg-neutral-900/60'}`}
+          >
             <Icons.House /> Início
           </button>
 
-          {/* DIVISOR */}
           <div className="h-[1px] bg-neutral-900 my-1 w-full" />
           
-          {/* LOCKPICK */}
-          <button onClick={() => handleNavigate('/lockpick')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/lockpick' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-cyan-400 hover:bg-neutral-900/60'}`}>
-            <Icons.Key /> Lockpick
-          </button>
-          
-          {/* CAIXINHA */}
-          <button onClick={() => handleNavigate('/caixinha')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/caixinha' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-emerald-400 hover:bg-neutral-900/60'}`}>
-            <Icons.Bomb /> Caixinha
-          </button>
-
-          {/* PORTA MALAS */}
-          <button onClick={() => handleNavigate('/portamalas')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/portamalas' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-blue-400 hover:bg-neutral-900/60'}`}>
-            <Icons.Car /> Porta Malas
-          </button>
-
-          {/* HACKING */}
-          <button onClick={() => handleNavigate('/hacking')} className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${location.pathname === '/hacking' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'bg-transparent border-transparent text-neutral-500 hover:text-purple-400 hover:bg-neutral-900/60'}`}>
-            <Icons.Laptop /> Hacking
-          </button>
+          {/* BOTÕES DINÂMICOS DOS MINIGAMES */}
+          {MINIGAMES_LIST.map((game) => {
+            const assets = SidebarAssets[game.id];
+            const isActive = location.pathname === game.path;
+            
+            return (
+              <button 
+                key={game.id}
+                onClick={() => handleNavigate(game.path)} 
+                className={`cursor-pointer w-full text-left py-3 px-4 rounded-lg border flex items-center group transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.97] ${
+                  isActive 
+                    ? `${game.bgAccent} ${game.borderAccent} ${game.colorClass} ${assets.shadowClass}` 
+                    : `bg-transparent border-transparent text-neutral-500 hover:bg-neutral-900/60 ${assets.hoverClass}`
+                }`}
+              >
+                <assets.Icon /> {game.title}
+              </button>
+            );
+          })}
         </div>
       </div>
 
