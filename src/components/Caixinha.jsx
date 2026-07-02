@@ -72,6 +72,7 @@ export default function CaixinhaTreino() {
 
   const pararJogo = () => {
     if (gameState === 'playing') {
+      registerAttempt('caixinha', false, 0, null);
       setStreak(0);
     }
     clearInterval(timerRef.current);

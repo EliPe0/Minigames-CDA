@@ -60,6 +60,7 @@ export default function Hacking() {
   const reset = useCallback((restart = true) => {
     setGameState(prev => {
       if (prev === 'playing') {
+        registerAttempt('hacking', false, 0, null);
         setStreak(0);
       }
       return 'idle';

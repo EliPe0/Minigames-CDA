@@ -114,6 +114,7 @@ export default function Digipick() {
 
   const pararSistema = () => {
     if (gameState === 'playing') {
+      registerAttempt('lockpick', false, 0, null);
       setStreak(0);
     }
     setGameState('idle'); setActiveRingIdx(0); setActiveToolIdx(0);

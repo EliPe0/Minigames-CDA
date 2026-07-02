@@ -57,6 +57,7 @@ export default function PortaMalas() {
 
   const pararSistema = () => {
     if (gameState === 'playing') {
+      registerAttempt('portamalas', false, 0, null);
       setStreak(0);
     }
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
